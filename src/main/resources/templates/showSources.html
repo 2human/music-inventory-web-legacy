@@ -1,0 +1,51 @@
+<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="styles/normalize.css">
+	<link rel="stylesheet" href="styles/showSources.css">
+    <title>View Source</title>
+</head>
+<body>
+	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId()})}"><button>Edit Source</button></a>
+	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId() + 1})}"><button>Next</button></a>
+    <table>
+        <tr>
+            <td>Id:</td>
+            <td th:text="${sources.getId()}"></td>
+        </tr>
+        <tr>
+            <td>Collection:</td>
+            <td th:text="${sources.getCollection()}"></td>
+        </tr>
+        <tr>
+            <td>Source Number:</td>
+            <td th:text="${sources.getSourceNumber()}"></td>
+        </tr>
+        <tr>
+            <td>Call Number:</td>
+            <td th:text="${sources.getCallNumber()}"></td>
+        </tr>
+        <tr>
+            <td>Author:</td>
+            <td th:text="${sources.getAuthor()}"></td>
+        </tr>
+        <tr>
+            <td>Title:</td>
+            <td th:text="${sources.getTitle()}"></td>
+        </tr>
+        <tr>
+            <td>Inscription:</td>
+            <td th:text="${sources.getInscription()}"></td>
+        </tr>
+        <tr>
+            <td>Description:</td>
+            <td th:text="${sources.getDescription()}"></td>
+        </tr>
+    </table>
+
+
+
+</body>
+</html>

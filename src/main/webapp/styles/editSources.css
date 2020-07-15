@@ -1,0 +1,33 @@
+/* Styles for edit source page */
+
+body{
+    width: 905px;
+}
+
+label{
+    width: 150px;
+    display: inline-block; /*inline elements are only as wide as need be, so necessary change*/
+    margin-bottom: 1em;
+}
+
+input[type=text]{
+    width: 750px;
+}
+
+textarea{    
+    width: 750px;
+    resize: none;
+}
+
+input[type=submit]{
+    float: right;
+    margin-bottom: 5em;
+}
+
+#inscription{
+    height: 6em;
+}
+
+#description{
+    height: 12em;
+}

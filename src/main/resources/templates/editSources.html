@@ -1,0 +1,34 @@
+<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="styles/normalize.css">
+	<link rel="stylesheet" href="styles/editSources.css">
+    <title>Edit Sources</title>
+</head>
+
+<body>
+	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId()})}"><button>View Source</button></a>
+	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId() + 1})}"><button>Next</button></a>
+    <form action="updateSources">
+        <label for="Id">Id:</label>
+        <input type="text" id="id" name="id" th:value="${sources.getId()}" autofocus readonly>
+        <label for="collection">Collection:</label>
+        <input type="text" id="collection" name="collection" th:value="${sources.getCollection()}">
+        <label for="sourceNumber">Source Number:</label>
+        <input type="text" id="sourceNumber" name="sourceNumber" th:value="${sources.getSourceNumber()}">
+        <label for="callNumber">Call Number:</label>
+        <input type="text" id="callNumber" name="callNumber" th:value="${sources.getCallNumber()}">
+        <label for="author">Author:</label>
+        <input type="text" id="author" name="author" th:value="${sources.getAuthor()}">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" th:value="${sources.getTitle()}">
+        <label for="inscription">Inscription:</label>
+        <textarea th:inline="text" id="inscription" name="inscription">[[${sources.getInscription()}]]</textarea>
+        <label for="description">Description:</label>
+        <textarea th:inline="text" id="description" name="description">[[${sources.getDescription()}]]</textarea>
+        <input type="submit" value="Submit">
+    </form>        
+</body>
+</html>
