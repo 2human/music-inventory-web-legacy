@@ -25,7 +25,7 @@ public class SourcesController {
 	@RequestMapping("/")
 	public String home() {
 		
-		return "home.jsp";		
+		return "home.html";		
 	}
 	
 	@GetMapping(value="/sources")

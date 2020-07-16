@@ -1,9 +1,13 @@
 package com.example.demo.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="entries")
 public class Entry {
 	
 	@Id
@@ -11,7 +15,7 @@ public class Entry {
 	@Column(name="entry_id")
 	private int id;
 	@Column(name="collection_name")
-	private String collectionName;
+	private String collection;
 	@Column(name="source_number")
 	private int sourceNumber;
 	@Column(name="entry_location")
@@ -26,6 +30,8 @@ public class Entry {
 	private String key;
 	@Column(name="entry_melodic_incipit")
 	private String melodicIncipit;
+	@Column(name="entry_text_incipit")
+	private String textIncipit;
 	@Column(name="entry_is_secular")
 	private String isSecular;
 	
@@ -35,10 +41,10 @@ public class Entry {
 
 	
 	
-	public Entry(int id, String collectionName, int sourceNumber, String location, String title, String credit,
-			String vocalPart, String key, String melodicIncipit, String isSecular) {
+	public Entry(int id, String collection, int sourceNumber, String location, String title, String credit,
+			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular) {
 		this.id = id;
-		this.collectionName = collectionName;
+		this.collection = collection;
 		this.sourceNumber = sourceNumber;
 		this.location = location;
 		this.title = title;
@@ -46,6 +52,7 @@ public class Entry {
 		this.vocalPart = vocalPart;
 		this.key = key;
 		this.melodicIncipit = melodicIncipit;
+		this.textIncipit = textIncipit;
 		this.isSecular = isSecular;
 	}
 
@@ -57,11 +64,11 @@ public class Entry {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getCollectionName() {
-		return collectionName;
+	public String getCollection() {
+		return collection;
 	}
-	public void setCollectionName(String collectionName) {
-		this.collectionName = collectionName;
+	public void setCollection(String collection) {
+		this.collection = collection;
 	}
 	public int getSourceNumber() {
 		return sourceNumber;
@@ -102,6 +109,9 @@ public class Entry {
 	public String getMelodicIncipit() {
 		return melodicIncipit;
 	}
+	public String getTextIncipit() {
+		return textIncipit;
+	}
 	public void setMelodicIncipit(String melodicIncipit) {
 		this.melodicIncipit = melodicIncipit;
 	}
@@ -110,13 +120,18 @@ public class Entry {
 	}
 	public void setIsSecular(String isSecular) {
 		this.isSecular = isSecular;
-	}	
+	}
+
+
+
 	@Override
 	public String toString() {
-		return "Entry [id=" + id + ", collectionName=" + collectionName + ", sourceNumber=" + sourceNumber
-				+ ", location=" + location + ", title=" + title + ", credit=" + credit + ", vocalPart=" + vocalPart
-				+ ", key=" + key + ", melodicIncipit=" + melodicIncipit + ", isSecular=" + isSecular + "]";
-	}
+		return "Entry [id=" + id + ", collection=" + collection + ", sourceNumber=" + sourceNumber + ", location="
+				+ location + ", title=" + title + ", credit=" + credit + ", vocalPart=" + vocalPart + ", key=" + key
+				+ ", melodicIncipit=" + melodicIncipit + ", textIncipit=" + textIncipit + ", isSecular=" + isSecular
+				+ "]";
+	}	
+
 	
 	
 }
