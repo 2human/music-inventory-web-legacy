@@ -3,6 +3,7 @@ package com.example.demo.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,8 +12,8 @@ import javax.persistence.Table;
 public class Entry {
 	
 	@Id
-	@GeneratedValue
-	@Column(name="entry_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "entry_id", nullable = false, unique = true)
 	private int id;
 	@Column(name="collection_name")
 	private String collection;
@@ -56,7 +57,19 @@ public class Entry {
 		this.isSecular = isSecular;
 	}
 
-
+	public Entry(String collection, int sourceNumber, String location, String title, String credit,
+			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular) {
+		this.collection = collection;
+		this.sourceNumber = sourceNumber;
+		this.location = location;
+		this.title = title;
+		this.credit = credit;
+		this.vocalPart = vocalPart;
+		this.key = key;
+		this.melodicIncipit = melodicIncipit;
+		this.textIncipit = textIncipit;
+		this.isSecular = isSecular;
+	}
 
 	public int getId() {
 		return id;

@@ -9,18 +9,15 @@ import com.example.demo.model.Sources;
 
 public interface SourcesRepo extends JpaRepository<Sources, Integer>{
 
-//	@Query("from Alien where tech=?1 order by aname")
-//	List<Alien> findByTechSorted(String tech);
-
 	@Query("from Sources where collection LIKE %?1%")
 	List<Sources> findByCollection(String collection);
+
+	@Query("from Sources where sourceNumber=?1")
+	List<Sources> findBySourceNumber(int sourceNumber);
 
 	@Query("from Sources where author LIKE %?1%")
 	List<Sources> findByAuthor(String author);
 	
-	@Query("from Sources where sourceNumber=?1")
-	List<Sources> findBySourceNumber(int sourceNumber);
-
 	@Query("from Sources where callNumber LIKE %?1%")
 	List<Sources> findByCallNumber(String callNumber);
 

@@ -1,0 +1,63 @@
+<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="styles/normalize.css">
+	<link rel="stylesheet" href="styles/showSources.css">
+    <title>View Source</title>
+</head>
+<body>
+	<a th:href="@{http://localhost:8080/getEntry(id=${entry.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://localhost:8080/editEntry(id=${entry.getId()})}"><button>Edit Entry</button></a>
+	<a th:href="@{http://localhost:8080/getEntry(id=${entry.getId() + 1})}"><button>Next</button></a>
+    <table>
+        <tr>
+            <td>Id:</td>
+            <td th:text="${entry.getId()}"></td>
+        </tr>
+        <tr>
+            <td>Collection:</td>
+            <td th:text="${entry.getCollection()}"></td>
+        </tr>
+        <tr>
+            <td>Source Number:</td>
+            <td th:text="${entry.getSourceNumber()}"></td>
+        </tr>
+        <tr>
+            <td>Location:</td>
+            <td th:text="${entry.getLocation()}"></td>
+        </tr>
+        <tr>
+            <td>Title:</td>
+            <td th:text="${entry.getTitle()}"></td>
+        </tr>
+        <tr>
+            <td>Credit:</td>
+            <td th:text="${entry.getCredit()}"></td>
+        </tr>
+        <tr>
+            <td>Vocal Part:</td>
+            <td th:text="${entry.getVocalPart()}"></td>
+        </tr>
+        <tr>
+            <td>Key:</td>
+            <td th:text="${entry.getKey()}"></td>
+        </tr>
+        <tr>
+            <td>Melodic Incipit:</td>
+            <td th:text="${entry.getMelodicIncipit()}"></td>
+        </tr>
+        <tr>
+            <td>Text Incipit:</td>
+            <td th:text="${entry.getTextIncipit()}"></td>
+        </tr>
+        <tr>
+            <td>Secular:</td>
+            <td th:text="${entry.getIsSecular()}"></td>
+        </tr>
+    </table>
+
+
+
+</body>
+</html>

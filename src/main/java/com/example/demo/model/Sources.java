@@ -3,6 +3,7 @@ package com.example.demo.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
@@ -10,8 +11,10 @@ public class Sources {
 	
 	//source/entry variables
 	@Id
-	@GeneratedValue
-	@Column(name="id")
+//	@GeneratedValue
+//	@Column(name="id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)	
 	private int id;
 	@Column(name="collection_name")
 	private String collection;
@@ -37,6 +40,18 @@ public class Sources {
 			String inscription, String description) {
 		super();
 		this.id = id;
+		this.collection = collection;
+		this.sourceNumber = sourceNumber;
+		this.callNumber = callNumber;
+		this.author = author;
+		this.title = title;
+		this.inscription = inscription;
+		this.description = description;
+	}
+	
+	public Sources(String collection, int sourceNumber, String callNumber, String author, String title,
+			String inscription, String description) {
+		super();
 		this.collection = collection;
 		this.sourceNumber = sourceNumber;
 		this.callNumber = callNumber;

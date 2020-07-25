@@ -1,0 +1,30 @@
+<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="styles/normalize.css">
+	<link rel="stylesheet" href="styles/showSources.css">
+    <title>View Source</title>
+</head>
+<body>
+	<a th:href="@{http://localhost:8080/getCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://localhost:8080/editCollection(id=${collection.getId()})}"><button>Edit Collection</button></a>
+	<a th:href="@{http://localhost:8080/getCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
+    <table>
+        <tr>
+            <td>Id:</td>
+            <td th:text="${collection.getId()}"></td>
+        </tr>
+        <tr>
+            <td>Collection:</td>
+            <td th:text="${collection.getCollection()}"></td>
+        </tr>
+        <tr>
+            <td>Description:</td>
+            <td th:text="${collection.getDescription()}"></td>
+        </tr>
+        
+    </table>
+
+</body>
+</html>

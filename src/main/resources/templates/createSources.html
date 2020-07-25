@@ -1,0 +1,29 @@
+<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="styles/normalize.css">
+	<link rel="stylesheet" href="styles/editSources.css">
+    <title>Edit Sources</title>
+</head>
+
+<body>
+    <form action="createSources">
+        <label for="collection">Collection:</label>
+        <input type="text" id="collection" name="collection">
+        <label for="sourceNumber">Source Number:</label>
+        <input type="text" id="sourceNumber" name="sourceNumber">
+        <label for="callNumber">Call Number:</label>
+        <input type="text" id="callNumber" name="callNumber">
+        <label for="author">Author:</label>
+        <input type="text" id="author" name="author">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+        <label for="inscription">Inscription:</label>
+        <textarea th:inline="text" id="inscription" name="inscription"></textarea>
+        <label for="description">Description:</label>
+        <textarea th:inline="text" id="description" name="description"></textarea>
+        <input type="submit" value="Submit">
+    </form>         
+</body>
+</html>

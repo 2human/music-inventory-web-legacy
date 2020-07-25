@@ -1,0 +1,20 @@
+<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="styles/normalize.css">
+	<link rel="stylesheet" href="styles/editSources.css">
+    <title>Edit Collection</title>
+</head>
+
+<body>
+   	<div th:text="${'Entry with ID ' + collection.getId() + ' successfully created.'}"></div><br><br>
+    <form action="createCollection">
+        <label for="collection">Collection:</label>
+        <input type="text" id="collection" name="collection">
+        <label for="description">Description:</label>
+        <textarea th:inline="text" id="description" name="description"></textarea>
+        <input type="submit" value="Submit">
+    </form>         
+</body>
+</html>

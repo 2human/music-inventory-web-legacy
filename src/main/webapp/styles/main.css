@@ -6,7 +6,7 @@ body {
     font-size: 100%;
     width: 1500px;
     margin: 0 auto 0;
-    background-color: white;    
+	background-color: white;
 }
 
 header{
@@ -22,165 +22,94 @@ header{
 	text-align: center;
 }
 
+/* Table  */
+
 tr{
-	margin-bottom: 5em;
+	/* margin-bottom: 5em;	 */
+}
+
+th{
+	border: .1px solid black;
+	border-collapse: collapse;
 	
 }
 
 td{
-	border: 3px solid black;
+	border: .1px solid black;
+	vertical-align: top;
+	padding: .25em;
+	border-collapse: collapse;
+}
+
+table{
+	white-space: pre-line;
+	width: 100% ;
+	border-collapse: collapse;
 }
 
 
 
-/*
-
-header h3{
-}
-
-main{
-}
-
-#heads{	
-	display: block;
-	display: inline-block;
-}
-
-header img{	
-	display: block;
-	display: inline-block;
-}
-
-
-#head_full{
-	
-}
-
-main{
-	margin: 1em 0 1em;
-}
-
-
-#sect_1{
-	clear: left;
-}
-
-#sect_2{
-}
-
-*/
-
-/*horizontal, 3-tier navigation list*/
-
-/*
-#nav_list_2 ul{
-	list-style-type: none;
-	position: relative;
-	padding: 0;
-}
-
-#nav_list_2 ul li{
-	float: left;
-	border: 2px solid black;
-	width: 186px;
-	text-align: center;
-	
-}
-
-#nav_list_2 ul li a{
+ /* The Modal (background) */
+ .modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+	background-color: #fefefe;
+	margin: 15% auto; /* 15% from the top and centered */
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%; /* Could be more or less, depending on screen size */
+  }
+  
+  /* The Close Button */
+  .close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
 	font-weight: bold;
-	text-align: center;
-	display: block;
-	width: 150px;
-	text-decoration: none;
-	padding: 1em 0;
+  }
+  
+  .close:hover,
+  .close:focus {
 	color: black;
-}
-
-#nav_list_2 ul li a.last{ border-right: none;}
-#nav_list_2 ul li a.current{color: blue	;}
-
-
-#nav_list_2 ul ul{
-	padding-left: 0;
-	display: none;
-	position: absolute;
-	top: 100%;
-	z-index: 5;
-	background-color: white;
-}
-
-#nav_list_2 ul ul li{
-	float: none;
-	position: relative;
-}
-
-#nav_list_2 ul li:hover > ul{
-	display: block;
-}
-
-#nav_list_2 ul ul li ul{
-	position: absolute;
-	left: 100%;
-	top: 0;
-}
-
-#nav_list_2 ul li.last ul li ul{
-	position: absolute;
-	left: -100%;
-	top: 0;
-}
-
-#nav_list_2 > ul::after{
-	content: "";
-	display: block;
-	clear: both;
-}
-
-
-#nav_list_2 ul li a: hover, #nav_list_2 ul li a: focus{
-	background-color: gray;
-}
-
-*/
-
-/* vertical navigation list*/
-
-/*
-#nav_list{
-	float: right;	
-    border-top: 3px solid black;    
-    border-bottom: 3px solid black;    
-    border-left: 3px solid black;
-    padding-right: 1em;
-}
-
-#nav_list h2{
-	text-align: center;	
-}
-
-#nav_list ul{
-	padding-left: 1em;
-	list-style-type: none;
-	list-style: none;
-	margin-bottom: .5em;
-}
-
-#nav_list ul li{
-	display: block;
 	text-decoration: none;
-	font-weight: bold;	
-	width: 200px;
-	margin-bottom: .5em;
-	border: 2px solid black;
+	cursor: pointer;
+  } 
+
+.modal label{
+    width: 150px;
+    display: inline-block; /*inline elements are only as wide as need be, so necessary change*/
+    margin-bottom: 1em;
 }
 
-#nav_list ul li a{	
-	padding: .5em 0 .5em 1.5em;
-	text-decoration: none;
-	display: block; /* make entire block clicable*/
-	/* 
-	color: black;
+.modal input[type=text]{
+    width: 750px;
 }
 
-*/
+.modal textarea{    
+    width: 750px;
+    resize: none;
+}
+
+/* .modal input[type=submit]{
+} */
+
+.modal #inscription{
+    height: 6em;
+}
+
+.modal #description{
+    height: 12em;
+}
+
