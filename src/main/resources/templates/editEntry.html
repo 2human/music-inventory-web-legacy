@@ -11,6 +11,7 @@
 	<a th:href="@{http://localhost:8080/editEntry(id=${entry.getId() - 1})}"><button>Previous</button></a>
 	<a th:href="@{http://localhost:8080/getEntry(id=${entry.getId()})}"><button>Read Mode</button></a>
 	<a th:href="@{http://localhost:8080/editEntry(id=${entry.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://localhost:8080/home.html}"><button>Home</button></a>
     <form action="updateEntry">
         <label for="Id">Id:</label>
         <input type="text" id="id" name="id" th:value="${entry.getId()}" autofocus readonly>

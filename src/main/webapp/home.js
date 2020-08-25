@@ -1,84 +1,12 @@
 /**
  * 
  */
-//TODO fix buttons so that "hide" no longer shows after table is changed
 //TODO change from id's to classes in html
-
-//"Get Sources" button that displays all sources upon click
-let srcBtn = document.getElementById('sourceBtn');
-srcBtn.addEventListener('click', (event) => {
-    if(event.target.innerText === 'Get Sources'){
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:8080/sources', true);
-        xhr.send();
-        xhr.onload = function(){
-            console.log(this.status);
-            if(this.status === 200){ 
-                let sourceTabelStr = createSourceTableStr(this.responseText);
-                let resultTable = document.getElementById('resultTable');
-                resultTable.innerHTML = sourceTabelStr;
-                //Change button so that it will hide sources next time it is clicked
-                srcBtn.innerText = 'Hide Sources';                      
-            }
-        }
-        //Hide sources if sources are displayed already
-    } else{
-        document.getElementById('resultTable').innerHTML = '';
-        srcBtn.innerText = 'Get Sources';
-    }
-});
-
-//set up "Get Entries" button so that all entries are displayed upon click
-let entryBtn = document.getElementById('entryBtn');
-entryBtn.addEventListener('click', (event) => {
-    if(event.target.innerText === 'Get Entries'){
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:8080/entries', true);
-        xhr.send();
-        xhr.onload = function(){
-            console.log(this.status);
-            if(this.status === 200){ 
-                let entryTabelStr = createEntryTableStr(this.responseText);
-                let resultTable = document.getElementById('resultTable');
-                resultTable.innerHTML = entryTabelStr;
-                entryBtn.innerText = 'Hide Entries';                      
-            }
-        }
-    } else{
-        document.getElementById('resultTable').innerHTML = '';
-        entryBtn.innerText = 'Get Entries';
-    }
-});
-
-//set up "Get Entries" button so that all entries are displayed upon click
-let collectionBtn = document.getElementById('collectionBtn');
-collectionBtn.addEventListener('click', (event) => {
-    console.log('collection button clicked');
-    if(event.target.innerText === 'Get Collections'){
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:8080/collections', true);
-        xhr.send();
-        console.log(this.status);
-        xhr.onload = function(){
-            console.log(this.status);
-            if(this.status === 200){ 
-                let collectionTabelStr = createCollectionTableStr(this.responseText);
-                let resultTable = document.getElementById('resultTable');
-                resultTable.innerHTML = collectionTabelStr;
-                collectionBtn.innerText = 'Hide Collections';                      
-            }
-        }
-    } else{
-        document.getElementById('resultTable').innerHTML = '';
-        collectionBtn.innerText = 'Get Collections';
-    }
-});
 
 //display checkboxes corresponding to fields of table radio button selection
 let tblBtn = document.getElementById('tableSelect');    //div containing buttons that determine which table to search
 //event listener that generates fieldSelect div containing buttons corresponding to fields within table
 tblBtn.addEventListener("click", (event) =>{            
-    console.log('clicked');
     let fieldDiv = document.getElementById('fieldSelect');      //div that contains fields for respective table
                
     //generate fields corresponding to those within sources table 
@@ -141,30 +69,142 @@ searchBtn.addEventListener("click", (event) => {
         console.log(this.status);
         if(this.status === 200){ 
             let resultTableHTMLStr,    //string containing html to display results of search            
-                resultTable = document.getElementById('resultTable');
-            //construct table based on type of search
+                resultTable = document.getElementById('resultTable'),
+                searchResultsArr = JSON.parse(this.responseText),   //convert JSON object to JS object; can be array
+                                                                    //of entries, sources, or collections
+                curPage = 1,    //current page of search results being viewed, 1 to start          
+                resultsPerPage = 100,   //number of results to be displayed per page; 100 to start
+                totalResults = searchResultsArr.length;
+                totalPages = Math.floor(totalResults / resultsPerPage + 1);
+            
+            //TODO turn below into method that takes any type of table
+            //construct table based on type of search                                 
             switch(tableSelection){
                 case "sources":
-                    resultTableHTMLStr = createSourceTableStr(this.responseText);
-                    resultTable.innerHTML = resultTableHTMLStr;
+                    resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
                     break;
                 case "entries":
-                    resultTableHTMLStr = createEntryTableStr(this.responseText);
-                    resultTable.innerHTML = resultTableHTMLStr;
+                    resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
                     break;
                 case "collections":
-                    resultTableHTMLStr = createCollectionTableStr(this.responseText);
-                    resultTable.innerHTML = resultTableHTMLStr;
+                    resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
                     break;
             }
+            resultTable.innerHTML = resultTableHTMLStr;     //add html to page
 
-            // event listener for search result table which displays edit modal
-            resultTable.addEventListener("dblclick", (event) => {
+            let pageNumberDiv = document.getElementById('pageBtns'),            //get page number button div
+                pageNumberDivBot = document.getElementById('pageBtnsBot'),
+                btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
+            pageNumberDiv.innerHTML = btnHTML;          //add button html to page
+            pageNumberDivBot.innerHTML = btnHTML;
+
+            let resultsPerPageDiv = document.getElementById('resultsPerPage');            
+            if(totalResults != 0){
+            let resultsPerPageHTML = createResultsPerPageHTML(resultsPerPage);
+            resultsPerPageDiv.innerHTML = resultsPerPageHTML;
+            } else resultsPerPageDiv.innerHTML = '';
+            resultsPerPageDiv.addEventListener("click", (event) => {
+                let clicked = event.target;
+                if(clicked.nodeName === 'A'){
+                    curPage = 1;
+                    if(clicked.id == 'All'){
+                        resultsPerPage = totalResults;
+                        totalPages = 1;
+                    } else{
+                        resultsPerPage = clicked.id;
+                        totalPages = Math.floor(totalResults / resultsPerPage + 1);
+                    }
+                    //reset page results according to selection of results per page
+                    switch(tableSelection){
+                        case "sources":
+                            resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                        case "entries":
+                            resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                        case "collections":
+                            resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                    }
+                    resultTable.innerHTML = resultTableHTMLStr;     //add html to page
+                    btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
+                    pageNumberDiv.innerHTML = btnHTML;          //add button html to page
+                    pageNumberDivBot.innerHTML = btnHTML;
+                    if(totalResults != 0){
+                    resultsPerPageHTML = createResultsPerPageHTML(clicked.id);
+                    resultsPerPageDiv.innerHTML = resultsPerPageHTML;
+                    } else resultsPerPageDiv.innerHTML = '';
+
+                } 
+            });
+
+            //create event listener for buttons
+            pageNumberDiv.addEventListener("click", (event) => {                
+                let btnClicked = event.target;      //get button clicked
+                if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
+                    curPage++;
+                } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
+                    curPage--;
+                } else{                             //if page number was clicked, set page to page number
+                curPage = btnClicked.innerText;
+                }
+                if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
+                    switch(tableSelection){         //create table string according to which one is being searched
+                        case "sources":
+                            resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                        case "entries":
+                            resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                        case "collections":
+                            resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                    }
+                    resultTable.innerHTML = resultTableHTMLStr;
+                    btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
+                    pageNumberDiv.innerHTML = btnHTML;
+                    pageNumberDivBot.innerHTML = btnHTML;
+                }
+            });
+            //TODO: remove so that there is only one listener for both page buttons
+            pageNumberDivBot.addEventListener("click", (event) => {                
+                let btnClicked = event.target;      //get button clicked
+                if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
+                    curPage++;
+                } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
+                    curPage--;
+                } else{                             //if page number was clicked, set page to page number
+                curPage = btnClicked.innerText;
+                }
+                if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
+                    switch(tableSelection){         //create table string according to which one is being searched
+                        case "sources":
+                            resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                        case "entries":
+                            resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                        case "collections":
+                            resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
+                            break;
+                    }
+                    resultTable.innerHTML = resultTableHTMLStr;
+                    btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
+                    pageNumberDiv.innerHTML = btnHTML;
+                    pageNumberDivBot.innerHTML = btnHTML;
+                    window.scrollTo(0, 130);
+                }
+            });
+
+            resultTable.ondblclick = function(event){
+                console.log("modal");
                 let cell = event.target;     //get cell that was clicked
                 if(cell.nodeName !== "TH" && cell.id !== "id"){     //if cell clicked is not table header and not the id column
                     let row = cell.parentElement,        //table row element of cell clicked
                         modalForm = document.getElementById("modalForm"),   //div that will contain form
                         formHTML;   //html containing form that will be displayed in modal
+                    //TODO set up so that form is displaying lines properly
+                    //construct modal form depending on what table is being viewed
                     switch(row.className){
                         case "entryRow":
                             formHTML = createEntryFormStr(row);
@@ -178,7 +218,6 @@ searchBtn.addEventListener("click", (event) => {
                     }
                     modalForm.innerHTML = formHTML;
                     let selected = matchClicked(document.getElementById('tableUpdateForm').childNodes, cell);
-                    console.log(selected);
                     let modal = document.getElementById("myModal");         
                     let span = document.getElementsByClassName("close")[0];           
                     modal.style.display = "block";// Get the <span> element that closes the modal
@@ -222,8 +261,7 @@ searchBtn.addEventListener("click", (event) => {
                                     break;
 
                             }
-                            row.innerHTML = updatedRowHTML;                            
-                            console.log(updatedRowHTML);
+                            row.innerHTML = updatedRowHTML; 
                             modal.style.display = "none";
                         }
                     });    
@@ -239,7 +277,7 @@ searchBtn.addEventListener("click", (event) => {
                       }
                     }
                 }
-            });
+            }
         }
     }        
 });
@@ -254,16 +292,17 @@ function getSearchParams(form){
 }
 
 //construct string with HTML for source table results
-function createSourceTableStr(xhrResponseText){                     
-    let sources = JSON.parse(xhrResponseText);
+//sources - array of source objects constructed from XHRResponse
+//pageNum - current page of search results being viewed
+//resultsPerPage - results displayed on each page of search results
+function createSourceTableStr(sources, pageNum, resultsPerPage){
     if(typeof sources[0] === "undefined"){
-        return 'No results found...';
+        return '';
     } else{
         sources = sources.sort((a, b) => {
             return a.id - b.id;
         });
-        let output = '<div><b>Displaying ' + sources.length + ' results... </b></div><br>' +
-            '<table id="table">' + 
+        let output = '<table id="table">' + 
                 '<tr>' +
                     '<th id="id">ID</td>' +
                     '<th id="collection">Collection</td>' +
@@ -274,7 +313,12 @@ function createSourceTableStr(xhrResponseText){
                     '<th id="inscription">Inscription</td>' +
                     '<th id="description">Description</td>' +
                 '</tr>';
-        for(const index in sources){
+        for(let pageLimit = pageNum * resultsPerPage, index = pageLimit - resultsPerPage, totalResults = sources.length;
+             index < pageLimit && index < totalResults; index++){
+            //pageLimit - last result index of results array to be displayed on page
+            //pageNum - page number being displayed
+            //index - current index being added to table; starts at pageLimit-pageNum
+            //totalResults - length of response object with search results
             output += 
                 '<tr class="sourceRow">' +
                     '<td id="id"><a href="http://localhost:8080/getSources?id=' + sources[index].id +'">' + sources[index].id + '</a></td>' +
@@ -292,19 +336,19 @@ function createSourceTableStr(xhrResponseText){
         }
 }
 
-//construct string containing HTML for Entry table results
-function createEntryTableStr(xhrResponseText){                     
-    let entries = JSON.parse(xhrResponseText);
+//construct string with HTML for entry table results
+//entries - array of entry objects constructed from XHRResponse
+//pageNum - current page of search results being viewed
+//resultsPerPage - results displayed on each page of search results
+function createEntryTableStr(entries, pageNum, resultsPerPage){
     //no results found
     if(typeof entries[0] === "undefined"){
-        return 'No results found...';
+        return '';
     } else{         //results found
         entries = entries.sort((a, b) => {
             return a.id - b.id;
         }); 
-        console.log(entries[0].id);
-        let output = '<div><b>Displaying ' + entries.length + ' results... </b></div><br>' +
-            '<table id="table">' + 
+        let output = '<table id="table">' + 
                 '<tr>' +
                     '<th id="id">ID</td>' +
                     '<th id="collection">Collection</td>' +
@@ -318,7 +362,12 @@ function createEntryTableStr(xhrResponseText){
                     '<th id="textIncipit">Text Incipit</td>' +
                     '<th id="isSecular">Secular</td>' +
                 '</tr>';
-        for(const index in entries){
+            for(let pageLimit = pageNum * resultsPerPage, index = pageLimit - resultsPerPage, totalResults = entries.length;
+                    index < pageLimit && index < totalResults; index++){
+                   //pageLimit - last result index of results array to be displayed on page
+                   //pageNum - page number being displayed
+                   //index - current index being added to table; starts at pageLimit-pageNum
+                   //totalResults - length of response object with search results
             output += '<tr class="entryRow">' +
                     '<td id="id"><a href="http://localhost:8080/getEntry?id=' + entries[index].id +'">' + entries[index].id + '</a></td>' +
                     '<td id="collection">' + entries[index].collection + '</td>' +
@@ -339,24 +388,25 @@ function createEntryTableStr(xhrResponseText){
         }
 }
 
-//create form that pre-fills data from table row
-function createCollectionTableStr(xhrResponseText){                     
-    let collections = JSON.parse(xhrResponseText);
+//construct string with HTML for entry table results
+//collections - array of collection objects constructed from XHRResponse
+//pageNum - current page of search results being viewed
+//resultsPerPage - results displayed on each page of search results
+function createCollectionTableStr(collections, pageNum, resultsPerPage){
     if(typeof collections[0] === "undefined"){
-        return 'No results found...';
+        return '';
     } else{
         collections = collections.sort((a, b) => {
             return a.id - b.id;
         }); 
-        console.log(collections[0].id);
-        let output = '<div><b>Displaying ' + collections.length + ' results... </b></div><br>' +
-            '<table id="table">' + 
+        let output = '<table id="table">' + 
                 '<tr class="collectionRow">' +
                     '<th id="id">ID</td>' +
                     '<th id="collection">Collection</td>' +
                     '<th id="description">Description</td>' +
                 '</tr>';
-        for(const index in collections){
+        for(let pageLimit = pageNum * resultsPerPage, index = pageLimit - resultsPerPage, totalResults = collections.length;
+            index < pageLimit && index < totalResults; index++){
             output += '<tr class="collectionRow">' +
                     '<td id="id"><a href="http://localhost:8080/getCollection?id=' + collections[index].id +'">' + collections[index].id + '</a></td>' +
                     '<td id="collection">' + collections[index].collection + '</td>' +
@@ -374,29 +424,29 @@ function createEntryFormStr(row){
     let rowCells = row.children;
     return '<form action="updateEntryTable" id="tableUpdateForm">' +        
         '<label for="Id">Id:</label>' +
-        '<input type="text" id="id" name="id" value="' + rowCells[0].innerText + '" readonly><br>' +
+        '<input type="text" id="id" class="searchBox" name="id" value="' + rowCells[0].innerText + '" readonly><br>' +
         '<label for="collection">Collection:</label>' +
-        '<input type="text" id="collection" name="collection" value="' + rowCells[1].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="collection" class="searchBox" name="collection" value="' + rowCells[1].innerText + '" onfocus="this.select()"><br>' +
         '<label for="sourceNumber">Source Number:</label>' +
-        '<input type="text" id="sourceNumber" name="sourceNumber" value="' + rowCells[2].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="' + rowCells[2].innerText + '" onfocus="this.select()"><br>' +
         '<label for="location">Location:</label>' +
-        '<input type="text" id="location" name="location" value="' + rowCells[3].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="location" class="searchBox" name="location" value="' + rowCells[3].innerText + '" onfocus="this.select()"><br>' +
         '<label for="title">Title:</label>' +
-        '<input type="text" id="title" name="title" value="' + rowCells[4].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="title" class="searchBox" name="title" value="' + rowCells[4].innerText + '" onfocus="this.select()"><br>' +
         '<label for="credit">Credit:</label>' +
-        '<input type="text" id="credit" name="credit" value="' + rowCells[5].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="credit" class="searchBox" name="credit" value="' + rowCells[5].innerText + '" onfocus="this.select()"><br>' +
         '<label for="vocalPart">Vocal Part:</label>' +
-        '<input type="text" id="vocalPart" name="vocalPart" value="' + rowCells[6].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="vocalPart" class="searchBox" name="vocalPart" value="' + rowCells[6].innerText + '" onfocus="this.select()"><br>' +
         '<label for="key">Key:</label>' +
-        '<input type="text" id="key" name="key" value="' + rowCells[7].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="key" class="searchBox" name="key" value="' + rowCells[7].innerText + '" onfocus="this.select()"><br>' +
         '<label for="melodicIncipit">Melodic Incipit:</label>' +
-        '<input type="text" id="melodicIncipit" name="melodicIncipit" value="' + rowCells[8].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="melodicIncipit" class="searchBox" name="melodicIncipit" value="' + rowCells[8].innerText + '" onfocus="this.select()"><br>' +
         '<label for="textIncipit">Text Incipit:</label>' +
-        '<input type="text" id="textIncipit" name="textIncipit" value="' + rowCells[9].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="textIncipit" class="searchBox" name="textIncipit" value="' + rowCells[9].innerText + '" onfocus="this.select()"><br>' +
         '<label for="isSecular">Secular:</label>' +
-        '<input type="text" id="isSecular" name="isSecular" value="' + rowCells[10].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="isSecular" class="searchBox" name="isSecular" value="' + rowCells[10].innerText + '" onfocus="this.select()"><br>' +
         '<button id="updateRow">Update</button>' +
-        '<input type="submit" value="Delete" formaction="deleteEntry">' +
+        '<button id="deleteEntry" class="searchBox" formaction="deleteEntry">Delete</button>' +
     '</form>';
 }
 
@@ -405,23 +455,23 @@ function createSourceFormStr(row){
     let rowCells = row.children;
     return '<form action="updateSourcesTable" id="tableUpdateForm">' +        
         '<label for="id">Id:</label>' +
-        '<input type="text" id="id" name="id" value="' + rowCells[0].innerText + '" readonly><br>' +
+        '<input type="text" id="id" class="searchBox" name="id" value="' + rowCells[0].innerText + '"><br>' +
         '<label for="collection">Collection:</label>' +
-        '<input type="text" id="collection" name="collection" value="' + rowCells[1].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="collection" class="searchBox" name="collection" value="' + rowCells[1].innerText + '" onfocus="this.select()"><br>' +
         '<label for="sourceNumber">Source Number:</label>' +
-        '<input type="text" id="sourceNumber" name="sourceNumber" value="' + rowCells[2].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="' + rowCells[2].innerText + '" onfocus="this.select()"><br>' +
         '<label for="callNumber">Call Number:</label>' +
-        '<input type="text" id="callNumber" name="callNumber" value="' + rowCells[3].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="callNumber" class="searchBox" name="callNumber" value="' + rowCells[3].innerText + '" onfocus="this.select()"><br>' +
         '<label for="author">Author:</label>' +
-        '<input type="text" id="author" name="author" value="' + rowCells[4].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="author" class="searchBox" name="author" value="' + rowCells[4].innerText + '" onfocus="this.select()"><br>' +
         '<label for="title">Title:</label>' +
-        '<input type="text" id="title" name="title" value="' + rowCells[5].innerText + '" onfocus="this.select()"><br>' +
+        '<input type="text" id="title" class="searchBox" name="title" value="' + rowCells[5].innerText + '" onfocus="this.select()"><br>' +
         '<label for="inscription">Inscription:</label>' +
-        '<textarea inline="text" id="inscription" name="inscription" onfocus="this.select()">' + rowCells[6].innerText + '</textarea><br>' +
+        '<textarea inline="text" id="inscription" class="searchBox" name="inscription" onfocus="this.select()">' + rowCells[6].innerText + '</textarea><br>' +
         '<label for="description">Description:</label>' +        
-        '<textarea inline="text" id="description" name="description" onfocus="this.select()">' + rowCells[7].innerText + '</textarea><br>' +
+        '<textarea inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">' + rowCells[7].innerText + '</textarea><br>' +
         '<button id="updateRow">Update</button>' +
-        '<input type="submit" value="Delete" formaction="deleteSources">' +
+        '<button id="deleteSources" formaction="deleteSources">Delete</button>' +
     '</form>';
 
 }
@@ -430,13 +480,13 @@ function createCollectionFormStr(row){
     let rowCells = row.children;
     return '<form action="updateCollectionTable" id="tableUpdateForm">' +
         '<label for="Id">Id:</label>' + 
-        '<input type="text" id="id" name="id" value="' + rowCells[0].innerText + '" readonly><br>' + 
+        '<input type="text" id="id" class="searchBox" name="id" value="' + rowCells[0].innerText + '" readonly><br>' + 
         '<label for="collection">Collection:</label>' + 
-        '<input type="text" id="collection" name="collection" value="' + rowCells[1].innerText + '" onfocus="this.select()"><br>' + 
+        '<input type="text" id="collection" class="searchBox" name="collection" value="' + rowCells[1].innerText + '" onfocus="this.select()"><br>' + 
         '<label for="description">Description:</label>' + 
-        '<textarea th:inline="text" id="description" name="description" onfocus="this.select()">' + rowCells[2].innerText + '</textarea><br>' + 
+        '<textarea th:inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">' + rowCells[2].innerText + '</textarea><br>' + 
         '<button id="updateRow">Update</button>' +
-        '<input type="submit" value="Delete" formaction="deleteCollection">' + 
+        '<button id="deleteCollection" formaction="deleteCollection">Delete</button>' + 
     '</form>';
 }
 
@@ -487,3 +537,91 @@ function matchClicked(childList, cellClicked){
     return null;
 }
 
+//construct buttons that allow user to select search result page
+function createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults){ 
+    if(totalResults == 0){
+        return '<b>No results found...<b><br><br>'
+    }
+    if(totalPages == 1){
+        if(totalResults === 1){
+            return '<b>Displaying ' + totalResults + ' result...</b><br><br>';
+        }
+        return '<b>Displaying ' + totalResults + ' results...</b><br><br>';
+    }
+    let btnHTMLStr,             //string that will hold html output for buttons
+        lowerBound = curPage,   //first button to be created (after 1, which is always created)
+        upperBound = curPage,   //last button to be created (before last page, which is always created)
+        btnsTallied = 0,        //current tally of buttons that will be created
+        startReached = curPage > 2 ? false : true,  //determine if curpage is 2nd page or later
+        endReached = curPage < totalPages - 1 ? false : true,   //determine if curpage is 2nd to last page or earlier
+        maxButtons = 8;
+    
+    //determine range of buttons to create
+    while((!startReached || !endReached)){    //while neither start nor end pages have been reached,
+                                                                            //and all buttons have not been created
+        if(!startReached){          //while lower bound has not hit beginning page
+            lowerBound--;           //decrement lower bound
+            btnsTallied++;
+            startReached = lowerBound > 2 ? false : true    //determine if beginning page has been reached after decrementation
+            if(btnsTallied === maxButtons) break;           //always end if max buttons reached
+        }
+        if(!endReached){            //while upper bound has not reached end page
+            upperBound++;           //increment upper bound
+            btnsTallied++;
+            endReached = upperBound < totalPages - 1 ? false : true;    //determine if end page has been reached after incrementation
+            if(btnsTallied === maxButtons) break;           //always end if max buttons reached
+        }
+        
+    }
+
+    //create search page buttons
+    if(curPage == 1){   //if current page is first page, disable first page button and previous button
+        btnHTMLStr = '<button class="pageBtns curPage" disabled>Previous</button>' + 
+                    '<button class="pageBtns curPage" disabled>1</button>';    
+    } else{         //if current page not first page, add as normal buttons
+        btnHTMLStr = '<button class="pageBtns">Previous</button>' +                                    
+                    '<button class="pageBtns">1</button>';
+        if(lowerBound > 2){     //if there is gap between first button and core buttons
+            btnHTMLStr += '...';    //add dots
+        }
+    }
+    //create inner buttons
+    for(let pageNum = lowerBound; pageNum <= upperBound; pageNum++){
+        if(pageNum != 1 && pageNum != totalPages){    //prevent duplicates of first and last page 
+            if(pageNum == curPage){         //if current page, disable button
+                btnHTMLStr += '<button class="pageBtns curPage" disabled>' + pageNum + '</button>';
+            } else{                     //create normal button 
+                btnHTMLStr += '<button class="pageBtns">' + pageNum + '</button>';
+            }
+        }
+    }
+    //add last page button no matter what
+    if(curPage == totalPages){  //if current page is lage page, disable last page and previous page button
+        btnHTMLStr +=   '<button class="pageBtns curPage" disabled>' + totalPages + '</button>' + 
+        '<button class="pageBtns curPage" disabled>Next</button>';    
+    } else{                     //if not last page, add normal page buttons
+        if(upperBound < totalPages - 1){     //if there is gap between core buttons and end button
+            btnHTMLStr += '...';               //add dots
+        }
+        btnHTMLStr += '<button id="curPage" class="pageBtns">' + totalPages + '</button>' + 
+        '<button >Next</button>';
+    } 
+    let upperResult = curPage == totalPages ? totalResults : parseInt(curPage * resultsPerPage);    //last result number on current page
+    btnHTMLStr += '<br><b>Displaying ' + parseInt((curPage - 1) * resultsPerPage + 1) + '-' + upperResult + ' of ' + totalResults + ' results...</b><br><br>';
+    return btnHTMLStr;
+}
+
+//generate links that allow user to select results per page
+function createResultsPerPageHTML(curResultsPerPage){
+    let resultsPerPageHTML = 'Results Per Page: ',
+        resultsPerPageOptions = ['All', 500, 100, 25];      //possible selections for results per page
+    for(const resultsOption of resultsPerPageOptions){
+        if(curResultsPerPage == resultsOption){             //if current selection
+            resultsPerPageHTML += resultsOption + '  ';     //add only text with no hyperlink
+        } else{                                             //otherwise construct text with hyperlink
+            resultsPerPageHTML += '<a href="javascript:void(null);" id="' + resultsOption + '" class="resultsPerPageLinks">' + resultsOption + '</a>    '
+        }
+    }
+    resultsPerPageHTML += '<br><br>';
+    return resultsPerPageHTML;
+}

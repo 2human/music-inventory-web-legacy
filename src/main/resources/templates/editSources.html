@@ -9,8 +9,10 @@
 
 <body>
 	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId()})}"><button>View Source</button></a>
+	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId()})}"><button>Read Mode</button></a>
 	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://localhost:8080/home.html}"><button>Home</button></a>
+	<br><br>
     <form action="updateSources">
         <label for="Id">Id:</label>
         <input type="text" id="id" name="id" th:value="${sources.getId()}" readonly>
@@ -29,7 +31,7 @@
         <label for="description">Description:</label>
         <textarea th:inline="text" id="description" name="description">[[${sources.getDescription()}]]</textarea>
         <input type="submit" value="Submit">        
-        <input type="submit" value="Delete" formaction="deleteSources">
+        <input class="button" 	type="submit" value="Delete" formaction="deleteSources">
     </form>         
 </body>
 </html>

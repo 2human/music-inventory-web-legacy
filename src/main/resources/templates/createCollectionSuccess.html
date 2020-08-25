@@ -8,7 +8,8 @@
 </head>
 
 <body>
-   	<div th:text="${'Entry with ID ' + collection.getId() + ' successfully created.'}"></div><br><br>
+	<a th:href="@{http://localhost:8080/home.html}"><button>Home</button></a><br><br>
+   	<div th:text="${'Collection with ID ' + collection.getId() + ' successfully created.'}"></div><br><br>
     <form action="createCollection">
         <label for="collection">Collection:</label>
         <input type="text" id="collection" name="collection">

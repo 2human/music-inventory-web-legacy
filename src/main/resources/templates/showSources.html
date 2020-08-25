@@ -8,39 +8,40 @@
 </head>
 <body>
 	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId()})}"><button>Edit Source</button></a>
+	<a th:href="@{http://localhost:8080/editSources(id=${sources.getId()})}"><button>Edit Mode</button></a>
 	<a th:href="@{http://localhost:8080/getSources(id=${sources.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://localhost:8080/home.html}"><button>Home</button></a>
     <table>
         <tr>
-            <td>Id:</td>
+            <td class="c1">Id:</td>
             <td th:text="${sources.getId()}"></td>
         </tr>
         <tr>
-            <td>Collection:</td>
+            <td class="c1">Collection:</td>
             <td th:text="${sources.getCollection()}"></td>
         </tr>
         <tr>
-            <td>Source Number:</td>
+            <td class="c1">Source Number:</td>
             <td th:text="${sources.getSourceNumber()}"></td>
         </tr>
         <tr>
-            <td>Call Number:</td>
+            <td class="c1">Call Number:</td>
             <td th:text="${sources.getCallNumber()}"></td>
         </tr>
         <tr>
-            <td>Author:</td>
+            <td class="c1">Author:</td>
             <td th:text="${sources.getAuthor()}"></td>
         </tr>
         <tr>
-            <td>Title:</td>
+            <td class="c1">Title:</td>
             <td th:text="${sources.getTitle()}"></td>
         </tr>
         <tr>
-            <td>Inscription:</td>
+            <td class="c1">Inscription:</td>
             <td th:text="${sources.getInscription()}"></td>
         </tr>
         <tr>
-            <td>Description:</td>
+            <td class="c1">Description:</td>
             <td th:text="${sources.getDescription()}"></td>
         </tr>
     </table>

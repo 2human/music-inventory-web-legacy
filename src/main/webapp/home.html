@@ -4,46 +4,49 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles/normalize.css">
 	<link rel="stylesheet" href="styles/main.css">
-    <title>Get Sources</title>
+    <title>Music Collections</title>
 </head>
     <body>     
-        <h1>Search Tables</h1>
+        <h1>Search</h1>
+        <!--Form for searching database-->
         <form id="search">
-            <input autofocus="autofocus" name="searchText" id="searchform" size="60" maxlength="200" value="">
+            <!--Text box for performing search-->
+            <input autofocus="autofocus" name="searchText" id="searchform" class="searchBox" size="60" maxlength="200" value="">
             <button id="submitSearch">Search</button>
             <br>
-            <div id="tableSelect">
-                Table:  
-                <input type="radio" name="table" value="collections" checked="">
+            <!--Select which database table to search-->
+            <div id="tableSelect">  
+                <input type="radio" name="table" value="collections" checked>
                 Collections
-                <input type="radio" name="table" value="sources" checked="checked">
+                <input type="radio" name="table" value="sources" >
                 Sources
-                <input type="radio" name="table" value="entries" checked="">
+                <input type="radio" name="table" value="entries">
                 Entries
             </div>
-            <div id="fieldSelect"></div>        
+            <!--Div that displays fields that can be searched-->
+            <div id="fieldSelect">
+                Field:  <input type="checkbox" name="field" id="id" value="id"> Id
+                <input type="checkbox" name="field" id="collection" value="collection"> Collection
+                <input type="checkbox" name="field" id="description" value="description"> Description
+            </div>        
         </form>
-        <br>
-
-        <button id="sourceBtn">Get Sources</button>
-        <br>
-        <button id="entryBtn">Get Entries</button>
-        <br>        
-        <button id="collectionBtn">Get Collections</button>
         <br><br>
+        <!--Div that displays results per page options-->
+        <div id="resultsPerPage"></div>
+        <!--Div that displays buttons for selecting result page number-->
+        <div id="pageBtns"></div>
+        <!--Table displaying search results-->
         <div id="resultTable"></div>
-
+        <!--Modal which displays form for editing table row-->
         <div id="myModal" class="modal">
-
             <!-- Modal content -->
             <div class="modal-content">
-              <span class="close">&times;</span>
-              <div id="modalForm"></div>
-            </div>
-
-          
-          </div>
-
+                <span class="close">&times;</span>
+                <div id="modalForm"></div>
+            </div>          
+        </div>
+        <!--Div that displays buttons for selecting page number at bottom of page-->
+        <div id="pageBtnsBot"></div>
         <script type="text/javascript" src='home.js'></script>
     </body>
 </html>

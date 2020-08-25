@@ -8,6 +8,7 @@
 </head>
 
 <body>
+	<a th:href="@{http://localhost:8080/home.html}"><button>Home</button></a><br><br>
     <form action="createEntry">
         <label for="collection">Collection:</label>
         <input type="text" id="collection" name="collection">
@@ -28,8 +29,7 @@
         <label for="textIncipit">Text Incipit:</label>
         <input type="text" id="textIncipit" name="textIncipit">
         <label for="isSecular">Secular:</label>
-        <input type="text" id="isSecular" name="isSecular">
-        
+        <input type="text" id="isSecular" name="isSecular">        
         <input type="submit" value="Submit">
     </form>         
 </body>

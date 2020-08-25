@@ -16,6 +16,7 @@ import com.example.demo.dao.SourcesRepo;
 import com.example.demo.model.Entry;
 import com.example.demo.model.Sources;
 
+//TODO change it so that source number does not stay the same in creating new sources
 @RestController
 public class SourcesController {
 	
@@ -181,6 +182,7 @@ public class SourcesController {
 		return mv;		
 	}
 	
+	//TODO set up so that deleting in search results does not return page
 	@RequestMapping(value = "/deleteSources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
 	public ModelAndView deleteSources(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
 							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
