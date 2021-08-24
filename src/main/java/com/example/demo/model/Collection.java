@@ -64,8 +64,5 @@ public class Collection {
 	@Override
 	public String toString() {
 		return "Collection [id=" + id + ", collection=" + collection + ", description=" + description + "]";
-	}
-	
-	
-	
+	}	
 }

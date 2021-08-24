@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import com.example.demo.dao.SourcesRepo;
-import com.example.demo.model.Entry;
 import com.example.demo.model.Sources;
 
 //TODO change it so that source number does not stay the same in creating new sources
+//TODO learn difference between post and put request, and add to all controllers
 @RestController
 public class SourcesController {
 	
@@ -31,13 +31,13 @@ public class SourcesController {
 	}
 	
 		
-	@GetMapping(value="/sources", params = {})
+	@RequestMapping(method = RequestMethod.GET, value="/sources", params = {})
 	public List<Sources> getAll(){
 		return repo.findAll();
 	}
 	
 		
-	@RequestMapping(value = "/sources", params = {"searchText", "table"})
+	@RequestMapping(method = RequestMethod.GET, value = "/sources", params = {"searchText", "table"})
 	public Set<Sources> search(@RequestParam String searchText, @RequestParam String table) {
 		
 		Set<Sources> sourceSet = new HashSet<Sources>();
@@ -58,15 +58,13 @@ public class SourcesController {
 				sourceSet.addAll(repo.findByAuthor(searchText));
 				sourceSet.addAll(repo.findByTitle(searchText));
 				sourceSet.addAll(repo.findByInscription(searchText));
-				sourceSet.addAll(repo.findByDescription(searchText));
-		case "entries":
-			
+				sourceSet.addAll(repo.findByDescription(searchText));			
 		}
 		return sourceSet;
 	}
 	
-	
-	@RequestMapping(value = "/sources", params = {"searchText", "table", "field"})
+	//get request for sources
+	@RequestMapping(method = RequestMethod.GET, value = "/sources", params = {"searchText", "table", "field"})
 	public Set<Sources> search(@RequestParam String searchText, @RequestParam String table, @RequestParam String field) {
 		List<String> fields = new ArrayList<String>(Arrays.asList(field.split(",")));
 		Set<Sources> sourceSet = new HashSet<Sources>();
@@ -151,7 +149,7 @@ public class SourcesController {
 		return mv;
 	}	
 
-	@RequestMapping(value = "/updateSourcesTable", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
+	@RequestMapping(method = RequestMethod.POST, value = "/sources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
 	public Sources updateSourcesTable(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
 					@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 					@RequestParam String inscription, @RequestParam String description) {
@@ -182,7 +180,6 @@ public class SourcesController {
 		return mv;		
 	}
 	
-	//TODO set up so that deleting in search results does not return page
 	@RequestMapping(value = "/deleteSources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
 	public ModelAndView deleteSources(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
 							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
@@ -196,4 +193,15 @@ public class SourcesController {
 		return mv;
 	}
 
+	@RequestMapping(method = RequestMethod.DELETE, value = "/sources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
+	public Sources delete(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
+							@RequestParam String inscription, @RequestParam String description) {
+		Sources sources =  repo.findById(id).orElse(new Sources());
+		System.out.println(sources.getId());
+		repo.delete(sources);
+		return sources;
+	}
+
+	
 }

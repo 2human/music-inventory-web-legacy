@@ -10,9 +10,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,7 +29,7 @@ public class EntryController {
 	
 	
 	//get all entries
-	@GetMapping(value="/entries")
+	@RequestMapping(method = RequestMethod.GET, value="/entries")
 	public List<Entry> getAll(){
 		return repo.findAll();
 	}
@@ -53,6 +54,18 @@ public class EntryController {
 		return mv;		
 	}
 	
+	//updates entry information when user clicks "submit" in editEntry form
+	@RequestMapping(method = RequestMethod.POST, value = "/entries")
+	public Entry postEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+			@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+			@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
+			@RequestParam String textIncipit, @RequestParam String isSecular) {
+				//construct/new entry object to database with update information
+				Entry entry = new Entry(id, collection, sourceNumber, location, title, credit, vocalPart, key, melodicIncipit, textIncipit, isSecular);
+				repo.save(entry);
+				entry =  repo.findById(id).orElse(new Entry());
+				return entry;
+		}
 	
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping("/updateEntry")
@@ -86,7 +99,7 @@ public class EntryController {
 		}
 	
 	
-	@RequestMapping(value = "/entries", params = {"searchText", "table"})
+	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table"})
 	public Set<Entry> search(@RequestParam String searchText, @RequestParam String table) {
 		//set that will contain results found
 		Set<Entry> entrySet = new HashSet<Entry>();		
@@ -117,7 +130,7 @@ public class EntryController {
 	}
 	
 	
-	@RequestMapping(value = "/entries", params = {"searchText", "table", "field"})
+	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table", "field"})
 	public Set<Entry> search(@RequestParam String searchText, @RequestParam String table, @RequestParam String field) {
 		List<String> fields = new ArrayList<String>(Arrays.asList(field.split(",")));
 		Set<Entry> entrySet = new HashSet<Entry>();
@@ -209,5 +222,17 @@ public class EntryController {
 		mv.addObject(entry);
 		//display page
 		return mv;
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE, value = "/entries", params = {"collection", "sourceNumber", "location", "title", "credit", "vocalPart",
+			"key", "melodicIncipit", "textIncipit", "isSecular"})
+	public Entry delete(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+									@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+									@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
+									@RequestParam String textIncipit, @RequestParam String isSecular) {
+		//construct/new entry object to database with update information
+		Entry entry =  repo.findById(id).orElse(new Entry());
+		repo.delete(entry);	
+		return entry;
 	}
 }

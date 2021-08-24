@@ -1,49 +1,30 @@
+import getTableFieldsHTML from "./functions/getTableFieldsHTML";
+
+
+
 /**
  * 
  */
+//TODO incorporate template strings
 //TODO change from id's to classes in html
+//TODO retain formatting on updates when there are multiple lines so that new lines are not deleted
 
 //display checkboxes corresponding to fields of table radio button selection
-let tblBtn = document.getElementById('tableSelect');    //div containing buttons that determine which table to search
+const tableButtons = document.getElementById('tableSelect');    //div containing buttons that determine which table to search
+const fieldDiv = document.getElementById('fieldSelect');  //div that displays checkboxes for selecting data fields to search
+for(const tableButton of tableButtons.children){             //for all table radio buttons
+    if(tableButton.checked === true){                   //if button is selected
+        fieldDiv.innerHTML = getTableFieldsHTML(tableButton.value); //display fields for that element
+        break;
+    }
+}
+
 //event listener that generates fieldSelect div containing buttons corresponding to fields within table
-tblBtn.addEventListener("click", (event) =>{            
-    let fieldDiv = document.getElementById('fieldSelect');      //div that contains fields for respective table
-               
-    //generate fields corresponding to those within sources table 
-    switch(event.target.value){
-        //source radio button clicked
-        case "sources":
-            //generate html for checkboxes
-            fieldDiv.innerHTML =          'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
-            '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-            '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
-            '<input type="checkbox" name="field" id="callNumber" value="callNumber"> Call Number ' +
-            '<input type="checkbox" name="field" id="author" value="author"> Author ' +
-            '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-            '<input type="checkbox" name="field" id="inscription" value="inscription"> Inscription ' +
-            '<input type="checkbox" name="field" id="description" value="description"> Description ';
-            break;
-        //entries radio button clicked
-        case "entries": 
-            //generate html for checkboxes
-            fieldDiv.innerHTML =        'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
-            '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-            '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
-            '<input type="checkbox" name="field" id="location" value="location"> Location ' +
-            '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-            '<input type="checkbox" name="field" id="credit" value="credit"> Credit ' +
-            '<input type="checkbox" name="field" id="vocalPart" value="vocalPart"> Vocal Part ' +
-            '<input type="checkbox" name="field" id="key" value="key"> Key ' +
-            '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
-            '<input type="checkbox" name="field" id="textIncipit" value="textIncipit"> Text Incipit ' +
-            '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ';
-            break;
-        case "collections": 
-        fieldDiv.innerHTML =     'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
-        '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-        '<input type="checkbox" name="field" id="description" value="description"> Description';
-
-
+tableButtons.addEventListener("click", (event) =>{ 
+    if(event.target.nodeName == 'INPUT'){                           //make sure that radio button, and not text, was clicked
+        let fieldDiv = document.getElementById('fieldSelect');      //div that contains fields for respective table
+        let tableSelection = event.target.value;                    //table radio button that is selected
+        fieldDiv.innerHTML = getTableFieldsHTML(tableSelection);    //insert html for field selection checkboxes
     }
     
 });
@@ -58,8 +39,9 @@ searchBtn.addEventListener("click", (event) => {
     let tableSelection = form.elements['table'].value;  //get value of selected table
     //get string of search parameters
     let searchParams = getSearchParams(document.forms[0]);
-    console.log(searchParams);
+    console.log(searchParams);    
     let xhr = new XMLHttpRequest();
+    //generate request url with search params and table selection
     let url = 'http://localhost:8080/' + tableSelection + '?' + searchParams;
     console.log(url);
     xhr.open('GET', url, true);
@@ -78,19 +60,8 @@ searchBtn.addEventListener("click", (event) => {
                 totalPages = Math.floor(totalResults / resultsPerPage + 1);
             
             //TODO turn below into method that takes any type of table
-            //construct table based on type of search                                 
-            switch(tableSelection){
-                case "sources":
-                    resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
-                    break;
-                case "entries":
-                    resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
-                    break;
-                case "collections":
-                    resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
-                    break;
-            }
-            resultTable.innerHTML = resultTableHTMLStr;     //add html to page
+            //construct HTML and add to page
+            resultTable.innerHTML = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
 
             let pageNumberDiv = document.getElementById('pageBtns'),            //get page number button div
                 pageNumberDivBot = document.getElementById('pageBtnsBot'),
@@ -115,17 +86,7 @@ searchBtn.addEventListener("click", (event) => {
                         totalPages = Math.floor(totalResults / resultsPerPage + 1);
                     }
                     //reset page results according to selection of results per page
-                    switch(tableSelection){
-                        case "sources":
-                            resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                        case "entries":
-                            resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                        case "collections":
-                            resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                    }
+                    resultTableHTMLStr = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
                     resultTable.innerHTML = resultTableHTMLStr;     //add html to page
                     btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
                     pageNumberDiv.innerHTML = btnHTML;          //add button html to page
@@ -148,19 +109,8 @@ searchBtn.addEventListener("click", (event) => {
                 } else{                             //if page number was clicked, set page to page number
                 curPage = btnClicked.innerText;
                 }
-                if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
-                    switch(tableSelection){         //create table string according to which one is being searched
-                        case "sources":
-                            resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                        case "entries":
-                            resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                        case "collections":
-                            resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                    }
-                    resultTable.innerHTML = resultTableHTMLStr;
+                if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text                    
+                    resultTable.innerHTML = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
                     btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
                     pageNumberDiv.innerHTML = btnHTML;
                     pageNumberDivBot.innerHTML = btnHTML;
@@ -177,22 +127,13 @@ searchBtn.addEventListener("click", (event) => {
                 curPage = btnClicked.innerText;
                 }
                 if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
-                    switch(tableSelection){         //create table string according to which one is being searched
-                        case "sources":
-                            resultTableHTMLStr = createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                        case "entries":
-                            resultTableHTMLStr = createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                        case "collections":
-                            resultTableHTMLStr = createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
-                            break;
-                    }
+                    //create table string according to which one is being searched
+                    resultTableHTMLStr = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
                     resultTable.innerHTML = resultTableHTMLStr;
                     btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
                     pageNumberDiv.innerHTML = btnHTML;
                     pageNumberDivBot.innerHTML = btnHTML;
-                    window.scrollTo(0, 130);
+                    window.scrollTo(0, 130);                    //scroll to top of page
                 }
             });
 
@@ -205,17 +146,7 @@ searchBtn.addEventListener("click", (event) => {
                         formHTML;   //html containing form that will be displayed in modal
                     //TODO set up so that form is displaying lines properly
                     //construct modal form depending on what table is being viewed
-                    switch(row.className){
-                        case "entryRow":
-                            formHTML = createEntryFormStr(row);
-                            break;
-                        case "sourceRow":
-                            formHTML = createSourceFormStr(row);
-                            break;
-                        case "collectionRow":
-                            formHTML = createCollectionFormStr(row);
-                            break;
-                    }
+                    formHTML = getFormHTML(row);
                     modalForm.innerHTML = formHTML;
                     let selected = matchClicked(document.getElementById('tableUpdateForm').childNodes, cell);
                     let modal = document.getElementById("myModal");         
@@ -229,45 +160,40 @@ searchBtn.addEventListener("click", (event) => {
                         let modalForm = document.getElementById("tableUpdateForm");
                         let searchParams = getSearchParams(modalForm);
                         let xhr = new XMLHttpRequest();
-                        //TODO get rid of this.
-                        let directoryKeyword;
-                        switch (tableSelection){
-                            case "entries":
-                                directoryKeyword = 'Entry';
-                                break;
-                            case "sources":
-                                directoryKeyword = 'Sources';
-                                break;
-                            case "collections":
-                                directoryKeyword = 'Collection';
-                                break;
-                        }
-                        let url = 'http://localhost:8080/update' + directoryKeyword + 'Table?' + searchParams;
+                        let url = 'http://localhost:8080/' + tableSelection + '?' + searchParams;
                         console.log(url);
                         xhr.open('POST', url, true);
                         xhr.send();
                         xhr.onload = function(){
                             let updatedRowData = JSON.parse(this.responseText),
-                                updatedRowHTML;
-                            switch(tableSelection){
-                                case "entries": 
-                                    updatedRowHTML = createEntryRow(updatedRowData);
-                                    break;
-                                case "sources":
-                                    updatedRowHTML = createSourceRow(updatedRowData);
-                                    break;
-                                case "collections":
-                                    updatedRowHTML = createCollectionRow(updatedRowData);
-                                    break;
-
-                            }
+                                updatedRowHTML = createTableRow(tableSelection, updatedRowData);
                             row.innerHTML = updatedRowHTML; 
                             modal.style.display = "none";
                         }
-                    });    
+                    });  
+                    let deleteBtn = document.getElementById("deleteRow");
+                    console.log(deleteBtn);
+                    deleteBtn.addEventListener("click", (event) => {                        
+                        event.preventDefault();
+                        let rowID = row.children[0].innerText;
+                        let modalForm = document.getElementById("tableUpdateForm");
+                        let searchParams = getSearchParams(modalForm);
+                        let xhr = new XMLHttpRequest();
+                        let url = 'http://localhost:8080/' + tableSelection + '?' + searchParams;
+                        console.log(url);
+                        xhr.open('DELETE', url, true);
+                        xhr.send();
+                        xhr.onload = function(){
+                            row.innerHTML = ""; 
+                            modal.style.display = "none";
+                            alert('Source with ID ' + rowID + ' deleted.')
+                        }
+
+
+                    }); 
                     // When the user clicks on <span> (x), close the modal
                     span.onclick = function() {
-                      modal.style.display = "none";
+                        modal.style.display = "none";
                     }
                     
                     // When the user clicks anywhere outside of the modal, close it
@@ -276,6 +202,14 @@ searchBtn.addEventListener("click", (event) => {
                         modal.style.display = "none";
                       }
                     }
+
+                    //make it so that hitting escape will close modal
+                    document.onkeydown = function(event) {
+                        event = event || window.event;
+                        if (event.keyCode == 27) {
+                            modal.style.display = "none";
+                        }
+                    };
                 }
             }
         }
@@ -419,6 +353,21 @@ function createCollectionTableStr(collections, pageNum, resultsPerPage){
         }
 }
 
+/**
+ * Get html for form that will be displayed in search table modal.
+ * @param {*} row Row selected within search table containing information that will populate modal form.
+ */
+
+function getFormHTML(row){    
+    switch(row.className){
+        case "entryRow":
+            return createEntryFormStr(row);
+        case "sourceRow":
+            return createSourceFormStr(row);
+        case "collectionRow":
+            return createCollectionFormStr(row);
+    }
+}
 //create form that pre-fills data from table row
 function createEntryFormStr(row){
     let rowCells = row.children;
@@ -446,7 +395,7 @@ function createEntryFormStr(row){
         '<label for="isSecular">Secular:</label>' +
         '<input type="text" id="isSecular" class="searchBox" name="isSecular" value="' + rowCells[10].innerText + '" onfocus="this.select()"><br>' +
         '<button id="updateRow">Update</button>' +
-        '<button id="deleteEntry" class="searchBox" formaction="deleteEntry">Delete</button>' +
+        '<button id="deleteRow">Delete</button>' +
     '</form>';
 }
 
@@ -471,7 +420,7 @@ function createSourceFormStr(row){
         '<label for="description">Description:</label>' +        
         '<textarea inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">' + rowCells[7].innerText + '</textarea><br>' +
         '<button id="updateRow">Update</button>' +
-        '<button id="deleteSources" formaction="deleteSources">Delete</button>' +
+        '<button id="deleteRow">Delete</button>' +
     '</form>';
 
 }
@@ -486,43 +435,13 @@ function createCollectionFormStr(row){
         '<label for="description">Description:</label>' + 
         '<textarea th:inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">' + rowCells[2].innerText + '</textarea><br>' + 
         '<button id="updateRow">Update</button>' +
-        '<button id="deleteCollection" formaction="deleteCollection">Delete</button>' + 
+        '<button id="deleteRow">Delete</button>' + 
     '</form>';
 }
 
-//create individual source search results table row using a single json object
-function createSourceRow(jsonSource){
-    return '<td id="id"><a href="http://localhost:8080/getSources?id=' + jsonSource.id +'">' + jsonSource.id + '</a></td>' +
-    '<td id="collection">' + jsonSource.collection + '</td>' +
-    '<td id="sourceNumber">' + jsonSource.sourceNumber + '</td>' +
-    '<td id="callNumber">' + jsonSource.callNumber + '</td>' +
-    '<td id="author">' + jsonSource.author + '</td>' +
-    '<td id="title">' + jsonSource.title + '</td>' +
-    '<td id="inscription" contenteditable="false">' + jsonSource.inscription + '</td>' +
-    '<td id="description">' + jsonSource.description + '</td>';
-}
 
-//create individual entry search results table row using a single json object
-function createEntryRow(jsonEntry){
-    return '<td id="id"><a href="http://localhost:8080/getEntry?id=' + jsonEntry.id +'">' + jsonEntry.id + '</a></td>' +
-    '<td id="collection">' + jsonEntry.collection + '</td>' +
-    '<td id="sourceNumber">' + jsonEntry.sourceNumber + '</td>' +
-    '<td id="location">' + jsonEntry.location + '</td>' +
-    '<td id="title">' + jsonEntry.title + '</td>' +
-    '<td id="credit">' + jsonEntry.credit + '</td>' +
-    '<td id="vocalPart">' + jsonEntry.vocalPart + '</td>' +
-    '<td id="key">' + jsonEntry.key + '</td>' +
-    '<td id="melodicIncipit">' + jsonEntry.melodicIncipit + '</td>' +
-    '<td id="textIncipit">' + jsonEntry.textIncipit + '</td>' +
-    '<td id="isSecular">' + jsonEntry.isSecular + '</td>';
-}
 
-//create individual collection search results table row using a single json object
-function createCollectionRow(jsonEntry){
-    return '<td id="id"><a href="http://localhost:8080/getCollection?id=' + jsonEntry.id +'">' + jsonEntry.id + '</a></td>' +
-    '<td id="collection">' + jsonEntry.collection + '</td>' +
-    '<td id="description">' + jsonEntry.description + '</td>';
-}
+
 
 //returns element in modal popup form in search engine that matches the cell clicked
 //so that the text may be focused/highlighted
@@ -624,4 +543,65 @@ function createResultsPerPageHTML(curResultsPerPage){
     }
     resultsPerPageHTML += '<br><br>';
     return resultsPerPageHTML;
+}
+
+/**
+ * Parse object containing information about table row into string for HTML table row.
+ * @param {*} tableSelection Type of table being edited, either Collection, Source, or Entry.
+ * @param {*} rowData Object containing data for table row being parsed.
+ */
+function createTableRow(tableSelection, rowData){    
+    switch(tableSelection){
+        case "entries": 
+            return createEntryRow(rowData);
+        case "sources":
+            return createSourceRow(rowData);
+        case "collections":
+            return createCollectionRow(rowData);
+    }
+}
+
+//create individual source search results table row using a single json object
+function createSourceRow(jsonSource){
+    return '<td id="id"><a href="http://localhost:8080/getSources?id=' + jsonSource.id +'">' + jsonSource.id + '</a></td>' +
+    '<td id="collection">' + jsonSource.collection + '</td>' +
+    '<td id="sourceNumber">' + jsonSource.sourceNumber + '</td>' +
+    '<td id="callNumber">' + jsonSource.callNumber + '</td>' +
+    '<td id="author">' + jsonSource.author + '</td>' +
+    '<td id="title">' + jsonSource.title + '</td>' +
+    '<td id="inscription" contenteditable="false">' + jsonSource.inscription + '</td>' +
+    '<td id="description">' + jsonSource.description + '</td>';
+}
+
+//create individual entry search results table row using a single json object
+function createEntryRow(jsonEntry){
+    return '<td id="id"><a href="http://localhost:8080/getEntry?id=' + jsonEntry.id +'">' + jsonEntry.id + '</a></td>' +
+    '<td id="collection">' + jsonEntry.collection + '</td>' +
+    '<td id="sourceNumber">' + jsonEntry.sourceNumber + '</td>' +
+    '<td id="location">' + jsonEntry.location + '</td>' +
+    '<td id="title">' + jsonEntry.title + '</td>' +
+    '<td id="credit">' + jsonEntry.credit + '</td>' +
+    '<td id="vocalPart">' + jsonEntry.vocalPart + '</td>' +
+    '<td id="key">' + jsonEntry.key + '</td>' +
+    '<td id="melodicIncipit">' + jsonEntry.melodicIncipit + '</td>' +
+    '<td id="textIncipit">' + jsonEntry.textIncipit + '</td>' +
+    '<td id="isSecular">' + jsonEntry.isSecular + '</td>';
+}
+
+//create individual collection search results table row using a single json object
+function createCollectionRow(jsonEntry){
+    return '<td id="id"><a href="http://localhost:8080/getCollection?id=' + jsonEntry.id +'">' + jsonEntry.id + '</a></td>' +
+    '<td id="collection">' + jsonEntry.collection + '</td>' +
+    '<td id="description">' + jsonEntry.description + '</td>';
+}
+
+function createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage){
+    switch(tableSelection){         //create table string according to which one is being searched
+        case "sources":
+            return createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
+        case "entries":
+            return createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
+        case "collections":
+            return createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
+    }
 }

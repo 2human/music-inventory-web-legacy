@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,13 +23,13 @@ public class CollectionController {
 	CollectionRepo repo;
 	
 	//get all collection information
-	@GetMapping(value="/collections", params = {})
+	@RequestMapping(method = RequestMethod.GET, value="/collections", params = {})
 	public List<Collection> getAll(){
 		return repo.findAll();
 	}
 		
 	//get search results by searching all fields
-	@RequestMapping(value = "/collections", params = {"searchText", "table"})
+	@RequestMapping(method = RequestMethod.GET, value = "/collections", params = {"searchText", "table"})
 	public Set<Collection> search(@RequestParam String searchText, @RequestParam String table) {
 		
 		Set<Collection> collectionSet = new HashSet<Collection>();
@@ -107,8 +107,8 @@ public class CollectionController {
 		return mv;
 	}
 	
-	//update collection information in database and return updated page
-	@RequestMapping("/updateCollectionTable")
+	//update collection information in database and return updated collection object
+	@RequestMapping(method = RequestMethod.POST, value = "/collections")
 	public Collection updateCollectionTable(@RequestParam int id, @RequestParam(value="collection") String collectionName, @RequestParam String description) {
 		//construct collection object and update database
 		Collection collection = new Collection(id, collectionName, description);
@@ -117,7 +117,8 @@ public class CollectionController {
 		return collection;
 	}
 	
-	//update collection information in database and return updated page
+	//create a new database entry for collection and return page containing new collection information
+	//and confirmation of successful creation
 	@RequestMapping(value = "/createCollection", params = {"collection", "description"})
 	public ModelAndView createCollection(@RequestParam(value="collection") String collectionName, @RequestParam String description) {
 		//construct collection object and update database
@@ -130,6 +131,8 @@ public class CollectionController {
 		mv.addObject(collection);
 		return mv;
 	}
+	
+	
 
 	//update collection information in database and return updated page
 	@RequestMapping(value = "/createCollection", params = {})
@@ -138,7 +141,7 @@ public class CollectionController {
 		return mv;
 	}
 	
-	//update collection information in database and return updated page
+	//delete entry from view collection page, and return view of another collection
 	@RequestMapping("/deleteCollection")
 	public ModelAndView deleteCollection(@RequestParam int id, @RequestParam(value="collection") String collectionName, @RequestParam String description) {
 		//construct collection object and update database
@@ -151,4 +154,12 @@ public class CollectionController {
 		return mv;
 	}
 	
+	//delete collection entry and return collection that was deleted
+	@RequestMapping("/collections")
+	public Collection delete(@RequestParam int id, @RequestParam(value="collection") String collectionName, @RequestParam String description) {
+		//construct collection object and update database
+		Collection collection = repo.findById(id).orElse(new Collection());
+		repo.delete(collection);
+		return collection;
+	}
 }

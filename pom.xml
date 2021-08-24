@@ -64,6 +64,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>music-entries-web</finalName>
 	</build>
 
 </project>
