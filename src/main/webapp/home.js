@@ -25,45 +25,53 @@ function getTableSelection(){
     }
 }
 
-    //event listener that generates fieldSelect div containing buttons corresponding to fields within table
+//event listener that generates fieldSelect div containing buttons corresponding to fields within table
 tableButtons.addEventListener("click", insertFieldCheckboxes);
-
 //event listener / handler for submitting search 
 searchBtn.addEventListener("click", performSearch);
 
 function performSearch(event){  
     event.preventDefault();   
+    let searchForm = document.forms[0];
     let xhr = new XMLHttpRequest();
-    console.log(getSearchRequestURL());
-    xhr.open('GET', getSearchRequestURL(), true);
+    console.log(getHTTPRequestURL(searchForm));
+    xhr.open('GET', getHTTPRequestURL(searchForm), true);
     xhr.send();
     xhr.onload = function(){     
-        console.log(this.status);
-        if(requestSuccessful(this.status)){
-            generateSearchResults(this);
+        let request = this;
+        console.log(request.status);
+        if(requestSuccessful(request.status)){
+            generateSearchResults(request);
         }
     }  
 }
 
 //TODO this has to be fixed so that it goes by domain name
 //generate request url with search params and table selection
-function getSearchRequestURL(){    
-    return 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams();
+function getHTTPRequestURL(form){    
+    return 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams(form);
+}
+
+//get URI search param string from form
+function getSearchParams(form){
+    let formData = new FormData(form);  //get data input from form
+    let searchObj = new URLSearchParams(formData);  //search param object
+    let params = searchObj.toString();       //get string of search parameters
+    return params;
 }
 
 function generateSearchResults(request){
-    let resultTableHTMLStr,    //string containing html to display results of search            
-        resultTable = document.getElementById('resultTable'),
-        searchResultsArr = JSON.parse(request.responseText),   //convert JSON object to JS object; can be array
+    let resultTable = document.getElementById('resultTable'),
+        searchResultData = JSON.parse(request.responseText),   //convert JSON object to JS object; can be array
                                                             //of entries, sources, or collections
         curPage = 1,    //current page of search results being viewed, 1 to start          
         resultsPerPage = 100,   //number of results to be displayed per page; 100 to start
-        totalResults = searchResultsArr.length;
+        totalResults = searchResultData.length;
         totalPages = Math.floor(totalResults / resultsPerPage + 1);
     
     //TODO turn below into method that takes any type of table
     //construct HTML and add to page
-    resultTable.innerHTML = createHTMLTableStr(getTableSelection(), searchResultsArr, curPage, resultsPerPage);
+    resultTable.innerHTML = getResultTableHTML(searchResultData, curPage, resultsPerPage);
 
     let pageNumberDiv = document.getElementById('pageBtns'),            //get page number button div
         pageNumberDivBot = document.getElementById('pageBtnsBot'),
@@ -88,8 +96,7 @@ function generateSearchResults(request){
                 totalPages = Math.floor(totalResults / resultsPerPage + 1);
             }
             //reset page results according to selection of results per page
-            resultTableHTMLStr = createHTMLTableStr(getTableSelection(), searchResultsArr, curPage, resultsPerPage);
-            resultTable.innerHTML = resultTableHTMLStr;     //add html to page
+            resultTable.innerHTML = getResultTableHTML(searchResultData, curPage, resultsPerPage);
             btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
             pageNumberDiv.innerHTML = btnHTML;          //add button html to page
             pageNumberDivBot.innerHTML = btnHTML;
@@ -112,7 +119,7 @@ function generateSearchResults(request){
         curPage = btnClicked.innerText;
         }
         if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text                    
-            resultTable.innerHTML = createHTMLTableStr(getTableSelection(), searchResultsArr, curPage, resultsPerPage);
+            resultTable.innerHTML = getResultTableHTML(searchResultData, curPage, resultsPerPage);
             btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
             pageNumberDivBot.innerHTML = btnHTML;
             pageNumberDiv.innerHTML = btnHTML;
@@ -130,7 +137,7 @@ function generateSearchResults(request){
         }
         if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
             //create table string according to which one is being searched
-            resultTableHTMLStr = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
+            resultTableHTMLStr = getResultTableHTML(searchResultData, curPage, resultsPerPage);
             resultTable.innerHTML = resultTableHTMLStr;
             btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
             pageNumberDiv.innerHTML = btnHTML;
@@ -160,15 +167,16 @@ function generateSearchResults(request){
                 event.preventDefault();
                 //get string of search parameters
                 let modalForm = document.getElementById("tableUpdateForm");
-                let searchParams = getSearchParams(modalForm);
                 let xhr = new XMLHttpRequest();
-                let url = 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams();
-                console.log(url);
+                console.log(getHTTPRequestURL(modalForm));
+                let url = 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams(modalForm);
                 xhr.open('POST', url, true);
                 xhr.send();
                 xhr.onload = function(){
+                    console.log(this.status);
                     let updatedRowData = JSON.parse(request.responseText),
                         updatedRowHTML = createTableRow(getTableSelection(), updatedRowData);
+                    console.log(updatedRowData);
                     row.innerHTML = updatedRowHTML; 
                     modal.style.display = "none";
                 }
@@ -179,11 +187,9 @@ function generateSearchResults(request){
                 event.preventDefault();
                 let rowID = row.children[0].innerText;
                 let modalForm = document.getElementById("tableUpdateForm");
-                let searchParams = getSearchParams(modalForm);
                 let xhr = new XMLHttpRequest();
-                let url = 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams();
-                console.log(url);
-                xhr.open('DELETE', url, true);
+                console.log(getHTTPRequestURL(modalForm));
+                xhr.open('DELETE', getHTTPRequestURL(modalForm), true);
                 xhr.send();
                 xhr.onload = function(){
                     row.innerHTML = ""; 
@@ -225,14 +231,6 @@ function getTableSelection(){
     //determine which table is going to be searched
     let searchForm = document.getElementById('search');
     return searchForm.elements['table'].value;  //get value of selected table
-}
-
-//get URI search param string from form
-function getSearchParams(){
-    let formData = new FormData(document.forms[0]);  //get data input from form
-    let searchObj = new URLSearchParams(formData);  //search param object
-    let params = searchObj.toString();       //get string of search parameters
-    return params;
 }
 
 function requestSuccessful(requestStatus){
@@ -609,14 +607,14 @@ function createCollectionRow(jsonEntry){
     '<td id="description">' + jsonEntry.description + '</td>';
 }
 
-function createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage){
-    switch(tableSelection){         //create table string according to which one is being searched
+function getResultTableHTML(searchResultData, curPage, resultsPerPage){
+    switch(getTableSelection()){         //create table string according to which one is being searched
         case "sources":
-            return createSourceTableStr(searchResultsArr, curPage, resultsPerPage);
+            return createSourceTableStr(searchResultData, curPage, resultsPerPage);
         case "entries":
-            return createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
+            return createEntryTableStr(searchResultData, curPage, resultsPerPage);
         case "collections":
-            return createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
+            return createCollectionTableStr(searchResultData, curPage, resultsPerPage);
     }
 }
 
