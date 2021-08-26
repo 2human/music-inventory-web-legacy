@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.toohuman.musicentriesweb.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.dao.CollectionRepo;
-import com.example.demo.model.Collection;
+import com.toohuman.musicentriesweb.dao.CollectionRepo;
+import com.toohuman.musicentriesweb.model.Collection;
 
 @RestController
 public class CollectionController {

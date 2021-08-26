@@ -1,6 +1,3 @@
-import getTableFieldsHTML from "./functions/getTableFieldsHTML";
-
-
 
 /**
  * 
@@ -12,217 +9,234 @@ import getTableFieldsHTML from "./functions/getTableFieldsHTML";
 //display checkboxes corresponding to fields of table radio button selection
 const tableButtons = document.getElementById('tableSelect');    //div containing buttons that determine which table to search
 const fieldDiv = document.getElementById('fieldSelect');  //div that displays checkboxes for selecting data fields to search
-for(const tableButton of tableButtons.children){             //for all table radio buttons
-    if(tableButton.checked === true){                   //if button is selected
-        fieldDiv.innerHTML = getTableFieldsHTML(tableButton.value); //display fields for that element
-        break;
+const searchBtn = document.getElementById('submitSearch');
+
+insertFieldCheckboxes();
+
+function insertFieldCheckboxes(){
+    fieldDiv.innerHTML = getTableFieldsHTML(getTableSelection()); //display fields for that element
+}
+
+function getTableSelection(){    
+    for(const tableButton of tableButtons.children){             //for all table radio buttons
+        if(tableButton.checked === true){                   //if button is selected
+            return tableButton.value;
+        }
     }
 }
 
-//event listener that generates fieldSelect div containing buttons corresponding to fields within table
-tableButtons.addEventListener("click", (event) =>{ 
-    if(event.target.nodeName == 'INPUT'){                           //make sure that radio button, and not text, was clicked
-        let fieldDiv = document.getElementById('fieldSelect');      //div that contains fields for respective table
-        let tableSelection = event.target.value;                    //table radio button that is selected
-        fieldDiv.innerHTML = getTableFieldsHTML(tableSelection);    //insert html for field selection checkboxes
-    }
-    
-});
+    //event listener that generates fieldSelect div containing buttons corresponding to fields within table
+tableButtons.addEventListener("click", insertFieldCheckboxes);
 
 //event listener / handler for submitting search 
-let searchBtn = document.getElementById('submitSearch');
-searchBtn.addEventListener("click", (event) => {
-    event.preventDefault();
+searchBtn.addEventListener("click", performSearch);
 
-    //determine which table is going to be searched
-    let form = document.getElementById('search');
-    let tableSelection = form.elements['table'].value;  //get value of selected table
-    //get string of search parameters
-    let searchParams = getSearchParams(document.forms[0]);
-    console.log(searchParams);    
+function performSearch(event){  
+    event.preventDefault();   
     let xhr = new XMLHttpRequest();
-    //generate request url with search params and table selection
-    let url = 'http://localhost:8080/' + tableSelection + '?' + searchParams;
-    console.log(url);
-    xhr.open('GET', url, true);
+    console.log(getSearchRequestURL());
+    xhr.open('GET', getSearchRequestURL(), true);
     xhr.send();
     xhr.onload = function(){     
-
         console.log(this.status);
-        if(this.status === 200){ 
-            let resultTableHTMLStr,    //string containing html to display results of search            
-                resultTable = document.getElementById('resultTable'),
-                searchResultsArr = JSON.parse(this.responseText),   //convert JSON object to JS object; can be array
-                                                                    //of entries, sources, or collections
-                curPage = 1,    //current page of search results being viewed, 1 to start          
-                resultsPerPage = 100,   //number of results to be displayed per page; 100 to start
-                totalResults = searchResultsArr.length;
-                totalPages = Math.floor(totalResults / resultsPerPage + 1);
-            
-            //TODO turn below into method that takes any type of table
-            //construct HTML and add to page
-            resultTable.innerHTML = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
+        if(requestSuccessful(this.status)){
+            generateSearchResults(this);
+        }
+    }  
+}
 
-            let pageNumberDiv = document.getElementById('pageBtns'),            //get page number button div
-                pageNumberDivBot = document.getElementById('pageBtnsBot'),
-                btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
+//TODO this has to be fixed so that it goes by domain name
+//generate request url with search params and table selection
+function getSearchRequestURL(){    
+    return 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams();
+}
+
+function generateSearchResults(request){
+    let resultTableHTMLStr,    //string containing html to display results of search            
+        resultTable = document.getElementById('resultTable'),
+        searchResultsArr = JSON.parse(request.responseText),   //convert JSON object to JS object; can be array
+                                                            //of entries, sources, or collections
+        curPage = 1,    //current page of search results being viewed, 1 to start          
+        resultsPerPage = 100,   //number of results to be displayed per page; 100 to start
+        totalResults = searchResultsArr.length;
+        totalPages = Math.floor(totalResults / resultsPerPage + 1);
+    
+    //TODO turn below into method that takes any type of table
+    //construct HTML and add to page
+    resultTable.innerHTML = createHTMLTableStr(getTableSelection(), searchResultsArr, curPage, resultsPerPage);
+
+    let pageNumberDiv = document.getElementById('pageBtns'),            //get page number button div
+        pageNumberDivBot = document.getElementById('pageBtnsBot'),
+        btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
+    pageNumberDiv.innerHTML = btnHTML;          //add button html to page
+    pageNumberDivBot.innerHTML = btnHTML;
+
+    let resultsPerPageDiv = document.getElementById('resultsPerPage');            
+    if(totalResults != 0){
+    let resultsPerPageHTML = createResultsPerPageHTML(resultsPerPage);
+    resultsPerPageDiv.innerHTML = resultsPerPageHTML;
+    } else resultsPerPageDiv.innerHTML = '';
+    resultsPerPageDiv.addEventListener("click", (event) => {
+        let clicked = event.target;
+        if(clicked.nodeName === 'A'){
+            curPage = 1;
+            if(clicked.id == 'All'){
+                resultsPerPage = totalResults;
+                totalPages = 1;
+            } else{
+                resultsPerPage = clicked.id;
+                totalPages = Math.floor(totalResults / resultsPerPage + 1);
+            }
+            //reset page results according to selection of results per page
+            resultTableHTMLStr = createHTMLTableStr(getTableSelection(), searchResultsArr, curPage, resultsPerPage);
+            resultTable.innerHTML = resultTableHTMLStr;     //add html to page
+            btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
             pageNumberDiv.innerHTML = btnHTML;          //add button html to page
             pageNumberDivBot.innerHTML = btnHTML;
-
-            let resultsPerPageDiv = document.getElementById('resultsPerPage');            
             if(totalResults != 0){
-            let resultsPerPageHTML = createResultsPerPageHTML(resultsPerPage);
+            resultsPerPageHTML = createResultsPerPageHTML(clicked.id);
             resultsPerPageDiv.innerHTML = resultsPerPageHTML;
             } else resultsPerPageDiv.innerHTML = '';
-            resultsPerPageDiv.addEventListener("click", (event) => {
-                let clicked = event.target;
-                if(clicked.nodeName === 'A'){
-                    curPage = 1;
-                    if(clicked.id == 'All'){
-                        resultsPerPage = totalResults;
-                        totalPages = 1;
-                    } else{
-                        resultsPerPage = clicked.id;
-                        totalPages = Math.floor(totalResults / resultsPerPage + 1);
-                    }
-                    //reset page results according to selection of results per page
-                    resultTableHTMLStr = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
-                    resultTable.innerHTML = resultTableHTMLStr;     //add html to page
-                    btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults); //construct page buttons for search results
-                    pageNumberDiv.innerHTML = btnHTML;          //add button html to page
-                    pageNumberDivBot.innerHTML = btnHTML;
-                    if(totalResults != 0){
-                    resultsPerPageHTML = createResultsPerPageHTML(clicked.id);
-                    resultsPerPageDiv.innerHTML = resultsPerPageHTML;
-                    } else resultsPerPageDiv.innerHTML = '';
 
-                } 
-            });
+        } 
+    });
 
-            //create event listener for buttons
-            pageNumberDiv.addEventListener("click", (event) => {                
-                let btnClicked = event.target;      //get button clicked
-                if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
-                    curPage++;
-                } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
-                    curPage--;
-                } else{                             //if page number was clicked, set page to page number
-                curPage = btnClicked.innerText;
-                }
-                if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text                    
-                    resultTable.innerHTML = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
-                    btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
-                    pageNumberDiv.innerHTML = btnHTML;
-                    pageNumberDivBot.innerHTML = btnHTML;
-                }
-            });
-            //TODO: remove so that there is only one listener for both page buttons
-            pageNumberDivBot.addEventListener("click", (event) => {                
-                let btnClicked = event.target;      //get button clicked
-                if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
-                    curPage++;
-                } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
-                    curPage--;
-                } else{                             //if page number was clicked, set page to page number
-                curPage = btnClicked.innerText;
-                }
-                if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
-                    //create table string according to which one is being searched
-                    resultTableHTMLStr = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
-                    resultTable.innerHTML = resultTableHTMLStr;
-                    btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
-                    pageNumberDiv.innerHTML = btnHTML;
-                    pageNumberDivBot.innerHTML = btnHTML;
-                    window.scrollTo(0, 130);                    //scroll to top of page
-                }
-            });
-
-            resultTable.ondblclick = function(event){
-                console.log("modal");
-                let cell = event.target;     //get cell that was clicked
-                if(cell.nodeName !== "TH" && cell.id !== "id"){     //if cell clicked is not table header and not the id column
-                    let row = cell.parentElement,        //table row element of cell clicked
-                        modalForm = document.getElementById("modalForm"),   //div that will contain form
-                        formHTML;   //html containing form that will be displayed in modal
-                    //TODO set up so that form is displaying lines properly
-                    //construct modal form depending on what table is being viewed
-                    formHTML = getFormHTML(row);
-                    modalForm.innerHTML = formHTML;
-                    let selected = matchClicked(document.getElementById('tableUpdateForm').childNodes, cell);
-                    let modal = document.getElementById("myModal");         
-                    let span = document.getElementsByClassName("close")[0];           
-                    modal.style.display = "block";// Get the <span> element that closes the modal
-                    let updateBtn = document.getElementById('updateRow');
-                    selected.focus();
-                    updateBtn.addEventListener("click", (event) => {
-                        event.preventDefault();
-                        //get string of search parameters
-                        let modalForm = document.getElementById("tableUpdateForm");
-                        let searchParams = getSearchParams(modalForm);
-                        let xhr = new XMLHttpRequest();
-                        let url = 'http://localhost:8080/' + tableSelection + '?' + searchParams;
-                        console.log(url);
-                        xhr.open('POST', url, true);
-                        xhr.send();
-                        xhr.onload = function(){
-                            let updatedRowData = JSON.parse(this.responseText),
-                                updatedRowHTML = createTableRow(tableSelection, updatedRowData);
-                            row.innerHTML = updatedRowHTML; 
-                            modal.style.display = "none";
-                        }
-                    });  
-                    let deleteBtn = document.getElementById("deleteRow");
-                    console.log(deleteBtn);
-                    deleteBtn.addEventListener("click", (event) => {                        
-                        event.preventDefault();
-                        let rowID = row.children[0].innerText;
-                        let modalForm = document.getElementById("tableUpdateForm");
-                        let searchParams = getSearchParams(modalForm);
-                        let xhr = new XMLHttpRequest();
-                        let url = 'http://localhost:8080/' + tableSelection + '?' + searchParams;
-                        console.log(url);
-                        xhr.open('DELETE', url, true);
-                        xhr.send();
-                        xhr.onload = function(){
-                            row.innerHTML = ""; 
-                            modal.style.display = "none";
-                            alert('Source with ID ' + rowID + ' deleted.')
-                        }
-
-
-                    }); 
-                    // When the user clicks on <span> (x), close the modal
-                    span.onclick = function() {
-                        modal.style.display = "none";
-                    }
-                    
-                    // When the user clicks anywhere outside of the modal, close it
-                    window.onclick = function(event) {
-                      if (event.target == modal) {
-                        modal.style.display = "none";
-                      }
-                    }
-
-                    //make it so that hitting escape will close modal
-                    document.onkeydown = function(event) {
-                        event = event || window.event;
-                        if (event.keyCode == 27) {
-                            modal.style.display = "none";
-                        }
-                    };
-                }
-            }
+    //create event listener for buttons
+    pageNumberDiv.addEventListener("click", (event) => {                
+        let btnClicked = event.target;      //get button clicked
+        if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
+            curPage++;
+        } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
+            curPage--;
+        } else{                             //if page number was clicked, set page to page number
+        curPage = btnClicked.innerText;
         }
-    }        
-});
+        if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text                    
+            resultTable.innerHTML = createHTMLTableStr(getTableSelection(), searchResultsArr, curPage, resultsPerPage);
+            btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
+            pageNumberDivBot.innerHTML = btnHTML;
+            pageNumberDiv.innerHTML = btnHTML;
+        }
+    });
+    //TODO: remove so that there is only one listener for both page buttons
+    pageNumberDivBot.addEventListener("click", (event) => {                
+        let btnClicked = event.target;      //get button clicked
+        if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
+            curPage++;
+        } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
+            curPage--;
+        } else{                             //if page number was clicked, set page to page number
+        curPage = btnClicked.innerText;
+        }
+        if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text
+            //create table string according to which one is being searched
+            resultTableHTMLStr = createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPerPage);
+            resultTable.innerHTML = resultTableHTMLStr;
+            btnHTML = createSearchPageButtons(curPage, resultsPerPage, totalPages, totalResults);
+            pageNumberDiv.innerHTML = btnHTML;
+            pageNumberDivBot.innerHTML = btnHTML;
+            window.scrollTo(0, 130);                    //scroll to top of page
+        }
+    });
 
+    resultTable.ondblclick = function(event){
+        console.log("modal");
+        let cell = event.target;     //get cell that was clicked
+        if(cell.nodeName !== "TH" && cell.id !== "id"){     //if cell clicked is not table header and not the id column
+            let row = cell.parentElement,        //table row element of cell clicked
+                modalForm = document.getElementById("modalForm"),   //div that will contain form
+                formHTML;   //html containing form that will be displayed in modal
+            //TODO set up so that form is displaying lines properly
+            //construct modal form depending on what table is being viewed
+            formHTML = getFormHTML(row);
+            modalForm.innerHTML = formHTML;
+            let selected = matchClicked(document.getElementById('tableUpdateForm').childNodes, cell);
+            let modal = document.getElementById("myModal");         
+            let span = document.getElementsByClassName("close")[0];           
+            modal.style.display = "block";// Get the <span> element that closes the modal
+            let updateBtn = document.getElementById('updateRow');
+            selected.focus();
+            updateBtn.addEventListener("click", (event) => {
+                event.preventDefault();
+                //get string of search parameters
+                let modalForm = document.getElementById("tableUpdateForm");
+                let searchParams = getSearchParams(modalForm);
+                let xhr = new XMLHttpRequest();
+                let url = 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams();
+                console.log(url);
+                xhr.open('POST', url, true);
+                xhr.send();
+                xhr.onload = function(){
+                    let updatedRowData = JSON.parse(request.responseText),
+                        updatedRowHTML = createTableRow(getTableSelection(), updatedRowData);
+                    row.innerHTML = updatedRowHTML; 
+                    modal.style.display = "none";
+                }
+            });  
+            let deleteBtn = document.getElementById("deleteRow");
+            console.log(deleteBtn);
+            deleteBtn.addEventListener("click", (event) => {                        
+                event.preventDefault();
+                let rowID = row.children[0].innerText;
+                let modalForm = document.getElementById("tableUpdateForm");
+                let searchParams = getSearchParams(modalForm);
+                let xhr = new XMLHttpRequest();
+                let url = 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams();
+                console.log(url);
+                xhr.open('DELETE', url, true);
+                xhr.send();
+                xhr.onload = function(){
+                    row.innerHTML = ""; 
+                    modal.style.display = "none";
+                    alert('Source with ID ' + rowID + ' deleted.')
+                }
+
+
+            }); 
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+            
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+            }
+
+            //make it so that hitting escape will close modal
+            document.onkeydown = function(event) {
+                event = event || window.event;
+                if (event.keyCode == 27) {
+                    modal.style.display = "none";
+                }
+            };
+        }
+    }
+
+}
+
+/**
+ * 
+ * @returns Name of table selected.
+ */
+function getTableSelection(){
+    //determine which table is going to be searched
+    let searchForm = document.getElementById('search');
+    return searchForm.elements['table'].value;  //get value of selected table
+}
 
 //get URI search param string from form
-function getSearchParams(form){
-    let formData = new FormData(form);  //get data input from form
+function getSearchParams(){
+    let formData = new FormData(document.forms[0]);  //get data input from form
     let searchObj = new URLSearchParams(formData);  //search param object
     let params = searchObj.toString();       //get string of search parameters
     return params;
+}
+
+function requestSuccessful(requestStatus){
+    return requestStatus == 200;
 }
 
 //construct string with HTML for source table results
@@ -603,5 +617,49 @@ function createHTMLTableStr(tableSelection, searchResultsArr, curPage, resultsPe
             return createEntryTableStr(searchResultsArr, curPage, resultsPerPage);
         case "collections":
             return createCollectionTableStr(searchResultsArr, curPage, resultsPerPage);
+    }
+}
+
+/**
+ * Returns checkboxes corresponding to with labels that correspond to field names which allows user to select
+ * which fields to search.
+ * @param {} tableSelection Table radio button that is selected
+ */
+function getTableFieldsHTML(tableSelection){
+    //generate fields corresponding to those within sources table 
+    switch(tableSelection){
+        //source radio button clicked
+        case "sources":
+            //generate html for checkboxes
+            return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+            '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
+            '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
+            '<input type="checkbox" name="field" id="callNumber" value="callNumber"> Call Number ' +
+            '<input type="checkbox" name="field" id="author" value="author"> Author ' +
+            '<input type="checkbox" name="field" id="title" value="title"> Title ' +
+            '<input type="checkbox" name="field" id="inscription" value="inscription"> Inscription ' +
+            '<input type="checkbox" name="field" id="description" value="description"> Description ';
+            break;
+        //entries radio button clicked
+        case "entries": 
+            //generate html for checkboxes
+            return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+            '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
+            '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
+            '<input type="checkbox" name="field" id="location" value="location"> Location ' +
+            '<input type="checkbox" name="field" id="title" value="title"> Title ' +
+            '<input type="checkbox" name="field" id="credit" value="credit"> Credit ' +
+            '<input type="checkbox" name="field" id="vocalPart" value="vocalPart"> Vocal Part ' +
+            '<input type="checkbox" name="field" id="key" value="key"> Key ' +
+            '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
+            '<input type="checkbox" name="field" id="textIncipit" value="textIncipit"> Text Incipit ' +
+            '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ';
+            break;
+        case "collections": 
+        return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+        '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
+        '<input type="checkbox" name="field" id="description" value="description"> Description';
+
+
     }
 }
