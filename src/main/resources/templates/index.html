@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="styles/normalize.css">
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="/styles/normalize.css">
+    <link rel="stylesheet" href="/styles/main.css">
     <link rel="shortcut icon" href="#">
     <title>Music Collections</title>
 </head>
@@ -17,9 +17,9 @@
             <br>
             <!--Select which database table to search-->
             <div id="tableSelect">  
-                <input type="radio" name="table" value="collections" checked>
+                <input type="radio" name="table" value="collections" >
                 Collections
-                <input type="radio" name="table" value="sources" >
+                <input type="radio" name="table" value="sources" checked="checked">
                 Sources
                 <input type="radio" name="table" value="entries">
                 Entries
@@ -33,18 +33,20 @@
         <div id="resultsPerPage"></div>
         <!--Div that displays buttons for selecting result page number-->
         <div id="pageBtns"></div>
+        <!--Div that displays buttons for selecting result page number-->
+        <div id="resultsMsg">These are the results</div>
         <!--Table displaying search results-->
-        <div id="resultTable"></div>
+        <div id="searchResultsTable"></div>
         <!--Modal which displays form for editing table row-->
         <div id="myModal" class="modal">
             <!-- Modal content -->
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close" id="closeModal">&times;</span>
                 <div id="modalForm"></div>
             </div>          
         </div>
         <!--Div that displays buttons for selecting page number at bottom of page-->
         <div id="pageBtnsBot"></div>
-        <script type="text/javascript" src='home.js' type="module"></script>        
+        <script type="text/javascript" src='index.js'></script>        
     </body>
 </html>

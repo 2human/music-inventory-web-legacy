@@ -11,7 +11,7 @@
 	<a th:href="@{http://localhost:8080/editCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
 	<a th:href="@{http://localhost:8080/getCollection(id=${collection.getId()})}"><button>Read Mode</button></a>
 	<a th:href="@{http://localhost:8080/editCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
-	<a th:href="@{http://localhost:8080/home.html}"><button>Home</button></a>
+	<a th:href="@{http://localhost:8080}"><button>Home</button></a>
     <form action="updateCollection">
         <label for="Id">Id:</label>
         <input type="text" id="id" name="id" th:value="${collection.getId()}" autofocus readonly>

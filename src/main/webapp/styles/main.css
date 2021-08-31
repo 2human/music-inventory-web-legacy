@@ -148,7 +148,8 @@ button {
 	vertical-align: middle;
  }
 
- .curPage{
+ button:disabled,
+ button[disabled]{
 	 color: black;
  }
 

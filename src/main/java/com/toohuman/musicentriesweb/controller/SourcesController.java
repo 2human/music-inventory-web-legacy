@@ -24,12 +24,12 @@ public class SourcesController {
 	@Autowired
 	SourcesRepo repo;
 	
-	
-	@RequestMapping("/")
-	public String home() {
-		
-		return "home.html";		
-	}
+//	
+//	@RequestMapping("/")
+//	public String home() {
+//		
+//		return "home";		
+//	}
 	
 		
 	@RequestMapping(method = RequestMethod.GET, value="/sources", params = {})
@@ -112,9 +112,9 @@ public class SourcesController {
 	}
 	
 	
-	@RequestMapping("/getSources")
+	@RequestMapping("/getSource")
 	public ModelAndView getSources(@RequestParam int id) {
-		ModelAndView mv = new ModelAndView("showSources.html");
+		ModelAndView mv = new ModelAndView("showSource.html");
 		Sources sources =  repo.findById(id).orElse(new Sources());
 
 //		Sources sources =  repo.findById(id)
@@ -129,9 +129,9 @@ public class SourcesController {
 	}
 	
 	
-	@RequestMapping("/editSources")
+	@RequestMapping("/editSource")
 	public ModelAndView editSources(@RequestParam int id) {
-		ModelAndView mv = new ModelAndView("editSources.html");
+		ModelAndView mv = new ModelAndView("editSource.html");
 		Sources sources =  repo.findById(id).orElse(new Sources());
 		mv.addObject(sources);
 		return mv;		
@@ -144,7 +144,7 @@ public class SourcesController {
 		Sources sources = new Sources(id, collection, sourceNumber, callNumber, author, title, inscription, description);
 		repo.save(sources);
 		
-		ModelAndView mv = new ModelAndView("editSources.html");
+		ModelAndView mv = new ModelAndView("editSource.html");
 		sources =  repo.findById(id).orElse(new Sources());
 		mv.addObject(sources);
 		return mv;
