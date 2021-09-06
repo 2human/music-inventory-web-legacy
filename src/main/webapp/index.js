@@ -2,17 +2,14 @@
 /**
  * 
  */
-//TODO incorporate template strings
 //TODO change from id's to classes in html
-//TODO retain formatting on updates when there are multiple lines so that new lines are not deleted
 
 
-//display checkboxes corresponding to fields of table radio button selection
-const tableButtons = document.getElementById('tableSelect');    //div containing buttons that determine which table to search
-const fieldDiv = document.getElementById('fieldSelect');  //div that displays checkboxes for selecting data fields to search
+const tableButtons = document.getElementById('tableSelect');    
+const fieldDiv = document.getElementById('fieldSelect');
 const searchBtn = document.getElementById('submitSearch');
 const modal = document.getElementById("myModal");     
-const pageBtnDiv = document.getElementById('pageBtns');            //get page number button div
+const pageBtnDiv = document.getElementById('pageBtns');
 const pageBtnDivBot = document.getElementById('pageBtnsBot');
 const searchResultsTable = document.getElementById('searchResultsTable');
 const searchForm = document.getElementById('search');
@@ -23,16 +20,61 @@ const resultsPerPageDiv = document.getElementById('resultsPerPage');
 let searchProperties;
 let searchResultsData;
 
-insertFieldCheckboxes();
+insertFieldCheckboxes();        //insert field checkboxes for default table selection
 initializeEventListeners();
 
 function insertFieldCheckboxes(){
-    fieldDiv.innerHTML = getTableFieldsHTML(getTableSelection()); //display fields for that element
+    fieldDiv.innerHTML = getFieldCheckboxesHTML(getTableSelection()); //display fields for that element
+}
+
+function getFieldCheckboxesHTML(tableSelection){
+    //generate fields corresponding to those within sources table 
+    switch(tableSelection){
+        //source radio button clicked
+        case "sources":
+            return getSourceFieldsCheckboxesHMTML();
+        //entries radio button clicked
+        case "entries": 
+            return getEntryFieldsCheckboxesHTML();
+        case "collections": 
+            return getCollectionFieldsCheckboxesHTML();
+    }
+}
+
+function getSourceFieldsCheckboxesHMTML(){
+    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+                    '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
+                    '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
+                    '<input type="checkbox" name="field" id="callNumber" value="callNumber"> Call Number ' +
+                    '<input type="checkbox" name="field" id="author" value="author"> Author ' +
+                    '<input type="checkbox" name="field" id="title" value="title"> Title ' +
+                    '<input type="checkbox" name="field" id="inscription" value="inscription"> Inscription ' +
+                    '<input type="checkbox" name="field" id="description" value="description"> Description ';
+}
+
+function getEntryFieldsCheckboxesHTML(){  
+    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+                    '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
+                    '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
+                    '<input type="checkbox" name="field" id="location" value="location"> Location ' +
+                    '<input type="checkbox" name="field" id="title" value="title"> Title ' +
+                    '<input type="checkbox" name="field" id="credit" value="credit"> Credit ' +
+                    '<input type="checkbox" name="field" id="vocalPart" value="vocalPart"> Vocal Part ' +
+                    '<input type="checkbox" name="field" id="key" value="key"> Key ' +
+                    '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
+                    '<input type="checkbox" name="field" id="textIncipit" value="textIncipit"> Text Incipit ' +
+                    '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ';
+}
+
+function getCollectionFieldsCheckboxesHTML(){    
+    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+                    '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
+                    '<input type="checkbox" name="field" id="description" value="description"> Description';
 }
 
 //gets table currently selected with radio button
 function getTableSelection(){
-    return tableButtons.children.find( button => button.checked === true);
+    return tableButtons.children.find( button => button.checked === true );
 }
 
 function initializeEventListeners(){
@@ -41,12 +83,12 @@ function initializeEventListeners(){
     //event listener / handler for submitting search 
     searchBtn.addEventListener("click", executeSearch);
     //create event listener for buttons
-    pageBtnDiv.addEventListener("click", selectResultPage);    
-    //TODO: remove so that there is only one listener for both page buttons
+    pageBtnDiv.addEventListener("click", selectResultPage);
     pageBtnDivBot.addEventListener("click", (event) => {
         selectResultPage(event);
         scrollToTop(event);
     });
+    resultsPerPageDiv.addEventListener("click", event => setResultsPerPage(event, searchProperties.resultsPerPageOptions));
     searchResultsTable.ondblclick = openEditorModal;
 }
 
@@ -81,7 +123,8 @@ function getSearchParams(form){
 function generateSearchResultsDisplay(){
     initializeSearchProperties();    
     insertSearchResults();
-    insertPageButtons();    
+    insertPageButtons();  
+    insertResultsMessage();  
     insertResultsPerPageSelector();
 }
 function getTableSelection(){
@@ -247,8 +290,11 @@ function insertPageButtons(){
     }
     pageBtnDiv.innerHTML = btnHTML;          //add button html to page
     pageBtnDivBot.innerHTML = btnHTML;
-    resultsMessage.innerHTML = getResultsMessage();
+}
 
+//insert messaging displaying total results, and range of results being displayed
+function insertResultsMessage(){
+    resultsMessage.innerHTML = getResultsMessage();
 }
 
 //construct buttons that allow user to select search result page
@@ -286,13 +332,12 @@ function getPageBtnBounds(searchProperties, maxButtons){
     return { upperBound: upperBound, lowerBound: lowerBound }
 }
 
-//TODO remove 'curPage' from button class
 function getPreviousAndFirstPageBtnsHTML(curPage, lowerBound){    
     //disable buttons if first page currently being viewd
     let htmlStr = getPageBtnHTML('Previous', curPage) + 
                 getPageBtnHTML(1, curPage);
     if(lowerBound > 2){     //if second page button will not be created
-        htmlStr += '...';    //put dots between first and proceeding buttons
+        htmlStr += ' ... ';    //put dots between first and proceeding buttons
     }
     return htmlStr;
 }
@@ -343,7 +388,7 @@ function getLastAndNextPageBtnsHTML(searchProperties, upperBound){
     let totalPages = searchProperties.totalPages;
     //if not last page, add normal page buttons
     if(upperBound < totalPages - 1){     //if there is gap between core buttons and end button
-        htmlStr += '...';               //add dots
+        htmlStr += ' ... ';               //add dots
     }
     htmlStr +=   getPageBtnHTML(totalPages, searchProperties.curPage) + 
                 getPageBtnHTML('Next', searchProperties.curPage);
@@ -375,12 +420,27 @@ function getSinglePageResultsMessage(totalResults){
 
 //result message containing range of results
 function getMultiPageResultsMessage(searchProperties){
-    let lastResult = searchProperties.curPage == searchProperties.totalPages ?  //if on last page
-                searchProperties.totalResults :                                     //last result will be equal to total results
-                parseInt(searchProperties.curPage * searchProperties.resultsPerPage);   //otherwise will be somewhere between
-    let firstResult = parseInt((searchProperties.curPage - 1) * searchProperties.resultsPerPage + 1) ;
-    return `<br><b>Displaying ${firstResult}-${lastResult} of ${searchProperties.totalResults} results...</b><br>`;   
+    let lastResult = getLastResultNumber(searchProperties);
+    let firstResult = getFirstResultNumber(searchProperties);
+    return `<br><b>Displaying ${firstResult}-${lastResult} of ${searchProperties.totalResults} results...</b><br>`;
+}
 
+function getLastResultNumber(searchProperties){
+    //gets last resultnumber of current search result display for search results message
+    if(viewingLastPage(searchProperties)){
+        return searchProperties.totalResults;   //last result number is same as total results
+    } else{
+        return parseInt(searchProperties.curPage * searchProperties.resultsPerPage);
+    }
+}
+
+function viewingLastPage(searchProperties){
+    return searchProperties.curPage == searchProperties.totalPages;
+}
+
+function getFirstResultNumber(searchProperties){
+    //gets first result number of current search result display for search results message
+    return parseInt((searchProperties.curPage - 1) * searchProperties.resultsPerPage + 1);
 }
 
 function scrollToTop(event){  
@@ -389,17 +449,18 @@ function scrollToTop(event){
     }
 }
 
-function insertResultsPerPageSelector(){   
-    if(searchProperties.totalPages > 1){ 
+//inserts links that allow user to select desired results per page
+function insertResultsPerPageSelector(){       
+    if(searchProperties.totalResults !== 0){
         resultsPerPageDiv.innerHTML = getResultsPerPageHTML(searchProperties.resultsPerPage, searchProperties.resultsPerPageOptions);
     } else resultsPerPageDiv.innerHTML = '';
-    resultsPerPageDiv.addEventListener("click", event => setResultsPerPage(event, searchProperties.resultsPerPageOptions));
 }
 
 //generate links that allow user to select results per page
-function getResultsPerPageHTML(curResultsPerPage){
+function getResultsPerPageHTML(curResultsPerPage, resultsPerPageOptions){
     let resultsPerPageHTML = 'Results Per Page: ';
-    searchProperties.resultsPerPageOptions.forEach( resultsOption => {
+    resultsPerPageOptions.forEach( resultsOption => {
+        console.log(curResultsPerPage + ' ' + resultsOption);
         if(curResultsPerPage == resultsOption){             //if current selection
             resultsPerPageHTML += resultsOption + '  ';     //add only text with no hyperlink
         } else{                                             //otherwise construct text with hyperlink
@@ -412,7 +473,7 @@ function getResultsPerPageHTML(curResultsPerPage){
 
 function setResultsPerPage(event){
     let clicked = event.target;
-    if(clicked.className === 'resultsPerPageLink'){
+    if(clicked.className === 'resultsPerPageLink'){ //make sure link was clicked and not random part of page
         let resultsPerPage = clicked.id;
         searchProperties.curPage = 1;
         if(resultsPerPage == 'All'){
@@ -424,79 +485,29 @@ function setResultsPerPage(event){
         }
         searchResultsTable.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
         insertPageButtons(searchProperties);
-        if(searchProperties.totalResults != 0){
-            resultsPerPageHTML = getResultsPerPageHTML(resultsPerPage, searchProperties.resultsPerPageOptions);
-            resultsPerPageDiv.innerHTML = resultsPerPageHTML;
-        } else resultsPerPageDiv.innerHTML = '';
+        insertResultsMessage();
+        insertResultsPerPageSelector();
     } 
 }
 
 function openEditorModal(event){
     let cellClicked = event.target;
     if(isEditableCell(cellClicked)){     //if cell clicked is not table header and not the id column
-        let tableRow = cellClicked.parentElement;        //table row element of cell clicked
-        modalForm.innerHTML = getFormHTML(getTableSelection(), getRowData(tableRow));  
-        let closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal    
+        constructModal(cellClicked);
         openModal();
-        getMatchingFormField(cellClicked).focus();  //focus field in form corresponding to field clicked
-        let updateBtn = document.getElementById('updateRow');
-        updateBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            //get string of search parameters
-            let xhr = new XMLHttpRequest();
-            console.log(getHTTPRequestURL(modalForm));
-            xhr.open('POST', getHTTPRequestURL(modalForm), true);
-            xhr.send();
-            xhr.onload = function(){
-                let request = this;
-                let updatedRowData = JSON.parse(request.responseText),
-                    updatedRowHTML = getTableRowHTML(getTableSelection(), updatedRowData);
-                console.log(updatedRowData);
-                tableRow.innerHTML = updatedRowHTML; 
-                modal.style.display = "none";
-            }            
-        });  
-        let deleteBtn = document.getElementById("deleteRow");
-        deleteBtn.addEventListener("click", (event) => {                        
-            event.preventDefault();
-            let rowID = row.children[0].innerText;
-            let xhr = new XMLHttpRequest();
-            console.log(getHTTPRequestURL(modalForm));
-            xhr.open('DELETE', getHTTPRequestURL(modalForm), true);
-            xhr.send();
-            xhr.onload = function(){
-                row.innerHTML = ""; 
-                modal.style.display = "none";
-                alert('Source with ID ' + rowID + ' deleted.')
-            }
-
-
-        }); 
-        // When the user clicks on (x), close the modal
-        closeModalBtn.onclick = function() {
-            closeModal();
-        }
-        
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        //make it so that hitting escape will close modal
-        document.onkeydown = function(event) {
-            event = event || window.event;
-            if (event.keyCode == 27) {
-                closeModal();
-            }
-        };
+        focusSelectedField(cellClicked);
+        addModalEventListeners(cellClicked);
     }
 }
 
 //makes sure that cell clicked in table is not part of header and is not database ID
 function isEditableCell(cellClicked){
     return cellClicked.nodeName !== "TH" && cellClicked.id !== "id"
+}
+
+function constructModal(cellClicked){
+    let tableRow = cellClicked.parentElement;        //table row element of cell clicked
+    modalForm.innerHTML = getFormHTML(getTableSelection(), getRowData(tableRow));     
 }
 
 /**
@@ -516,64 +527,64 @@ function getFormHTML(dataType, rowData){
 }
 //create form that pre-fills data from table row
 function getEntryFormHTML(entry){
-    return '<label for="Id">Id:</label>' +
-            '<input type="text" id="id" class="searchBox" name="id" value="' + entry.id + '" readonly><br>' +
-            '<label for="collection">Collection:</label>' +
-            '<input type="text" id="collection" class="searchBox" name="collection" value="' + entry.collection + '" onfocus="this.select()"><br>' +
-            '<label for="sourceNumber">Source Number:</label>' +
-            '<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="' + entry.sourceNumber + '" onfocus="this.select()"><br>' +
-            '<label for="location">Location:</label>' +
-            '<input type="text" id="location" class="searchBox" name="location" value="' + entry.location + '" onfocus="this.select()"><br>' +
-            '<label for="title">Title:</label>' +
-            '<input type="text" id="title" class="searchBox" name="title" value="' + entry.title + '" onfocus="this.select()"><br>' +
-            '<label for="credit">Credit:</label>' +
-            '<input type="text" id="credit" class="searchBox" name="credit" value="' + entry.credit + '" onfocus="this.select()"><br>' +
-            '<label for="vocalPart">Vocal Part:</label>' +
-            '<input type="text" id="vocalPart" class="searchBox" name="vocalPart" value="' + entry.vocalPart + '" onfocus="this.select()"><br>' +
-            '<label for="key">Key:</label>' +
-            '<input type="text" id="key" class="searchBox" name="key" value="' + entry.key + '" onfocus="this.select()"><br>' +
-            '<label for="melodicIncipit">Melodic Incipit:</label>' +
-            '<input type="text" id="melodicIncipit" class="searchBox" name="melodicIncipit" value="' + entry.melodicIncipit + '" onfocus="this.select()"><br>' +
-            '<label for="textIncipit">Text Incipit:</label>' +
-            '<input type="text" id="textIncipit" class="searchBox" name="textIncipit" value="' + entry.textIncipit + '" onfocus="this.select()"><br>' +
-            '<label for="isSecular">Secular:</label>' +
-            '<input type="text" id="isSecular" class="searchBox" name="isSecular" value="' + entry.isSecular + '" onfocus="this.select()"><br>' +
-            '<button id="updateRow">Update</button>' +
-            '<button id="deleteRow">Delete</button>';
+    return `<label for="Id">Id:</label>` +
+            `<input type="text" id="id" class="searchBox" name="id" value="${entry.id}" readonly><br>` +
+            `<label for="collection">Collection:</label>` +
+            `<input type="text" id="collection" class="searchBox" name="collection" value="${entry.collection}" onfocus="this.select()"><br>` +
+            `<label for="sourceNumber">Source Number:</label>` +
+            `<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="${entry.sourceNumber}" onfocus="this.select()"><br>` +
+            `<label for="location">Location:</label>` +
+            `<input type="text" id="location" class="searchBox" name="location" value="${entry.location}" onfocus="this.select()"><br>` +
+            `<label for="title">Title:</label>` +
+            `<input type="text" id="title" class="searchBox" name="title" value="${entry.title}" onfocus="this.select()"><br>` +
+            `<label for="credit">Credit:</label>` +
+            `<input type="text" id="credit" class="searchBox" name="credit" value="${entry.credit}" onfocus="this.select()"><br>` +
+            `<label for="vocalPart">Vocal Part:</label>` +
+            `<input type="text" id="vocalPart" class="searchBox" name="vocalPart" value="${entry.vocalPart}" onfocus="this.select()"><br>` +
+            `<label for="key">Key:</label>` +
+            `<input type="text" id="key" class="searchBox" name="key" value="${entry.key}" onfocus="this.select()"><br>` +
+            `<label for="melodicIncipit">Melodic Incipit:</label>` +
+            `<input type="text" id="melodicIncipit" class="searchBox" name="melodicIncipit" value="${entry.melodicIncipit}" onfocus="this.select()"><br>` +
+            `<label for="textIncipit">Text Incipit:</label>` +
+            `<input type="text" id="textIncipit" class="searchBox" name="textIncipit" value="${entry.textIncipit}" onfocus="this.select()"><br>` +
+            `<label for="isSecular">Secular:</label>` +
+            `<input type="text" id="isSecular" class="searchBox" name="isSecular" value="${entry.isSecular}" onfocus="this.select()"><br>` +
+            `<button id="updateRow">Update</button>` +
+            `<button id="deleteRow">Delete</button>`;
 }
 
 //create form that pre-fills data from table row
 function getSourceFormHTML(source){
-    return '<label for="id">Id:</label>' +
-            '<input type="text" id="id" class="searchBox" name="id" value="' + source.id + '" readonly><br>' +
-            '<label for="collection">Collection:</label>' +
-            '<input type="text" id="collection" class="searchBox" name="collection" value="' + source.collection + '" onfocus="this.select()"><br>' +
-            '<label for="sourceNumber">Source Number:</label>' +
-            '<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="' + source.sourceNumber + '" onfocus="this.select()"><br>' +
-            '<label for="callNumber">Call Number:</label>' +
-            '<input type="text" id="callNumber" class="searchBox" name="callNumber" value="' + source.callNumber + '" onfocus="this.select()"><br>' +
-            '<label for="author">Author:</label>' +
-            '<input type="text" id="author" class="searchBox" name="author" value="' + source.author + '" onfocus="this.select()"><br>' +
-            '<label for="title">Title:</label>' +
-            '<input type="text" id="title" class="searchBox" name="title" value="' + source.title + '" onfocus="this.select()"><br>' +
-            '<label for="inscription">Inscription:</label>' +
-            '<textarea inline="text" id="inscription" class="searchBox" name="inscription" onfocus="this.select()">' + source.inscription + '</textarea><br>' +
-            '<label for="description">Description:</label>' +        
-            '<textarea inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">' + source.description + '</textarea><br>' +
-            '<button id="updateRow">Update</button>' +
-            '<button id="deleteRow">Delete</button>';
+    return `<label for="id">Id:</label>` +
+            `<input type="text" id="id" class="searchBox" name="id" value="${source.id}" readonly><br>` +
+            `<label for="collection">Collection:</label>` +
+            `<input type="text" id="collection" class="searchBox" name="collection" value="${source.collection}" onfocus="this.select()"><br>` +
+            `<label for="sourceNumber">Source Number:</label>` +
+            `<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="${source.sourceNumber}" onfocus="this.select()"><br>` +
+            `<label for="callNumber">Call Number:</label>` +
+            `<input type="text" id="callNumber" class="searchBox" name="callNumber" value="${source.callNumber}" onfocus="this.select()"><br>` +
+            `<label for="author">Author:</label>` +
+            `<input type="text" id="author" class="searchBox" name="author" value="${source.author}" onfocus="this.select()"><br>` +
+            `<label for="title">Title:</label>` +
+            `<input type="text" id="title" class="searchBox" name="title" value="${source.title}" onfocus="this.select()"><br>` +
+            `<label for="inscription">Inscription:</label>` +
+            `<textarea inline="text" id="inscription" class="searchBox" name="inscription" onfocus="this.select()">${source.inscription}</textarea><br>` +
+            `<label for="description">Description:</label>` +      
+            `<textarea inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">${source.description}</textarea><br>` +
+            `<button id="updateRow">Update</button>` +
+            `<button id="deleteRow">Delete</button>`;
 
 }
 
 function getCollectionFormHTML(collection){
-    return '<label for="Id">Id:</label>' + 
-            '<input type="text" id="id" class="searchBox" name="id" value="' + collection.id + '" readonly><br>' + 
-            '<label for="collection">Collection:</label>' + 
-            '<input type="text" id="collection" class="searchBox" name="collection" value="' + collection.collection + '" onfocus="this.select()"><br>' + 
-            '<label for="description">Description:</label>' + 
-            '<textarea th:inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">' + collection.description + '</textarea><br>' + 
-            '<button id="updateRow">Update</button>' +
-            '<button id="deleteRow">Delete</button>';
+    return `<label for="Id">Id:</label>` + 
+            `<input type="text" id="id" class="searchBox" name="id" value="${collection.id}" readonly><br>` + 
+            `<label for="collection">Collection:</label>` + 
+            `<input type="text" id="collection" class="searchBox" name="collection" value="${collection.collection}" onfocus="this.select()"><br>` + 
+            `<label for="description">Description:</label>` + 
+            `<textarea th:inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">${collection.description}</textarea><br>` + 
+            `<button id="updateRow">Update</button>` +
+            `<button id="deleteRow">Delete</button>`;
 }
 
 function getRowData(row){
@@ -589,15 +600,9 @@ function openModal(){
 }
 
 //focus form field corresponding to field that was clicked in table
-function focusFormField(cellClicked){
-
+function focusSelectedField(cellClicked){
+    getMatchingFormField(cellClicked).focus();  //focus field in form corresponding to field clicked
 }
-
-function closeModal(){
-    modal.style.display = "none";
-}
-
-
 
 //gets input element corresponding to field of cell clicked
 function getMatchingFormField(cellClicked){
@@ -611,8 +616,78 @@ function getMatchingFormField(cellClicked){
     return null;
 }
 
-//TODO figure out haow to make it so bottom div goes to top
-//respond to result page click
+function addModalEventListeners(cellClicked){    
+    let updateBtn = document.getElementById('updateRow');
+    let tableRow = cellClicked.parentElement;        //table row element of cell clicked
+    updateBtn.addEventListener("click", event => updateTableRow(event, tableRow));  
+    let deleteBtn = document.getElementById("deleteRow");
+    deleteBtn.addEventListener("click", (event) => deleteTableRow(event, tableRow)); 
+    let closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
+    //clicking x will close modal
+    closeModalBtn.onclick = function() {
+        closeModal();
+    }    
+    //clicking outside of modal content will close modal
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+    //make it so that hitting escape will close modal
+    document.onkeydown = function(event) {
+        event = event || window.event;
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    };
+}
+
+function closeModal(){
+    modal.style.display = "none";
+}
+
+function updateTableRow(event, tableRow){
+    event.preventDefault();
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', getHTTPRequestURL(modalForm), true);
+    xhr.send();
+    closeModal();
+    xhr.onload = function(){
+        let request = this;
+        let updatedRowData = JSON.parse(request.responseText);
+        //update data array then insert data into table row
+        updateSearchResultsData(updatedRowData);
+        updateSearchResultsDisplay(tableRow, updatedRowData);
+    }
+}
+
+//update data array with new data instead of making new http request
+function updateSearchResultsData(updatedRowData){
+    searchResultsData[searchResultsData.findIndex( data => data.id === updatedRowData.id)] = updatedRowData;
+}
+
+//updated data being displayed
+function updateSearchResultsDisplay(tableRow, updatedRowData){
+    tableRow.innerHTML = getTableRowHTML(getTableSelection(), updatedRowData)
+}
+
+
+function deleteTableRow(event, tableRow){    
+    console.log('Deleting');                 
+    event.preventDefault();
+    let xhr = new XMLHttpRequest();
+    console.log(getHTTPRequestURL(modalForm));
+    xhr.open('DELETE', getHTTPRequestURL(modalForm), true);
+    xhr.send();
+    xhr.onload = function(){
+        let rowID = tableRow.children[0].innerText;
+        alert('Source with ID ' + rowID + ' deleted.');
+        tableRow.innerHTML = ""; 
+        closeModal();
+    }
+}
+
+//view search results page in response to user clicking resultsPageBtn
 function selectResultPage(event){    
     let btnClicked = event.target;      //get button clicked
     if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
@@ -625,49 +700,6 @@ function selectResultPage(event){
     if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text                
         searchResultsTable.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
         insertPageButtons(searchProperties);
-    }
-}
-
-/**
- * Returns checkboxes corresponding to with labels that correspond to field names which allows user to select
- * which fields to search.
- * @param {} tableSelection Table radio button that is selected
- */
-function getTableFieldsHTML(tableSelection){
-    //generate fields corresponding to those within sources table 
-    switch(tableSelection){
-        //source radio button clicked
-        case "sources":
-            //generate html for checkboxes
-            return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
-            '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-            '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
-            '<input type="checkbox" name="field" id="callNumber" value="callNumber"> Call Number ' +
-            '<input type="checkbox" name="field" id="author" value="author"> Author ' +
-            '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-            '<input type="checkbox" name="field" id="inscription" value="inscription"> Inscription ' +
-            '<input type="checkbox" name="field" id="description" value="description"> Description ';
-            break;
-        //entries radio button clicked
-        case "entries": 
-            //generate html for checkboxes
-            return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
-            '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-            '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
-            '<input type="checkbox" name="field" id="location" value="location"> Location ' +
-            '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-            '<input type="checkbox" name="field" id="credit" value="credit"> Credit ' +
-            '<input type="checkbox" name="field" id="vocalPart" value="vocalPart"> Vocal Part ' +
-            '<input type="checkbox" name="field" id="key" value="key"> Key ' +
-            '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
-            '<input type="checkbox" name="field" id="textIncipit" value="textIncipit"> Text Incipit ' +
-            '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ';
-            break;
-        case "collections": 
-        return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
-        '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-        '<input type="checkbox" name="field" id="description" value="description"> Description';
-
-
+        insertResultsMessage();
     }
 }
