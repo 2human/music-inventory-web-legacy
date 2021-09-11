@@ -1,11 +1,11 @@
-package com.toohuman.musicentriesweb.dao;
+package com.toohuman.dao;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.toohuman.musicentriesweb.model.Sources;
+import com.toohuman.model.Sources;
 
 public interface SourcesRepo extends JpaRepository<Sources, Integer>{
 

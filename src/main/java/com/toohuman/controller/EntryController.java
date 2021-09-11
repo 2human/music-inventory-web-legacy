@@ -1,4 +1,4 @@
-package com.toohuman.musicentriesweb.controller;
+package com.toohuman.controller;
 
 /**
  * @author farsor
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.toohuman.musicentriesweb.dao.EntryRepo;
-import com.toohuman.musicentriesweb.model.Entry;
+import com.toohuman.dao.EntryRepo;
+import com.toohuman.model.Entry;
 
 @RestController
 public class EntryController {

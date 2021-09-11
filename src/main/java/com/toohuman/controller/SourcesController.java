@@ -1,4 +1,4 @@
-package com.toohuman.musicentriesweb.controller;
+package com.toohuman.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.toohuman.musicentriesweb.dao.SourcesRepo;
-import com.toohuman.musicentriesweb.model.Sources;
+import com.toohuman.dao.SourcesRepo;
+import com.toohuman.model.Sources;
 
 //TODO change it so that source number does not stay the same in creating new sources
 //TODO learn difference between post and put request, and add to all controllers

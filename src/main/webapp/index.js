@@ -444,7 +444,7 @@ function getFirstResultNumber(searchProperties){
 }
 
 function scrollToTop(event){  
-    if(event.target.nodeName === 'BUTTON'){ //only scroll to top if button was clicked
+    if(event.target.nodeName === 'BUTTON'){ //only scroll to top if button was clicked, not random part of div
         window.scrollTo(0, 130);
     }
 }

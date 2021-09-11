@@ -1,4 +1,4 @@
-package com.toohuman.musicentriesweb.model;
+package com.toohuman.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ public class Sources {
 //	@GeneratedValue
 //	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)	
+    @Column(name = "source_id", nullable = false, unique = true)	
 	private int id;
 	@Column(name="collection_name")
 	private String collection;

@@ -1,4 +1,4 @@
-package com.toohuman.musicentriesweb.model;
+package com.toohuman.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
