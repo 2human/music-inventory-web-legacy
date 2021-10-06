@@ -1,16 +1,16 @@
 <html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="styles/normalize.css">
-	<link rel="stylesheet" href="styles/showSources.css">
+    <link rel="stylesheet" href="styles/editSources.css">
     <title>View Source</title>
 </head>
 <body>
-	<a th:href="@{http://localhost:8080/getCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://localhost:8080/editCollection(id=${collection.getId()})}"><button>Edit Mode</button></a>
-	<a th:href="@{http://localhost:8080/getCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
-	<a th:href="@{http://localhost:8080}"><button>Home</button></a>
+	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/getCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/editCollection(id=${collection.getId()})}"><button>Edit Mode</button></a>
+	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/getCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080}"><button>Home</button></a>
     <table>
         <tr>
             <td>Id:</td>

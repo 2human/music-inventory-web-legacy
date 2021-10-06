@@ -1,14 +1,14 @@
 <html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="styles/normalize.css">
-	<link rel="stylesheet" href="styles/editSources.css">
+    <link rel="stylesheet" href="styles/editSources.css">
     <title>Edit Entry</title>
 </head>
 
 <body>
-	<a th:href="@{http://localhost:8080}"><button>Home</button></a><br><br>
+	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080}"><button>Home</button></a><br><br>
     <form action="createEntry">
         <label for="collection">Collection:</label>
         <input type="text" id="collection" name="collection">

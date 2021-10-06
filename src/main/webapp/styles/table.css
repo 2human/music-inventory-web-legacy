@@ -1,0 +1,111 @@
+
+
+/* Table  */
+th{
+	text-align: left;	
+	border-bottom: .1px solid black;
+	/* border-right: .1px solid black;	 */
+}
+
+td{
+	vertical-align: top;
+	padding: .25em;
+	border-left: .5px solid rgb(219, 219, 219);
+}
+
+table{
+	font-size: 11px;
+	white-space: pre-line;
+	width: 100% ;
+	border-collapse: collapse;
+	border-top: .1px solid black;
+	word-break:break-word;
+}
+
+table td:nth-child(1){	
+	border-left: none;
+}
+
+/* table th:nth-child(1){	
+	border-left: .1px solid black;
+} */
+
+/* Utilized for columns that need to retain formatting */
+pre{
+    font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
+    font-size: 1em;
+	white-space: pre-wrap;
+	margin:0;
+}
+
+/* Sources results columns */
+
+tr:nth-child(even){
+	background-color: #EBEBEB;
+}
+
+/* tr:nth-child(odd) td:nth-child(even){
+	background-color: #EBEBEB;
+} */
+
+.sourcesTable td:nth-child(1){	/* ID column  */
+    width:3%;
+}
+.sourcesTable td:nth-child(2){	/* Collection column  */
+    width:10%;
+}
+.sourcesTable td:nth-child(3){	/* Source Number column  */
+    width:3%;
+}
+.sourcesTable td:nth-child(4){	/* Call Number column  */
+    width:10%;
+}
+.sourcesTable td:nth-child(5){	/* Author column  */	
+    width:10%;
+}
+.sourcesTable td:nth-child(6){	/* Title column  */
+    width:10%;
+}
+.sourcesTable td:nth-child(7){	/* Inscription column  */
+    width:26%;
+}
+.sourcesTable td:nth-child(8){	/* Description column  */
+    width:28%;	
+}
+
+/* Entries results columns */
+
+.entriesTable td:nth-child(1){	/* ID column  */
+    width:3%;
+}
+.entriesTable td:nth-child(2){	/* Collection column  */
+    width:10%;
+}
+.entriesTable td:nth-child(3){	/* Source Number column  */
+    width:3%;
+}
+.entriesTable td:nth-child(4){	/* Location column  */
+    width:10%;
+}
+.entriesTable td:nth-child(5){	/* Title column  */	
+    width:9%;
+}
+.entriesTable td:nth-child(6){	/* Credit column  */
+    width:9%;
+}
+.entriesTable td:nth-child(7){	/* Vocal Part column  */
+    width:11%;
+}
+.entriesTable td:nth-child(8){	/* Key column  */
+    width:6%;	
+}
+.entriesTable td:nth-child(9){	/* Melodic Incipit column  */
+    width:17%;	
+}
+.entriesTable td:nth-child(10){	/* Text Incipit column  */
+    width:17%;	
+}
+.entriesTable td:nth-child(11){	/* Secular column  */
+    width:5%;	
+}
+

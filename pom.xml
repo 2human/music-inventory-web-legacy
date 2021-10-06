@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.toohuman</groupId>
-	<artifactId>bootjpa</artifactId>
+	<artifactId>music-entries-web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bootjpa</name>
+	<name>music-entries-web</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -54,8 +54,8 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>    
-		<dependency>             
+		</dependency> 
+			<dependency>             
 			<groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
@@ -68,9 +68,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<finalName>music-entries-web</finalName>					
+				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>music-entries-web</finalName>
 	</build>
 
 </project>

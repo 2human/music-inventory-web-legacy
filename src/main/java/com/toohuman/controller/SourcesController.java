@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import com.toohuman.model.Sources;
 //TODO change it so that source number does not stay the same in creating new sources
 //TODO learn difference between post and put request, and add to all controllers
 @RestController
+@CrossOrigin
 public class SourcesController {
 	
 	@Autowired
@@ -31,7 +33,6 @@ public class SourcesController {
 //		return "home";		
 //	}
 	
-		
 	@RequestMapping(method = RequestMethod.GET, value="/sources", params = {})
 	public List<Sources> getAll(){
 		return repo.findAll();
@@ -42,25 +43,22 @@ public class SourcesController {
 	public Set<Sources> search(@RequestParam String searchText, @RequestParam String table) {
 		
 		Set<Sources> sourceSet = new HashSet<Sources>();
-		switch(table) {
-		case "sources":
+		try {
+			sourceSet.add(repo.findById(Integer.parseInt(searchText)).orElse(new Sources()));
+			} catch(Exception e) {
+				System.out.println("NaN entered as ID");
+			}
+			sourceSet.addAll(repo.findByCollection(searchText));
 			try {
-				sourceSet.add(repo.findById(Integer.parseInt(searchText)).orElse(new Sources()));
-				} catch(Exception e) {
-					System.out.println("NaN entered as ID");
-				}
-				sourceSet.addAll(repo.findByCollection(searchText));
-				try {
-					sourceSet.addAll(repo.findBySourceNumber(Integer.parseInt(searchText)));
-				} catch(Exception e) {
-					System.out.println("NaN entered as sourceNumber");
-				}
-				sourceSet.addAll(repo.findByCallNumber(searchText));
-				sourceSet.addAll(repo.findByAuthor(searchText));
-				sourceSet.addAll(repo.findByTitle(searchText));
-				sourceSet.addAll(repo.findByInscription(searchText));
-				sourceSet.addAll(repo.findByDescription(searchText));			
-		}
+				sourceSet.addAll(repo.findBySourceNumber(Integer.parseInt(searchText)));
+			} catch(Exception e) {
+				System.out.println("NaN entered as sourceNumber");
+			}
+			sourceSet.addAll(repo.findByCallNumber(searchText));
+			sourceSet.addAll(repo.findByAuthor(searchText));
+			sourceSet.addAll(repo.findByTitle(searchText));
+			sourceSet.addAll(repo.findByInscription(searchText));
+			sourceSet.addAll(repo.findByDescription(searchText));			
 		return sourceSet;
 	}
 	
@@ -70,8 +68,8 @@ public class SourcesController {
 		List<String> fields = new ArrayList<String>(Arrays.asList(field.split(",")));
 		Set<Sources> sourceSet = new HashSet<Sources>();
 		System.out.println(field);
-			for(String f: fields) {
-				switch(f) {
+			for(String fld: fields) {
+				switch(fld) {
 					case "id":
 						//TODO make it so this does not return a null source object when integer input
 						try {

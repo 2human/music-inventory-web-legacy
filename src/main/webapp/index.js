@@ -4,6 +4,8 @@
  */
 //TODO change from id's to classes in html
 
+const webHostURL = "http://localhost:8080";
+// const webHostURL = "http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080";
 
 const tableButtons = document.getElementById('tableSelect');    
 const fieldDiv = document.getElementById('fieldSelect');
@@ -42,7 +44,7 @@ function getFieldCheckboxesHTML(tableSelection){
 }
 
 function getSourceFieldsCheckboxesHMTML(){
-    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> ID ' +
                     '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
                     '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
                     '<input type="checkbox" name="field" id="callNumber" value="callNumber"> Call Number ' +
@@ -53,7 +55,7 @@ function getSourceFieldsCheckboxesHMTML(){
 }
 
 function getEntryFieldsCheckboxesHTML(){  
-    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> ID ' +
                     '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
                     '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
                     '<input type="checkbox" name="field" id="location" value="location"> Location ' +
@@ -67,7 +69,7 @@ function getEntryFieldsCheckboxesHTML(){
 }
 
 function getCollectionFieldsCheckboxesHTML(){    
-    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> Id ' +
+    return 'Field:  <input type="checkbox" name="field" id="id" value="id"> ID ' +
                     '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
                     '<input type="checkbox" name="field" id="description" value="description"> Description';
 }
@@ -109,7 +111,7 @@ function executeSearch(event){
 //TODO this has to be fixed so that it goes by domain name
 //generate request url with search params and table selection
 function getHTTPRequestURL(form){    
-    return 'http://localhost:8080/' + getTableSelection() + '?' + getSearchParams(form);
+    return webHostURL + "/" + getTableSelection() + '?' + getSearchParams(form);
 }
 
 //get URI search param string from form
@@ -140,10 +142,10 @@ function requestSuccessful(requestStatus){
 function initializeSearchProperties(){
     searchProperties = new function(){
         this.curPage = 1,
-        this.resultsPerPage = 100,
+        this.resultsPerPage = 25,
         this.totalResults = searchResultsData.length,
         this.totalPages = Math.floor(this.totalResults / this.resultsPerPage + 1),
-        this.resultsPerPageOptions = ['All', 500, 100, 25]
+        this.resultsPerPageOptions = [10, 25, 100, 500]
     };
 }
 
@@ -153,7 +155,7 @@ function insertSearchResults(){
 
 function getResultTableHTML(dataType, data){
     if(!searchResultsData[0]) return '';    //return empty string if data is empty
-    return  '<table id="table">' + 
+    return  `<table class=${dataType}Table id="table">` + 
                 getTableHeaderHTML(dataType) +
                 getTableBodyHTML(dataType, data) +
             '</table>';
@@ -173,7 +175,7 @@ function getTableHeaderHTML(dataType){
 function getEntryTableHeaderHTML(){
     return  '<tr>' +
                 '<th id="id">ID</td>' +
-                '<th id="collection">Collections</td>' +
+                '<th id="collection">Collection</td>' +
                 '<th id="sourceNumber">Source Number</td>' +
                 '<th id="location">Location</td>' +
                 '<th id="title">Title</td>' +
@@ -233,19 +235,19 @@ function getTableRowHTML(dataType, data){
 
 function getSourceTableRowHTML(source){
     return '<tr class="sourceRow">' +
-                `<td id="id"><a href="http://localhost:8080/getSource?id=${source.id}" target="_blank">${source.id}</a></td>` +
+                `<td id="id"><a href="${webHostURL}/getSource?id=${source.id}" target="_blank">${source.id}</a></td>` +
                 `<td id="collection">${source.collection}</td>` +
                 `<td id="sourceNumber">${source.sourceNumber}</td>` +
                 `<td id="callNumber">${source.callNumber}</td>` +
                 `<td id="author">${source.author}</td>` +
                 `<td id="title">${source.title}</td>` +
-                `<td id="inscription" contenteditable="false">${source.inscription}</td>` +
-                `<td id="description">${source.description}</td>` +
+                `<td id="inscription" contenteditable="false"><pre>${source.inscription}</pre></td>` +
+                `<td id="description"><pre>${source.description}</pre></td>` +
             '</tr>';
 }
 
 function getEntryTableHTML(entries){
-    return  '<table id="table">' +
+    return  '<table id="entryTable">' +
                 getEntryTableHeaderHTML() +
                 getTableBodyHTML(entries) +                    
             '</table>';
@@ -254,7 +256,7 @@ function getEntryTableHTML(entries){
 
 function getEntryTableRowHTML(entry){
     return '<tr class="entryRow">' +
-                `<td id="id"><a href="http://localhost:8080/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
+                `<td id="id"><a href="${webHostURL}/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
                 `<td id="collection">${entry.collection}</td>` +
                 `<td id="sourceNumber">${entry.sourceNumber}</td>` +
                 `<td id="location">${entry.location}</td>` +
@@ -269,7 +271,7 @@ function getEntryTableRowHTML(entry){
 }
 
 function getCollectionResultTableHTML(collections){    
-    return  '<table id="table">' + 
+    return  '<table id="collectionTable">' + 
                 getCollectionTableHeaderHTML() + 
                 getTableBodyHTML(collections) + 
             '</table>';
@@ -277,7 +279,7 @@ function getCollectionResultTableHTML(collections){
 
 function getCollectionTableRowHTML(collection){
     return '<tr class="collectionRow">' +
-                `<td id="id"><a href="http://localhost:8080/getCollection?id=${collection.id}" target="_blank">${collection.id}</a></td>` +
+                `<td id="id"><a href="${webHostURL}/getCollection?id=${collection.id}" target="_blank">${collection.id}</a></td>` +
                 `<td id="collection">${collection.collection}</td>` +
                 `<td id="description">${collection.description}</td>` +
             '</tr>';        
@@ -460,7 +462,6 @@ function insertResultsPerPageSelector(){
 function getResultsPerPageHTML(curResultsPerPage, resultsPerPageOptions){
     let resultsPerPageHTML = 'Results Per Page: ';
     resultsPerPageOptions.forEach( resultsOption => {
-        console.log(curResultsPerPage + ' ' + resultsOption);
         if(curResultsPerPage == resultsOption){             //if current selection
             resultsPerPageHTML += resultsOption + '  ';     //add only text with no hyperlink
         } else{                                             //otherwise construct text with hyperlink
@@ -491,7 +492,7 @@ function setResultsPerPage(event){
 }
 
 function openEditorModal(event){
-    let cellClicked = event.target;
+    let cellClicked = getCellClicked(event.target);
     if(isEditableCell(cellClicked)){     //if cell clicked is not table header and not the id column
         constructModal(cellClicked);
         openModal();
@@ -500,13 +501,21 @@ function openEditorModal(event){
     }
 }
 
+function getCellClicked(element){
+    if(element.nodeName === 'PRE'){ //some cells have pre-divs within, in which case parent cell must be returned
+        return element.parentElement;
+    }
+    else return element;
+
+}
+
 //makes sure that cell clicked in table is not part of header and is not database ID
 function isEditableCell(cellClicked){
     return cellClicked.nodeName !== "TH" && cellClicked.id !== "id"
 }
 
 function constructModal(cellClicked){
-    let tableRow = cellClicked.parentElement;        //table row element of cell clicked
+    let tableRow = cellClicked.parentElement;
     modalForm.innerHTML = getFormHTML(getTableSelection(), getRowData(tableRow));     
 }
 
@@ -527,7 +536,7 @@ function getFormHTML(dataType, rowData){
 }
 //create form that pre-fills data from table row
 function getEntryFormHTML(entry){
-    return `<label for="Id">Id:</label>` +
+    return `<label for="ID">ID:</label>` +
             `<input type="text" id="id" class="searchBox" name="id" value="${entry.id}" readonly><br>` +
             `<label for="collection">Collection:</label>` +
             `<input type="text" id="collection" class="searchBox" name="collection" value="${entry.collection}" onfocus="this.select()"><br>` +
@@ -555,7 +564,7 @@ function getEntryFormHTML(entry){
 
 //create form that pre-fills data from table row
 function getSourceFormHTML(source){
-    return `<label for="id">Id:</label>` +
+    return `<label for="ID">ID:</label>` +
             `<input type="text" id="id" class="searchBox" name="id" value="${source.id}" readonly><br>` +
             `<label for="collection">Collection:</label>` +
             `<input type="text" id="collection" class="searchBox" name="collection" value="${source.collection}" onfocus="this.select()"><br>` +
@@ -577,7 +586,7 @@ function getSourceFormHTML(source){
 }
 
 function getCollectionFormHTML(collection){
-    return `<label for="Id">Id:</label>` + 
+    return `<label for="ID">ID:</label>` + 
             `<input type="text" id="id" class="searchBox" name="id" value="${collection.id}" readonly><br>` + 
             `<label for="collection">Collection:</label>` + 
             `<input type="text" id="collection" class="searchBox" name="collection" value="${collection.collection}" onfocus="this.select()"><br>` + 
@@ -690,14 +699,14 @@ function deleteTableRow(event, tableRow){
 //view search results page in response to user clicking resultsPageBtn
 function selectResultPage(event){    
     let btnClicked = event.target;      //get button clicked
-    if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
-        searchProperties.curPage++;
-    } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
-        searchProperties.curPage--;
-    } else{                             //if page number was clicked, set page to page number
-    searchProperties.curPage = parseInt(btnClicked.innerText);
-    }
-    if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text                
+    if(btnClicked.nodeName === 'BUTTON'){   //make sure that button was clicked, and not "..." text 
+        if(btnClicked.innerText === 'Next'){    //if next button was clicked, increment page number
+            searchProperties.curPage++;
+        } else if(btnClicked.innerText === 'Previous'){ //if previous button was clicked, decrement page number
+            searchProperties.curPage--;
+        } else{                             //if page number was clicked, set page to page number
+        searchProperties.curPage = parseInt(btnClicked.innerText);
+        }              
         searchResultsTable.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
         insertPageButtons(searchProperties);
         insertResultsMessage();

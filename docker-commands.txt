@@ -1,0 +1,29 @@
+C:\Users\Andrew\Documents\Computer Science\STS Workspace\MusicEntriesWeb
+
+docker build . -t music-entries-web
+
+docker run -p 8080:8080 --name mew -d mew
+docker run -p 8080:8080 --name mew --link mew-mysql:mysql -d mew
+
+xx docker run --name test-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -e MYSQL_USER=2h -e MYSQL_PASSWORD=password -p 3367:3306 -d mysql:8 xx
+docker run --name mew-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=collections -e MYSQL_USER=2h -e MYSQL_PASSWORD=password -d mysql:8
+
+docker exec test-mysql /usr/bin/mysqldump -u 2h --password=password --no-tablespaces test>db-dump.sql
+
+mysqldump [specified_options] name_of_database [name_of_table ...] > nameOfBackupFile.sql
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>
+mysqldump -uroot -ppassword --databases collections_2 > C:\Users\Andrew\Documents\sql\backup-collections-1.sql
+
+
+spring.datasource.url=jdbc:mysql://mew-mysql:3306/collections
+spring.datasource.username=2h
+spring.datasource.password=password
+
+use AWS secret access key to login
+aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin  902412163876.dkr.ecr.us-east-2.amazonaws.com
+docker tag music-entries-web:latest 902412163876.dkr.ecr.us-east-2.amazonaws.com/music-entries-web:latest
+docker push 902412163876.dkr.ecr.ecr.us-east-2.amazonaws.com/music-entries-web:latest
+
+
+   

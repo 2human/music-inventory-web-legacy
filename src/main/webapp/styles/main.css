@@ -3,30 +3,30 @@
 
 body {
     font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
-    font-size: 12px;
+    font-size: .75em;
     width: 1500px;
-    margin: 0 auto 0;
+    padding: 0 .5em 0;
 	background-color: white;
 }
 
-header{
+/* header{
 	margin-top: 2em;
 	margin-bottom: 2em;
 	margin-left: auto;
 	margin-right: auto;
-	width: 500px;
+	width: 15em;
 	border: 2px solid black;
-	border-radius: 4px;
+	border-radius: .25em;
 	padding-bottom: 1em;
 	padding-top: 1em;
 	text-align: center;
-}
+} */
 
 h1 {
     font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
     font-size: 1.75em;
     margin-left: 0px;
-    margin-top: 30px;
+    margin-top: 1.5em;
     margin-bottom: 0.5em;
     color: #195383;
 }
@@ -35,36 +35,11 @@ h1 {
 	border-radius: 5px;
 }
 
-/* Table  */
-th{
-	text-align: left;	
-	border-bottom: .1px solid black;
-	
-}
-
-td{
-	vertical-align: top;
-	padding: .25em;
-}
-
-table{
-	font-size: 12px;
-	white-space: pre-line;
-	width: 100% ;
-	border-collapse: collapse;
-	border-top: .1px solid black;
-}
-
-
-tr:nth-child(even){
-	background-color: #EBEBEB;
-}
-
 /* The Modal (background) */
  .modal {
 	display: none; /* Hidden by default */
 	position: fixed; /* Stay in place */
-	padding-top: 50px;
+	padding-top: 4.25em;
 	z-index: 1; /* Sit on top */
 	left: 0;
 	top: 0;
@@ -79,7 +54,7 @@ tr:nth-child(even){
   .modal-content {
 	background-color: #fefefe;
 	margin: 3% auto; /* 15% from the top and centered */
-	padding: 20px;
+	padding: 1.25em;
 	border: 1px solid #888;
 	width: 67%; /* Could be more or less, depending on screen size */
   }
@@ -88,7 +63,7 @@ tr:nth-child(even){
   .close {
 	color: #aaa;
 	float: right;
-	font-size: 28px;
+	font-size: 1.75px;
 	font-weight: bold;
   }
   
@@ -154,6 +129,10 @@ button {
 	vertical-align: middle;
  }
 
+ .pageBtns{
+	 min-width: 2em;
+ }
+
  /*page buttons that are selected and disabled */
  button:disabled,
  button[disabled]{
@@ -161,5 +140,5 @@ button {
  }
 
  #resultsPerPage{
-	 font-size: 14px;
+	 font-size: 1.15em;
  }

@@ -1,0 +1,47 @@
+Steps:
+1. Create Ubuntu EC2 instance. Make open to all traffic
+2. Copy URL from "connect" starting at "ubuntu..."
+3. In Putty, paste into Host Name, and then go to SSH, Auth, and select PPK file. Connect.
+
+ubuntu@ec2-3-144-32-160.us-east-2.compute.amazonaws.com
+
+4. Run the following commands: (ignore errors)
+
+sudo apt-get update
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+apt-cache madison docker-ce
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+sudo apt install docker.io
+
+sudo apt install docker-compose
+
+5. Open Filezilla, go to Edit > Setttings > SFTP; add Putty Key file
+ 
+6. Enter same path to Host: and then click connect
+
+ubuntu@ec2-3-144-32-160.us-east-2.compute.amazonaws.com
+
+7. Paste project into Ubuntu folder. Do not past it to home, as this causes error.
+
+8. Run docker commands, deploy
+
+9. To install Maven, run the following commands:
+ 
+sudo apt update
+sudo apt install maven
+
+git commit -m "Integrated ability to handle pre-parsed files"
+git push -u origin master
