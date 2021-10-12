@@ -52,25 +52,25 @@ tr:nth-child(even){
     width:3%;
 }
 .sourcesTable td:nth-child(2){	/* Collection column  */
-    width:10%;
+    width:9%;
 }
 .sourcesTable td:nth-child(3){	/* Source Number column  */
-    width:3%;
+    width:3%; 
 }
 .sourcesTable td:nth-child(4){	/* Call Number column  */
-    width:10%;
+    width:9%;
 }
 .sourcesTable td:nth-child(5){	/* Author column  */	
-    width:10%;
+    width:9%;
 }
 .sourcesTable td:nth-child(6){	/* Title column  */
-    width:10%;
+    width:9%;
 }
 .sourcesTable td:nth-child(7){	/* Inscription column  */
-    width:26%;
+    width:28%;
 }
 .sourcesTable td:nth-child(8){	/* Description column  */
-    width:28%;	
+    width:30%;	
 }
 
 /* Entries results columns */

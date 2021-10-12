@@ -36,6 +36,9 @@ public class Entry {
 	@Column(name="entry_is_secular")
 	private String isSecular;
 	
+	private static final String[] FIELD_LIST = {"id", "collection", "sourceNumber", "location", "title", "credit",
+                                                "vocalPart", "key", "melodicIncipit", "textIncipit", "isSecular"};
+	
 	public Entry() {
 		
 	}
@@ -133,6 +136,10 @@ public class Entry {
 	}
 	public void setIsSecular(String isSecular) {
 		this.isSecular = isSecular;
+	}
+	
+	public String[] getFieldList() {
+		return FIELD_LIST;
 	}
 
 

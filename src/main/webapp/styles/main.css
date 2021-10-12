@@ -31,9 +31,7 @@ h1 {
     color: #195383;
 }
 
-.searchBox{
-	border-radius: 5px;
-}
+
 
 /* The Modal (background) */
  .modal {
@@ -67,8 +65,7 @@ h1 {
 	font-weight: bold;
   }
   
-  .close:hover,
-  .close:focus {
+.close:hover, .close:focus {
 	color: black;
 	text-decoration: none;
 	cursor: pointer;

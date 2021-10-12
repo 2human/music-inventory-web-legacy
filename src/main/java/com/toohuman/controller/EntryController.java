@@ -29,7 +29,6 @@ public class EntryController {
 	@Autowired
 	EntryRepo repo;
 	
-	
 	//get all entries
 	@RequestMapping(method = RequestMethod.GET, value="/entries")
 	public List<Entry> getAll(){
@@ -103,87 +102,196 @@ public class EntryController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table"})
 	public Set<Entry> search(@RequestParam String searchText, @RequestParam String table) {
+		String[] keywords = searchText.split(" ");
 		//set that will contain results found
-		Set<Entry> entrySet = new HashSet<Entry>();		
-
-		//search all fields to determine if there are any matches, 
+		Set<Entry> resultSet = getInitialResultSet(keywords[0]);	//query database for initial results
+		Set<Entry> oldResultSet = new HashSet<Entry>();	
+		
+		//iterate through each keyword, and filter out results that do not contain keyword
+		for(int i = 1; i < keywords.length; i++) {					
+			oldResultSet = resultSet;
+			resultSet = getFilteredResultSet(keywords[i], oldResultSet);
+		}		
+		return resultSet;
+	}
+	
+	//get initial result set by querying ALL fields within database
+	private Set<Entry> getInitialResultSet(String keyword){
+		Set<Entry> resultSet = new HashSet<Entry>();		//search all fields to determine if there are any matches, 
 		//adding them to a set so that duplicates are not retained
 		try {
-			entrySet.add(repo.findById(Integer.parseInt(searchText)).orElse(new Entry()));
+			resultSet.add(repo.findById(Integer.parseInt(keyword)).orElse(new Entry()));
 			} catch(Exception e) {
 				System.out.println("NaN entered as ID");
 			}
-		entrySet.addAll(repo.findByCollection(searchText));
+		resultSet.addAll(repo.findByCollection(keyword));
 		try {
-			entrySet.addAll(repo.findBySourceNumber(Integer.parseInt(searchText)));
+			resultSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
 		} catch(Exception e) {
 			System.out.println("NaN entered as sourceNumber");
 		}
-		entrySet.addAll(repo.findByLocation(searchText));
-		entrySet.addAll(repo.findByTitle(searchText));
-		entrySet.addAll(repo.findByCredit(searchText));
-		entrySet.addAll(repo.findByVocalPart(searchText));
-		entrySet.addAll(repo.findByKey(searchText));
-		entrySet.addAll(repo.findByMelodicIncipit(searchText));
-		entrySet.addAll(repo.findByTextIncipit(searchText));
-		entrySet.addAll(repo.findByIsSecular(searchText));
+		resultSet.addAll(repo.findByLocation(keyword));
+		resultSet.addAll(repo.findByTitle(keyword));
+		resultSet.addAll(repo.findByCredit(keyword));
+		resultSet.addAll(repo.findByVocalPart(keyword));
+		resultSet.addAll(repo.findByKey(keyword));
+		resultSet.addAll(repo.findByMelodicIncipit(keyword));
+		resultSet.addAll(repo.findByTextIncipit(keyword));
+		resultSet.addAll(repo.findByIsSecular(keyword));
 		
-		return entrySet;
+		return resultSet;
+	}
+	
+	//get filtered result set by filtering existing set, checking all fields
+	private Set<Entry> getFilteredResultSet(String keyword, Set<Entry> curResultSet){
+		Set <Entry> filteredSet = new HashSet<Entry>();
+		//check each current result, adding only those containing current keyword to filtered set
+		for(Entry curResult: curResultSet) {
+			try {
+				if(curResult.getId() == Integer.parseInt(keyword)) filteredSet.add(curResult);
+//				resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
+				} catch(Exception e) {
+					System.out.println("NaN entered as ID");
+				}
+			if(curResult.getCollection().indexOf(keyword) != -1) filteredSet.add(curResult);
+			try {
+				if(curResult.getSourceNumber() == Integer.parseInt(keyword)) filteredSet.add(curResult);
+			} catch(Exception e) {
+				System.out.println("NaN entered as sourceNumber");
+			}
+			if(curResult.getLocation().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getTitle().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getCredit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getVocalPart().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getKey().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getMelodicIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getTextIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getIsSecular().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+		}
+		return filteredSet;
 	}
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table", "field"})
 	public Set<Entry> search(@RequestParam String searchText, @RequestParam String table, @RequestParam String field) {
 		List<String> fields = new ArrayList<String>(Arrays.asList(field.split(",")));
-		Set<Entry> entrySet = new HashSet<Entry>();
-		System.out.println(field);
-		for(String f: fields) {
-			switch(f) {
+		String[] keywords = searchText.split(" ");
+		Set<Entry> resultSet = getInitialResultSet(keywords[0], fields);
+		Set<Entry> oldResultSet = new HashSet<Entry>();	
+		for(int i = 1; i < keywords.length; i++) {
+			oldResultSet = resultSet;
+			resultSet = getFilteredResultSet(keywords[i], oldResultSet, fields);			
+		}
+		return resultSet;		
+	}
+	
+	//get initial result set by querying SELECTED fields within database
+	private Set<Entry> getInitialResultSet(String keyword, List<String> fields){
+		Set<Entry> resultSet = new HashSet<Entry>();		
+		for(String field: fields) {
+			switch(field) {
 				case "id":			
 					try {
-						entrySet.add(repo.findById(Integer.parseInt(searchText)).orElse(new Entry()));
+						resultSet.add(repo.findById(Integer.parseInt(keyword)).orElse(new Entry()));
 						} catch(Exception e) {
 							System.out.println("NaN entered as ID");
 						}
 					break;
 				case "collection":
-					entrySet.addAll(repo.findByCollection(searchText));
+					resultSet.addAll(repo.findByCollection(keyword));
 					break;
 				case "sourceNumber":
 					try {
-						entrySet.addAll(repo.findBySourceNumber(Integer.parseInt(searchText)));
+						resultSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
 					} catch(Exception e) {
 						System.out.println("NaN entered as sourceNumber");
 					}
 					break;
 				case "location":
-					entrySet.addAll(repo.findByLocation(searchText));
+					resultSet.addAll(repo.findByLocation(keyword));
 					break;
 				case "title":
-					entrySet.addAll(repo.findByTitle(searchText));
+					resultSet.addAll(repo.findByTitle(keyword));
 					break;
 				case "credit":
-					entrySet.addAll(repo.findByCredit(searchText));
+					resultSet.addAll(repo.findByCredit(keyword));
 					break;
 				case "vocalPart":
-					entrySet.addAll(repo.findByVocalPart(searchText));
+					resultSet.addAll(repo.findByVocalPart(keyword));
 					break;
 				case "key":
-					entrySet.addAll(repo.findByKey(searchText));
+					resultSet.addAll(repo.findByKey(keyword));
 					break;
 				case "melodicIncipit":
-					entrySet.addAll(repo.findByMelodicIncipit(searchText));
+					resultSet.addAll(repo.findByMelodicIncipit(keyword));
 					break;
 				case "textIncipit":
-					entrySet.addAll(repo.findByTextIncipit(searchText));
+					resultSet.addAll(repo.findByTextIncipit(keyword));
 					break;
 				case "isSecular":
-					entrySet.addAll(repo.findByIsSecular(searchText));
+					resultSet.addAll(repo.findByIsSecular(keyword));
 					break;
 			}
 		}
-		return entrySet;
+		return resultSet;
 	}
+	
+	//get filtered result set by filtering existing set, checking all fields
+	private Set<Entry> getFilteredResultSet(String keyword, Set<Entry> curResultSet, List<String> fields){
+		Set<Entry> filteredSet = new HashSet<Entry>();
+		for(Entry curResult: curResultSet) {
+			for(String field: fields) {
+				switch(field) {
+					case "id":	
+						try {
+							if(curResult.getId() == Integer.parseInt(keyword)) filteredSet.add(curResult);
+		//					resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
+							} catch(Exception e) {
+								System.out.println("NaN entered as ID");
+							}
+						break;
+					case "collection":
+						if(curResult.getCollection().indexOf(keyword) != -1) filteredSet.add(curResult);
+						break;
+					case "sourceNumber":
+						try {
+							if(curResult.getSourceNumber() == Integer.parseInt(keyword)) filteredSet.add(curResult);
+						} catch(Exception e) {
+							System.out.println("NaN entered as sourceNumber");
+						}
+						break;
+					case "location":
+						if(curResult.getLocation().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "title":
+						if(curResult.getTitle().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "credit":
+						if(curResult.getCredit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "vocalPart":
+						if(curResult.getVocalPart().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "key":
+						if(curResult.getKey().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "melodicIncipit":
+						if(curResult.getMelodicIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "textIncipit":
+						if(curResult.getTextIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+					case "isSecular":
+						if(curResult.getIsSecular().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
+				}
+			}
+		}
+
+		return filteredSet;
+	}
+	
+	
 	
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping(value = "/createEntry", params = {"collection", "sourceNumber", "location", "title", "credit", "vocalPart",
