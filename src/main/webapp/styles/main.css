@@ -24,8 +24,8 @@ body {
 
 h1 {
     font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
+    margin-left: 1em;
     font-size: 1.75em;
-    margin-left: 0px;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
     color: #195383;

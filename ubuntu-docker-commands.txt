@@ -43,5 +43,5 @@ ubuntu@ec2-3-144-32-160.us-east-2.compute.amazonaws.com
 sudo apt update
 sudo apt install maven
 
-git commit -m "Integrated ability to handle pre-parsed files"
+git commit -a -m "Integrated ability to handle pre-parsed files"
 git push -u origin master

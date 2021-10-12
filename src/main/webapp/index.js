@@ -83,7 +83,8 @@ function getTableSelection(){
 
 function initializeEventListeners(){
     //event listener that generates fieldSelect div containing buttons corresponding to fields within table
-    tableButtons.addEventListener("click", insertFieldCheckboxes);;
+    tableButtons.addEventListener("click", () => {  closeAdvancedSearch();
+                                                    insertFieldCheckboxes();});
     //event listener / handler for submitting search 
     searchBtn.addEventListener("click", executeSearch);
     //create event listener for buttons
@@ -95,54 +96,6 @@ function initializeEventListeners(){
     resultsPerPageDiv.addEventListener("click", event => setResultsPerPage(event, searchProperties.resultsPerPageOptions));
     searchResultsTable.ondblclick = openEditorModal;
     advancedSearchToggle.addEventListener("click", toggleAdvancedSearch)
-}
-
-function toggleAdvancedSearch(event){
-    if(event.target.className === 'downArrow'){
-        openAdvancedSearch();
-    } else{
-        closeAdvancedSearch();
-    }
-}
-
-function openAdvancedSearch(){
-    advancedSearchToggle.classList.remove('downArrow');
-    advancedSearchToggle.classList.add('upArrow');
-    fieldDiv.innerHTML = '';
-    advancedSearchInput.innerHTML = getAdvancedSearchHTML();
-}
-
-function getAdvancedSearchHTML(){
-    return '<label for="Id">Id:</label>' +
-            '<input type="text" id="id" name="id" class="shortText">' +
-            '<label for="sourceNumber">Source Number:</label>' +
-            '<input type="text" id="sourceNumber" name="sourceNumber" class="shortText">' +
-            '<label for="location">Location:</label>' +
-            '<input type="text" id="location" name="location" class="shortText"><br>' +
-            '<label for="collection">Collection:</label>' +
-            '<input type="text" id="collection" name="collection" class="longText">' +
-            '<label for="title">Title:</label>' +
-            '<input type="text" id="title" name="title" class="longText"><br>' +
-            '<label for="credit">Credit:</label>' +
-            '<input type="text" id="credit" class="longText">' +
-            '<label for="vocalPart">Vocal Part:</label>' +
-            '<input type="text" id="vocalPart" name="vocalPart" class="longText"><br>' +
-            '<label for="key">Key:</label>' +
-            '<input type="text" id="key" name="key" class="longText">' +
-            '<label for="melodicIncipit">Melodic Incipit:</label>' +
-            '<input type="text" id="melodicIncipit" name="melodicIncipit" class="longText">' +
-            'Notes Only<a href="javascript:void(0)">(?)</a></>:     <input type="checkbox" id="notesOnly" value="notesOnly"><br>' +
-            '<label for="textIncipit">Text Incipit:</label>' +
-            '<input type="text" id="textIncipit" name="textIncipit" class="longText">' +
-            '<label for="isSecular">Secular:</label>' +
-            '<input type="text" id="isSecular" name="isSecular" class="longText">';
-}
-
-function closeAdvancedSearch(){
-    advancedSearchToggle.classList.remove('upArrow');
-    advancedSearchToggle.classList.add('downArrow');    
-    advancedSearchInput.innerHTML = '';
-    fieldDiv.innerHTML = getFieldCheckboxesHTML(getTableSelection());
 }
 
 function executeSearch(event){  
@@ -763,4 +716,52 @@ function selectResultPage(event){
         insertPageButtons(searchProperties);
         insertResultsMessage();
     }
+}
+
+function toggleAdvancedSearch(event){
+    if(event.target.className === 'downArrow'){
+        if(getTableSelection() === 'entries') openAdvancedSearch();
+    } else{
+        closeAdvancedSearch();
+        insertFieldCheckboxes(getTableSelection());
+    }
+}
+
+function openAdvancedSearch(){
+    advancedSearchToggle.classList.remove('downArrow');
+    advancedSearchToggle.classList.add('upArrow');
+    fieldDiv.innerHTML = '';
+    advancedSearchInput.innerHTML = getAdvancedSearchHTML();
+}
+
+function getAdvancedSearchHTML(){
+    return '<label for="Id">Id:</label>' +
+            '<input type="text" id="id" name="id" class="shortText">' +
+            '<label for="sourceNumber">Source Number:</label>' +
+            '<input type="text" id="sourceNumber" name="sourceNumber" class="shortText">' +
+            '<label for="location">Location:</label>' +
+            '<input type="text" id="location" name="location" class="shortText"><br>' +
+            '<label for="collection">Collection:</label>' +
+            '<input type="text" id="collection" name="collection" class="longText">' +
+            '<label for="title">Title:</label>' +
+            '<input type="text" id="title" name="title" class="longText"><br>' +
+            '<label for="credit">Credit:</label>' +
+            '<input type="text" id="credit"  name="credit" class="longText">' +
+            '<label for="vocalPart">Vocal Part:</label>' +
+            '<input type="text" id="vocalPart" name="vocalPart" class="longText"><br>' +
+            '<label for="key">Key:</label>' +
+            '<input type="text" id="key" name="key" class="longText">' +
+            '<label for="melodicIncipit">Melodic Incipit:</label>' +
+            '<input type="text" id="melodicIncipit" name="melodicIncipit" class="longText">' +
+            'Notes Only<a href="javascript:void(0)">(?)</a></>:     <input type="checkbox" id="notesOnly" value="notesOnly"><br>' +
+            '<label for="textIncipit">Text Incipit:</label>' +
+            '<input type="text" id="textIncipit" name="textIncipit" class="longText">' +
+            '<label for="isSecular">Secular:</label>' +
+            '<input type="text" id="isSecular" name="isSecular" class="longText">';
+}
+
+function closeAdvancedSearch(){
+    advancedSearchToggle.classList.remove('upArrow');
+    advancedSearchToggle.classList.add('downArrow');    
+    advancedSearchInput.innerHTML = '';
 }
