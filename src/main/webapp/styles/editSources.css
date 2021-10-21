@@ -8,6 +8,7 @@ label{
     width: 150px;
     display: inline-block;
     margin-bottom: 1em;
+	vertical-align: top;
 }
 
 input[type=text]{
@@ -62,7 +63,6 @@ input[type=text], textarea{
 	border-radius: 7px;
 }
 
-/*column 1 of show sources table, where labels are*/
-.c1{
-    float: top;
+td:nth-child(1){
+    vertical-align: top;	
 }

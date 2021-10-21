@@ -21,8 +21,8 @@ public interface EntryRepo extends JpaRepository<Entry, Integer> {
 	@Query("from Entry where title LIKE %?1%")
 	List<Entry> findByTitle(String title);
 
-	@Query("from Entry where credit LIKE %?1%")
-	List<Entry> findByCredit(String credit);
+	@Query("from Entry where composer LIKE %?1%")
+	List<Entry> findByComposer(String composer);
 
 	@Query("from Entry where vocalPart LIKE %?1%")
 	List<Entry> findByVocalPart(String vocalPart);

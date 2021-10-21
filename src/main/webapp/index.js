@@ -5,7 +5,8 @@
 //TODO change from id's to classes in html
 
 const webHostURL = "http://localhost:8080";
-// const webHostURL = "http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080";
+// const webHostURL = "http://ec2-3-144-221-89.us-east-2.compute.amazonaws.com";
+
 
 const tableButtons = document.getElementById('tableSelect');    
 const fieldDiv = document.getElementById('fieldSelect');
@@ -13,7 +14,7 @@ const searchBtn = document.getElementById('submitSearch');
 const modal = document.getElementById("myModal");     
 const pageBtnDiv = document.getElementById('pageBtns');
 const pageBtnDivBot = document.getElementById('pageBtnsBot');
-const searchResultsTable = document.getElementById('searchResultsTable');
+const searchResultsDiv = document.getElementById('searchResultsDiv');
 const searchForm = document.getElementById('search');
 const modalForm = document.getElementById("modalForm");
 const resultsMessage = document.getElementById("resultsMsg");     
@@ -62,7 +63,7 @@ function getEntryFieldsCheckboxesHTML(){
                     '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
                     '<input type="checkbox" name="field" id="location" value="location"> Location ' +
                     '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-                    '<input type="checkbox" name="field" id="credit" value="credit"> Credit ' +
+                    '<input type="checkbox" name="field" id="composer" value="composer"> Composer ' +
                     '<input type="checkbox" name="field" id="vocalPart" value="vocalPart"> Vocal Part ' +
                     '<input type="checkbox" name="field" id="key" value="key"> Key ' +
                     '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
@@ -94,7 +95,7 @@ function initializeEventListeners(){
         scrollToTop(event);
     });
     resultsPerPageDiv.addEventListener("click", event => setResultsPerPage(event, searchProperties.resultsPerPageOptions));
-    searchResultsTable.ondblclick = openEditorModal;
+    searchResultsDiv.ondblclick = openEditorModal;
     advancedSearchToggle.addEventListener("click", toggleAdvancedSearch)
 }
 
@@ -155,12 +156,12 @@ function initializeSearchProperties(){
 }
 
 function insertSearchResults(){    
-    searchResultsTable.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
+    searchResultsDiv.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
 }
 
 function getResultTableHTML(dataType, data){
     if(!searchResultsData[0]) return '';    //return empty string if data is empty
-    return  `<table class=${dataType}Table id="table">` + 
+    return  `<table id=${dataType}Table>` + 
                 getTableHeaderHTML(dataType) +
                 getTableBodyHTML(dataType, data) +
             '</table>';
@@ -184,7 +185,7 @@ function getEntryTableHeaderHTML(){
                 '<th id="sourceNumber">Source Number</td>' +
                 '<th id="location">Location</td>' +
                 '<th id="title">Title</td>' +
-                '<th id="credit">Credit</td>' +
+                '<th id="composer">Composer</td>' +
                 '<th id="vocalPart">Vocal Part</td>' +
                 '<th id="key">Key</td>' +
                 '<th id="melodicIncipit">Melodic Incipit</td>' +
@@ -266,12 +267,14 @@ function getEntryTableRowHTML(entry){
                 `<td id="sourceNumber">${entry.sourceNumber}</td>` +
                 `<td id="location">${entry.location}</td>` +
                 `<td id="title">${entry.title}</td>` +
-                `<td id="credit">${entry.credit}</td>` +
+                `<td id="composer">${entry.composer}</td>` +
                 `<td id="vocalPart">${entry.vocalPart}</td>` +
                 `<td id="key">${entry.key}</td>` +
                 `<td id="melodicIncipit">${entry.melodicIncipit}</td>` +
                 `<td id="textIncipit">${entry.textIncipit}</td>` +
-                `<td id="isSecular">${entry.isSecular}</td>` +
+                `<td class="isSecularCol">` +
+                   `<input type="checkbox" class="isSecularData" ${entry.isSecular === 'true' ? "checked" : ""} disabled>` + 
+                `</td>` +
             '</tr>'; 
 }
 
@@ -489,7 +492,7 @@ function setResultsPerPage(event){
             searchProperties.resultsPerPage = resultsPerPage;
             searchProperties.totalPages = Math.floor(searchProperties.totalResults / searchProperties.resultsPerPage + 1);
         }
-        searchResultsTable.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
+        searchResultsDiv.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
         insertPageButtons(searchProperties);
         insertResultsMessage();
         insertResultsPerPageSelector();
@@ -551,8 +554,8 @@ function getEntryFormHTML(entry){
             `<input type="text" id="location" class="searchBox" name="location" value="${entry.location}" onfocus="this.select()"><br>` +
             `<label for="title">Title:</label>` +
             `<input type="text" id="title" class="searchBox" name="title" value="${entry.title}" onfocus="this.select()"><br>` +
-            `<label for="credit">Credit:</label>` +
-            `<input type="text" id="credit" class="searchBox" name="credit" value="${entry.credit}" onfocus="this.select()"><br>` +
+            `<label for="composer">Composer:</label>` +
+            `<input type="text" id="composer" class="searchBox" name="composer" value="${entry.composer}" onfocus="this.select()"><br>` +
             `<label for="vocalPart">Vocal Part:</label>` +
             `<input type="text" id="vocalPart" class="searchBox" name="vocalPart" value="${entry.vocalPart}" onfocus="this.select()"><br>` +
             `<label for="key">Key:</label>` +
@@ -712,7 +715,7 @@ function selectResultPage(event){
         } else{                             //if page number was clicked, set page to page number
         searchProperties.curPage = parseInt(btnClicked.innerText);
         }              
-        searchResultsTable.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
+        searchResultsDiv.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
         insertPageButtons(searchProperties);
         insertResultsMessage();
     }
@@ -720,7 +723,7 @@ function selectResultPage(event){
 
 function toggleAdvancedSearch(event){
     if(event.target.className === 'downArrow'){
-        if(getTableSelection() === 'entries') openAdvancedSearch();
+        openAdvancedSearch();
     } else{
         closeAdvancedSearch();
         insertFieldCheckboxes(getTableSelection());
@@ -731,33 +734,92 @@ function openAdvancedSearch(){
     advancedSearchToggle.classList.remove('downArrow');
     advancedSearchToggle.classList.add('upArrow');
     fieldDiv.innerHTML = '';
-    advancedSearchInput.innerHTML = getAdvancedSearchHTML();
+    advancedSearchInput.innerHTML = getAdvancedSearchHTML(getTableSelection());
 }
 
-function getAdvancedSearchHTML(){
+function getAdvancedSearchHTML(dataType){
+    switch(dataType){
+        case "sources":
+            return getAdvancedSearchHTMLSources();
+        case "entries":
+            return getAdvancedSearchHTMLEntries();      
+        case "collections":
+            return getAdvancedSearchHTMLCollections();      
+    }
+}
+
+
+function getAdvancedSearchHTMLEntries(){
     return '<label for="Id">Id:</label>' +
             '<input type="text" id="id" name="id" class="shortText">' +
+            
             '<label for="sourceNumber">Source Number:</label>' +
             '<input type="text" id="sourceNumber" name="sourceNumber" class="shortText">' +
+            
             '<label for="location">Location:</label>' +
             '<input type="text" id="location" name="location" class="shortText"><br>' +
+            
             '<label for="collection">Collection:</label>' +
             '<input type="text" id="collection" name="collection" class="longText">' +
+            
             '<label for="title">Title:</label>' +
             '<input type="text" id="title" name="title" class="longText"><br>' +
-            '<label for="credit">Credit:</label>' +
-            '<input type="text" id="credit"  name="credit" class="longText">' +
+            
+            '<label for="composer">Composer:</label>' +
+            '<input type="text" id="composer"  name="composer" class="longText">' +
+            
             '<label for="vocalPart">Vocal Part:</label>' +
             '<input type="text" id="vocalPart" name="vocalPart" class="longText"><br>' +
+            
             '<label for="key">Key:</label>' +
             '<input type="text" id="key" name="key" class="longText">' +
+            
             '<label for="melodicIncipit">Melodic Incipit:</label>' +
             '<input type="text" id="melodicIncipit" name="melodicIncipit" class="longText">' +
             'Notes Only<a href="javascript:void(0)">(?)</a></>:     <input type="checkbox" id="notesOnly" value="notesOnly"><br>' +
+            
             '<label for="textIncipit">Text Incipit:</label>' +
             '<input type="text" id="textIncipit" name="textIncipit" class="longText">' +
+            
             '<label for="isSecular">Secular:</label>' +
             '<input type="text" id="isSecular" name="isSecular" class="longText">';
+}
+
+function getAdvancedSearchHTMLSources(){
+    return '<label for="Id">Id:</label>' +
+            '<input type="text" id="id" name="id" class="shortText">' +
+            
+            '<label for="sourceNumber">Source Number:</label>' +
+            '<input type="text" id="sourceNumber" name="sourceNumber" class="shortText"><br>' +
+            
+            '<label for="collection">Collection:</label>' +
+            '<input type="text" id="collection" name="collection" class="longText">' +
+            
+            '<label for="callNumber">Call Number:</label>' +
+            '<input type="text" id="callNumber" name="callNumber" class="longText"><br>' +
+            
+            '<label for="author">Author:</label>' +
+            '<input type="text" id="author"  name="author" class="longText">' +
+            
+            '<label for="title">Title:</label>' +
+            '<input type="text" id="title" name="title" class="longText"><br>' +
+            
+            '<label for="inscription">Inscription:</label>' +
+            '<input type="text" id="inscription" name="inscription" class="longText">' +
+            
+            '<label for="description">Description:</label>' +
+            '<input type="text" id="description" name="description" class="longText">';
+}
+
+function getAdvancedSearchHTMLCollections(){
+    return '<label for="Id">Id:</label>' +
+            '<input type="text" id="id" name="id" class="shortText"><br>' +
+            
+            '<label for="collection">Collection:</label>' +
+            '<input type="text" id="collection" name="collection" class="longText"><br>' +
+            
+            '<label for="description">Description:</label>' +
+            '<input type="text" id="description" name="description" class="longText"><br>';
 }
 
 function closeAdvancedSearch(){

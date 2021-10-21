@@ -3,7 +3,8 @@ Steps:
 2. Copy URL from "connect" starting at "ubuntu..."
 3. In Putty, paste into Host Name, and then go to SSH, Auth, and select PPK file. Connect.
 
-ubuntu@ec2-3-144-32-160.us-east-2.compute.amazonaws.com
+
+ubuntu@ec2-3-144-221-89.us-east-2.compute.amazonaws.com
 
 4. Run the following commands: (ignore errors)
 

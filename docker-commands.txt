@@ -5,6 +5,11 @@ docker build . -t music-entries-web
 docker run -p 8080:8080 --name mew -d mew
 docker run -p 8080:8080 --name mew --link mew-mysql:mysql -d mew
 
+docker run -p 80:80 --name mew -d mew --restart=always
+docker update --restart=always
+docker update --restart=on-failure
+
+
 xx docker run --name test-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -e MYSQL_USER=2h -e MYSQL_PASSWORD=password -p 3367:3306 -d mysql:8 xx
 docker run --name mew-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=collections -e MYSQL_USER=2h -e MYSQL_PASSWORD=password -d mysql:8
 
@@ -13,7 +18,7 @@ docker exec test-mysql /usr/bin/mysqldump -u 2h --password=password --no-tablesp
 mysqldump [specified_options] name_of_database [name_of_table ...] > nameOfBackupFile.sql
 
 C:\Program Files\MySQL\MySQL Server 8.0\bin>
-mysqldump -uroot -ppassword --databases collections_2 > C:\Users\Andrew\Documents\sql\backup-collections-1.sql
+mysqldump -uroot -ppassword --databases testcollections > C:\Users\Andrew\Documents\sql\schema-mysql.sql
 
 
 spring.datasource.url=jdbc:mysql://mew-mysql:3306/collections
@@ -25,5 +30,11 @@ aws ecr get-login-password --region us-east-2 | docker login --username AWS --pa
 docker tag music-entries-web:latest 902412163876.dkr.ecr.us-east-2.amazonaws.com/music-entries-web:latest
 docker push 902412163876.dkr.ecr.ecr.us-east-2.amazonaws.com/music-entries-web:latest
 
+
+changing boolean to tinyint
+
+UPDATE entries
+SET entry_is_secular = 1
+WHERE entry_is_secular = "true"
 
    

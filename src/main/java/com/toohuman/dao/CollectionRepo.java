@@ -14,4 +14,5 @@ public interface CollectionRepo extends JpaRepository<Collection, Integer>{
 
 	@Query("from Collection where description LIKE %?1%")
 	List<Collection> findByDescription(String description);
+	
 }

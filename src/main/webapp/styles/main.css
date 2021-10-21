@@ -4,7 +4,8 @@
 body {
     font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
     font-size: .75em;
-    width: 1500px;
+    min-width: 125em;
+	max-width: 200em;
     padding: 0 .5em 0;
 	background-color: white;
 }
@@ -41,8 +42,8 @@ h1 {
 	z-index: 1; /* Sit on top */
 	left: 0;
 	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
+	width: 100%;
+	height: 100%; 
 	overflow: auto; /* Enable scroll if needed */
 	background-color: rgb(0,0,0); /* Fallback color */
 	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
@@ -54,7 +55,7 @@ h1 {
 	margin: 3% auto; /* 15% from the top and centered */
 	padding: 1.25em;
 	border: 1px solid #888;
-	width: 67%; /* Could be more or less, depending on screen size */
+	width: 80em;
   }
   
   /* The Close Button */
@@ -72,17 +73,18 @@ h1 {
   } 
 
 .modal label{
-    width: 150px;
+    width: 9em;
     display: inline-block; /*inline elements are only as wide as need be, so necessary change*/
     margin-bottom: 1em;
+	vertical-align: top;
 }
 
 .modal input[type=text]{
-    width: 750px;
+    width: 60em;
 }
 
 .modal textarea{    
-    width: 750px;
+    width: 60em;
     resize: none;
 }
 
@@ -128,6 +130,10 @@ button {
 
  .pageBtns{
 	 min-width: 2em;
+ }
+
+ #pageBtnsBot{
+	 margin-bottom: 1em;
  }
 
  /*page buttons that are selected and disabled */

@@ -7,41 +7,41 @@
     <title>View Source</title>
 </head>
 <body>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/getSource(id=${sources.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/editSource(id=${sources.getId()})}"><button>Edit Mode</button></a>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/getSource(id=${sources.getId() + 1})}"><button>Next</button></a>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080}"><button>Home</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org/getSource(id=${sources.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org/editSource(id=${sources.getId()})}"><button>Edit Mode</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org/getSource(id=${sources.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a>
     <table>
         <tr>
-            <td class="c1">Id:</td>
+            <td>Id:</td>
             <td th:text="${sources.getId()}"></td>
         </tr>
         <tr>
-            <td class="c1">Collection:</td>
+            <td>Collection:</td>
             <td th:text="${sources.getCollection()}"></td>
         </tr>
         <tr>
-            <td class="c1">Source Number:</td>
+            <td>Source Number:</td>
             <td th:text="${sources.getSourceNumber()}"></td>
         </tr>
         <tr>
-            <td class="c1">Call Number:</td>
+            <td>Call Number:</td>
             <td th:text="${sources.getCallNumber()}"></td>
         </tr>
         <tr>
-            <td class="c1">Author:</td>
+            <td>Author:</td>
             <td th:text="${sources.getAuthor()}"></td>
         </tr>
         <tr>
-            <td class="c1">Title:</td>
+            <td>Title:</td>
             <td th:text="${sources.getTitle()}"></td>
         </tr>
         <tr>
-            <td class="c1">Inscription:</td>
+            <td>Inscription:</td>
             <td th:text="${sources.getInscription()}"></td>
         </tr>
         <tr>
-            <td class="c1">Description:</td>
+            <td>Description:</td>
             <td th:text="${sources.getDescription()}"></td>
         </tr>
     </table>

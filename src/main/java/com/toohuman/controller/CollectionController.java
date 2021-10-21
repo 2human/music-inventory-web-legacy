@@ -32,47 +32,184 @@ public class CollectionController {
 		
 	//get search results by searching all fields
 	@RequestMapping(method = RequestMethod.GET, value = "/collections", params = {"searchText", "table"})
-	public Set<Collection> search(@RequestParam String searchText, @RequestParam String table) {
+	public Set<Collection> searchByKeyword(@RequestParam String searchText, @RequestParam String table) {
 		
-		Set<Collection> collectionSet = new HashSet<Collection>();
-			//search all fields to determine if there are any matches, 
-			//adding them to a set so that duplicates are not retained
-			try {
-				collectionSet.add(repo.findById(Integer.parseInt(searchText)).orElse(new Collection()));
-				} catch(Exception e) {
-					System.out.println("NaN entered as ID");
-				}
-			collectionSet.addAll(repo.findByCollection(searchText));				
-			collectionSet.addAll(repo.findByDescription(searchText));
-		return collectionSet;
+		String[] keywords = searchText.split(" ");
+		//set that will contain results found
+		Set<Collection> resultSet = getInitialResultSet(keywords[0]);	//query database for initial results
+		Set<Collection> oldResultSet = new HashSet<Collection>();	
+		
+		//iterate through each keyword, and filter out results that do not contain keyword
+		for(int i = 1; i < keywords.length; i++) {					
+			oldResultSet = resultSet;
+			resultSet = getFilteredResultSet(keywords[i], oldResultSet);
+		}		
+		return resultSet;
 	}
+	
+	private Set<Collection> getInitialResultSet(String keyword){
+		Set<Collection> workingSet = new HashSet<Collection>();		//search all fields to determine if there are any matches, 
+		//adding them to a set so that duplicates are not retained
+		try {
+			workingSet.add(repo.findById(Integer.parseInt(keyword)).orElse(new Collection()));
+		} catch(Exception e) {
+//			System.out.println("NaN entered as ID");
+		}
+		workingSet.addAll(repo.findByCollection(keyword));			
+		workingSet.addAll(repo.findByDescription(keyword));	
+		
+		return workingSet;
+	}
+	
+	//get filtered result set by filtering existing set, checking all fields
+	private Set<Collection> getFilteredResultSet(String keyword, Set<Collection> curResultSet){
+		Set<Collection> workingSet = new HashSet<Collection>();
+		//check each current result, adding only those containing current keyword to filtered set
+		for(Collection curResult: curResultSet) {
+			try {
+				if(curResult.getId() == Integer.parseInt(keyword)) workingSet.add(curResult);
+//				resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
+				} catch(Exception e) {
+//					System.out.println("NaN entered as ID");
+				}
+			if(curResult.getCollection().indexOf(keyword) != -1) workingSet.add(curResult);
+			if(curResult.getDescription().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
+		}
+		return workingSet;
+	}	
+	
+	
 	
 	//fetch search results for search containing parameters of specific fields
 	@RequestMapping(value = "/collections", params = {"searchText", "table", "field"})
-	public Set<Collection> search(@RequestParam String searchText, @RequestParam String table, @RequestParam String field) {
-		List<String> fields = new ArrayList<String>(Arrays.asList(field.split(",")));	//split field parameter into array
-		Set<Collection> collectionSet = new HashSet<Collection>();					//set that will contain search results
-		//iterate through all selected fields to determine if there are any matches, 
-		//adding them to a set so that duplicates are not retained
-		for(String f: fields) {
-			switch(f) {
+	public Set<Collection> searchByKeywordWithFields(@RequestParam String searchText, @RequestParam String table, @RequestParam String field) {
+		List<String> fields = new ArrayList<String>(Arrays.asList(field.split(",")));
+		String[] keywords = searchText.split(" ");
+		Set<Collection> resultSet = getInitialResultSet(keywords[0], fields);
+		Set<Collection> oldResultSet = new HashSet<Collection>();	
+		for(int i = 1; i < keywords.length; i++) {
+			oldResultSet = resultSet;
+			resultSet = getFilteredResultSet(keywords[i], oldResultSet, fields);			
+		}
+		return resultSet;
+	}
+	
+		
+	//get initial result set by querying SELECTED fields within database
+	private Set<Collection> getInitialResultSet(String keyword, List<String> fields){
+		Set<Collection> workingSet = new HashSet<Collection>();		
+		for(String field: fields) {
+			switch(field) {
 				case "id":
+					//TODO make it so this does not return a null source object when integer input
 					try {
-						collectionSet.add(repo.findById(Integer.parseInt(searchText)).orElse(new Collection()));
-						} catch(Exception e) {
-							System.out.println("NaN entered as ID");
-						}
+						workingSet.add(repo.findById(Integer.parseInt(keyword)).orElse(new Collection()));
+					} catch(Exception e) {
+						System.out.println("NaN entered as ID");
+					}
 					break;
 				case "collection":
-					collectionSet.addAll(repo.findByCollection(searchText));
+					System.out.println("Run 2");
+					workingSet.addAll(repo.findByCollection(keyword));
 					break;
 				case "description":
-					collectionSet.addAll(repo.findByDescription(searchText));
+					workingSet.addAll(repo.findByDescription(keyword));
 					break;
 			}
 		}
-		return collectionSet;
+		return workingSet;
+	}	
+		
+	//get filtered result set by filtering existing set, checking all fields
+	private Set<Collection> getFilteredResultSet(String keyword, Set<Collection> curResultSet, List<String> fields){
+		Set<Collection> workingSet = new HashSet<Collection>();
+		for(Collection curResult: curResultSet) {
+			for(String field: fields) {
+				switch(field) {
+					case "id":
+						//TODO make it so this does not return a null source object when integer input
+						try {
+							if(curResult.getId() == Integer.parseInt(keyword)) workingSet.add(curResult);
+						} catch(Exception e) {
+							System.out.println("NaN entered as ID");
+						}
+						break;
+					case "collection":
+						if(curResult.getCollection().indexOf(keyword) != -1) workingSet.add(curResult);
+						break;
+					case "description":
+						if(curResult.getDescription().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
+						break;
+				}
+			}
+			
+		}
+		return workingSet;
 	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/collections", params = {"searchText", "table", "id", "collection", "description"})
+	public Set<Collection> advancedSearch(@RequestParam String searchText, @RequestParam String table,
+		@RequestParam String id, @RequestParam String collection, @RequestParam String description) {
+		System.out.println("advancedsearch");
+		
+		Set<Collection> resultSet = getKeywordSearchResultSet(searchText);	//filter first by keywords
+		
+		resultSet = getAdvancedResultSet(resultSet, id, collection, description);	//filter by each individual field
+		
+		return resultSet;		
+	}
+	
+	//get results checking only the keywords
+	private Set<Collection> getKeywordSearchResultSet(String searchText){
+		String[] keywords = searchText.split(" ");				//split so that each keyword is searched individually
+		Set<Collection> resultSet = getInitialResultSet(keywords[0]);//construct initial results from searching database with first keyword
+		Set<Collection> oldResultSet = new HashSet<Collection>();			//placeholder set
+		for(int i = 1; i < keywords.length; i++) {				//starting at second keyword, filter by each keyword
+		oldResultSet = resultSet;
+		resultSet = getFilteredResultSet(keywords[i], oldResultSet);	//filter results by current keyword			
+		}		
+		return resultSet;
+	}
+	
+	//get results by checking each field in advanced search
+	private Set<Collection> getAdvancedResultSet(Set<Collection> resultSet, String id, String collection, String description){
+	
+		if(id.length() > 0) resultSet = getFilteredByIdSet(id, resultSet);
+		if(collection.length() > 0) resultSet = getFilteredByCollectionSet(collection, resultSet);
+		if(description.length() > 0) resultSet = getFilteredByDescriptionSet(description, resultSet);
+		
+		return resultSet;	
+	}	
+	
+	private Set<Collection> getFilteredByIdSet(String id, Set<Collection> resultSet){
+		Set<Collection> workingSet = new HashSet<Collection>();
+		for(Collection result: resultSet) {
+			try {
+				if(result.getId() == Integer.parseInt(id)) workingSet.add(result);
+//					resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
+			} catch(Exception e) {
+//					System.out.println("NaN entered as ID");
+			}			
+		}
+		return workingSet;
+	}
+	
+	private Set<Collection> getFilteredByCollectionSet(String collection, Set<Collection> resultSet){
+		Set<Collection> workingSet = new HashSet<Collection>();
+		for(Collection result: resultSet) {
+			if(result.getCollection().toLowerCase().indexOf(collection.toLowerCase()) != -1) workingSet.add(result);			
+		}
+		return workingSet;		
+	}
+	
+	private Set<Collection> getFilteredByDescriptionSet(String description, Set<Collection> resultSet){
+		Set<Collection> workingSet = new HashSet<Collection>();
+		for(Collection result: resultSet) {
+			if(result.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) workingSet.add(result);			
+		}
+		return workingSet;		
+	}		
 		
 	//get page containing information for single collection
 	@RequestMapping("/getCollection")
@@ -90,7 +227,6 @@ public class CollectionController {
 	public ModelAndView editCollection(@RequestParam int id) {
 		ModelAndView mv = new ModelAndView("editCollection.html");
 		Collection collection =  repo.findById(id).orElse(new Collection());
-//		Sources sources =  repo.findById(id);
 		mv.addObject(collection);
 		return mv;
 		

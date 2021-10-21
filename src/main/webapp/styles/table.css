@@ -4,7 +4,6 @@
 th{
 	text-align: left;	
 	border-bottom: .1px solid black;
-	/* border-right: .1px solid black;	 */
 }
 
 td{
@@ -15,11 +14,13 @@ td{
 
 table{
 	font-size: 11px;
-	white-space: pre-line;
+	white-space: pre-line; 
 	width: 100% ;
 	border-collapse: collapse;
 	border-top: .1px solid black;
-	word-break:break-word;
+	word-break:break-word;    
+	border-bottom: .5px solid rgb(219, 219, 219);
+    margin-bottom: 1em;
 }
 
 table td:nth-child(1){	
@@ -48,64 +49,86 @@ tr:nth-child(even){
 	background-color: #EBEBEB;
 } */
 
-.sourcesTable td:nth-child(1){	/* ID column  */
+#sourcesTable td:nth-child(1){	/* ID column  */
     width:3%;
 }
-.sourcesTable td:nth-child(2){	/* Collection column  */
+#sourcesTable td:nth-child(2){	/* Collection column  */
     width:9%;
 }
-.sourcesTable td:nth-child(3){	/* Source Number column  */
+#sourcesTable td:nth-child(3){	/* Source Number column  */
     width:3%; 
 }
-.sourcesTable td:nth-child(4){	/* Call Number column  */
+#sourcesTable td:nth-child(4){	/* Call Number column  */
     width:9%;
 }
-.sourcesTable td:nth-child(5){	/* Author column  */	
+#sourcesTable td:nth-child(5){	/* Author column  */	
     width:9%;
 }
-.sourcesTable td:nth-child(6){	/* Title column  */
+#sourcesTable td:nth-child(6){	/* Title column  */
     width:9%;
 }
-.sourcesTable td:nth-child(7){	/* Inscription column  */
+#sourcesTable td:nth-child(7){	/* Inscription column  */
     width:28%;
 }
-.sourcesTable td:nth-child(8){	/* Description column  */
+#sourcesTable td:nth-child(8){	/* Description column  */
     width:30%;	
 }
 
 /* Entries results columns */
 
-.entriesTable td:nth-child(1){	/* ID column  */
+#entriesTable td:nth-child(1){	/* ID column  */
     width:3%;
 }
-.entriesTable td:nth-child(2){	/* Collection column  */
+#entriesTable td:nth-child(2){	/* Collection column  */
     width:10%;
 }
-.entriesTable td:nth-child(3){	/* Source Number column  */
+#entriesTable td:nth-child(3){	/* Source Number column  */
     width:3%;
 }
-.entriesTable td:nth-child(4){	/* Location column  */
+#entriesTable td:nth-child(4){	/* Location column  */
     width:10%;
 }
-.entriesTable td:nth-child(5){	/* Title column  */	
+#entriesTable td:nth-child(5){	/* Title column  */	
     width:9%;
 }
-.entriesTable td:nth-child(6){	/* Credit column  */
+#entriesTable td:nth-child(6){	/* Credit column  */
     width:9%;
 }
-.entriesTable td:nth-child(7){	/* Vocal Part column  */
+#entriesTable td:nth-child(7){	/* Vocal Part column  */
     width:11%;
 }
-.entriesTable td:nth-child(8){	/* Key column  */
+#entriesTable td:nth-child(8){	/* Key column  */
     width:6%;	
 }
-.entriesTable td:nth-child(9){	/* Melodic Incipit column  */
+#entriesTable td:nth-child(9){	/* Melodic Incipit column  */
     width:17%;	
 }
-.entriesTable td:nth-child(10){	/* Text Incipit column  */
+#entriesTable td:nth-child(10){	/* Text Incipit column  */
     width:17%;	
 }
-.entriesTable td:nth-child(11){	/* Secular column  */
+#entriesTable td:nth-child(11){	/* Secular column  */
     width:5%;	
+}
+
+.isSecularCol{
+    text-align: center;
+    vertical-align: middle;
+}
+
+input:disabled{
+    color: red;
+  }
+
+
+/* Collections results columns */
+
+#collectionsTable td:nth-child(1){	/* ID column  */
+    width:3%;
+}
+#collectionsTable td:nth-child(2){	/* Collection column  */
+    width:10%;
+}
+#collectionsTable td:nth-child(3){	/* Source Number column  */
+    width:87%;
 }
 

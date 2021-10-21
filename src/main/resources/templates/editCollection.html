@@ -8,10 +8,10 @@
 </head>
 
 <body>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/editCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/getCollection(id=${collection.getId()})}"><button>Read Mode</button></a>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080/editCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
-	<a th:href="@{http://ec2-3-144-32-160.us-east-2.compute.amazonaws.com:8080}"><button>Home</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org/editCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org/getCollection(id=${collection.getId()})}"><button>Read Mode</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org/editCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a>
     <form action="updateCollection">
         <label for="Id">Id:</label>
         <input type="text" id="id" name="id" th:value="${collection.getId()}" autofocus readonly>

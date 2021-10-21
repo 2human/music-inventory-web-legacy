@@ -23,8 +23,8 @@ public class Entry {
 	private String location;
 	@Column(name="entry_title")
 	private String title;
-	@Column(name="entry_credit")
-	private String credit;
+	@Column(name="entry_composer")
+	private String composer;
 	@Column(name="entry_vocal_part")
 	private String vocalPart;
 	@Column(name="entry_key")
@@ -36,7 +36,7 @@ public class Entry {
 	@Column(name="entry_is_secular")
 	private String isSecular;
 	
-	private static final String[] FIELD_LIST = {"id", "collection", "sourceNumber", "location", "title", "credit",
+	private static final String[] FIELD_LIST = {"id", "collection", "sourceNumber", "location", "title", "composer",
                                                 "vocalPart", "key", "melodicIncipit", "textIncipit", "isSecular"};
 	
 	public Entry() {
@@ -45,14 +45,14 @@ public class Entry {
 
 	
 	
-	public Entry(int id, String collection, int sourceNumber, String location, String title, String credit,
+	public Entry(int id, String collection, int sourceNumber, String location, String title, String composer,
 			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular) {
 		this.id = id;
 		this.collection = collection;
 		this.sourceNumber = sourceNumber;
 		this.location = location;
 		this.title = title;
-		this.credit = credit;
+		this.composer = composer;
 		this.vocalPart = vocalPart;
 		this.key = key;
 		this.melodicIncipit = melodicIncipit;
@@ -60,13 +60,13 @@ public class Entry {
 		this.isSecular = isSecular;
 	}
 
-	public Entry(String collection, int sourceNumber, String location, String title, String credit,
+	public Entry(String collection, int sourceNumber, String location, String title, String composer,
 			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular) {
 		this.collection = collection;
 		this.sourceNumber = sourceNumber;
 		this.location = location;
 		this.title = title;
-		this.credit = credit;
+		this.composer = composer;
 		this.vocalPart = vocalPart;
 		this.key = key;
 		this.melodicIncipit = melodicIncipit;
@@ -104,11 +104,11 @@ public class Entry {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getCredit() {
-		return credit;
+	public String getComposer() {
+		return composer;
 	}
-	public void setCredit(String credit) {
-		this.credit = credit;
+	public void setComposer(String composer) {
+		this.composer = composer;
 	}
 	public String getVocalPart() {
 		return vocalPart;
@@ -147,7 +147,7 @@ public class Entry {
 	@Override
 	public String toString() {
 		return "Entry [id=" + id + ", collection=" + collection + ", sourceNumber=" + sourceNumber + ", location="
-				+ location + ", title=" + title + ", credit=" + credit + ", vocalPart=" + vocalPart + ", key=" + key
+				+ location + ", title=" + title + ", composer=" + composer + ", vocalPart=" + vocalPart + ", key=" + key
 				+ ", melodicIncipit=" + melodicIncipit + ", textIncipit=" + textIncipit + ", isSecular=" + isSecular
 				+ "]";
 	}	
