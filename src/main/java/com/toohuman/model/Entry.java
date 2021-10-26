@@ -35,7 +35,10 @@ public class Entry {
 	private String textIncipit;
 	@Column(name="entry_is_secular")
 	private String isSecular;
+	@Column(name="entry_notes")
+	private String notes;
 	
+
 	private static final String[] FIELD_LIST = {"id", "collection", "sourceNumber", "location", "title", "composer",
                                                 "vocalPart", "key", "melodicIncipit", "textIncipit", "isSecular"};
 	
@@ -46,7 +49,7 @@ public class Entry {
 	
 	
 	public Entry(int id, String collection, int sourceNumber, String location, String title, String composer,
-			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular) {
+			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular, String notes) {
 		this.id = id;
 		this.collection = collection;
 		this.sourceNumber = sourceNumber;
@@ -58,10 +61,11 @@ public class Entry {
 		this.melodicIncipit = melodicIncipit;
 		this.textIncipit = textIncipit;
 		this.isSecular = isSecular;
+		this.notes = notes;
 	}
 
 	public Entry(String collection, int sourceNumber, String location, String title, String composer,
-			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular) {
+			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular, String notes) {
 		this.collection = collection;
 		this.sourceNumber = sourceNumber;
 		this.location = location;
@@ -72,6 +76,7 @@ public class Entry {
 		this.melodicIncipit = melodicIncipit;
 		this.textIncipit = textIncipit;
 		this.isSecular = isSecular;
+		this.notes = notes;
 	}
 
 	public int getId() {
@@ -140,6 +145,14 @@ public class Entry {
 	
 	public String[] getFieldList() {
 		return FIELD_LIST;
+	}
+	
+	public String getNotes() {
+		return notes;
+	}
+	
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 
 

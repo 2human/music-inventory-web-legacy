@@ -39,6 +39,9 @@ public interface EntryRepo extends JpaRepository<Entry, Integer> {
 	@Query("from Entry where isSecular LIKE %?1%")
 	List<Entry> findByIsSecular(String isSecular);
 	
+	@Query("from Entry where notes LIKE %?1%")
+	List<Entry> findByNotes(String notes);
+	
 }
 
 	

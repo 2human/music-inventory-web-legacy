@@ -35,6 +35,8 @@
         <input type="text" id="textIncipit" name="textIncipit" th:value="${entry.getTextIncipit()}">
         <label for="isSecular">Secular:</label>
         <input type="text" id="isSecular" name="isSecular" th:value="${entry.getIsSecular()}">        
+        <label for="notes">Notes:</label>
+        <input type="text" id="notes" name="notes" th:value="${entry.getNotes()}">  
         <input type="submit" value="Submit">        
         <input type="submit" value="Delete" formaction="deleteEntry">
     </form>         

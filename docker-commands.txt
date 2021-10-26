@@ -6,7 +6,7 @@ docker run -p 8080:8080 --name mew -d mew
 docker run -p 8080:8080 --name mew --link mew-mysql:mysql -d mew
 
 docker run -p 80:80 --name mew -d mew --restart=always
-docker update --restart=always
+docker update mew --restart=always
 docker update --restart=on-failure
 
 

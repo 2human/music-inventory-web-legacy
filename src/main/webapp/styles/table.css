@@ -4,6 +4,7 @@
 th{
 	text-align: left;	
 	border-bottom: .1px solid black;
+    height:2em;
 }
 
 td{
@@ -27,10 +28,6 @@ table td:nth-child(1){
 	border-left: none;
 }
 
-/* table th:nth-child(1){	
-	border-left: .1px solid black;
-} */
-
 /* Utilized for columns that need to retain formatting */
 pre{
     font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
@@ -49,86 +46,96 @@ tr:nth-child(even){
 	background-color: #EBEBEB;
 } */
 
-#sourcesTable td:nth-child(1){	/* ID column  */
+.sourceRow .idCell{	/* ID column  */
     width:3%;
 }
-#sourcesTable td:nth-child(2){	/* Collection column  */
+.sourceRow .collectionCell{	/* Collection column  */
     width:9%;
 }
-#sourcesTable td:nth-child(3){	/* Source Number column  */
-    width:3%; 
+.sourceRow .sourceNumberCell{	/* Source Number column  */
+    width:4%; 
 }
-#sourcesTable td:nth-child(4){	/* Call Number column  */
+.sourceRow .callNumberCell{	/* Call Number column  */
+    width:8.5%;
+}
+.sourceRow .authorCell{	/* Author column  */	
+    width:8.5%;
+}
+.sourceRow .titleCell{	/* Title column  */
     width:9%;
 }
-#sourcesTable td:nth-child(5){	/* Author column  */	
-    width:9%;
-}
-#sourcesTable td:nth-child(6){	/* Title column  */
-    width:9%;
-}
-#sourcesTable td:nth-child(7){	/* Inscription column  */
+.sourceRow .inscriptionCell{	/* Inscription column  */
     width:28%;
 }
-#sourcesTable td:nth-child(8){	/* Description column  */
+.sourceRow .descriptionCell{	/* Description column  */
     width:30%;	
 }
 
 /* Entries results columns */
 
-#entriesTable td:nth-child(1){	/* ID column  */
+.entryRow .idCell{	/* ID column  */
     width:3%;
 }
-#entriesTable td:nth-child(2){	/* Collection column  */
+.entryRow .collectionCell{	/* Collection column  */
     width:10%;
 }
-#entriesTable td:nth-child(3){	/* Source Number column  */
-    width:3%;
+.entryRow .sourceNumberCell{	/* Source Number column  */
+    width:4%;
 }
-#entriesTable td:nth-child(4){	/* Location column  */
-    width:10%;
+.entryRow .locationCell{	/* Location column  */
+    /* width:10%; */
+    width:8%;
 }
-#entriesTable td:nth-child(5){	/* Title column  */	
-    width:9%;
+.entryRow .titleCell{	/* Title column  */	
+    /* width:9%; */
+    width:8%;
 }
-#entriesTable td:nth-child(6){	/* Credit column  */
-    width:9%;
+.entryRow .composerCell{	/* Credit column  */
+    /* width:9%; */
+    width:8%;
 }
-#entriesTable td:nth-child(7){	/* Vocal Part column  */
-    width:11%;
+.entryRow .vocalPartCell{	/* Vocal Part column  */
+    /* width:11%; */
+    width: 9%;
 }
-#entriesTable td:nth-child(8){	/* Key column  */
+.entryRow .keyCell{	/* Key column  */
     width:6%;	
 }
-#entriesTable td:nth-child(9){	/* Melodic Incipit column  */
-    width:17%;	
+.entryRow .melodicIncipitCell{	/* Melodic Incipit column  */
+    /* width:17%; */
+    width:14%;	
 }
-#entriesTable td:nth-child(10){	/* Text Incipit column  */
-    width:17%;	
+.entryRow .textIncipitCell{	/* Text Incipit column  */
+    /* width:17%; */
+    width:14%;	
 }
-#entriesTable td:nth-child(11){	/* Secular column  */
+.entryRow .isSecularCell{	/* Secular column  */
     width:5%;	
 }
 
-.isSecularCol{
+.entryRow .notesCell{
+    width:11%;
+}
+
+.isSecularCell{    
     text-align: center;
     vertical-align: middle;
 }
 
-input:disabled{
-    color: red;
-  }
-
-
 /* Collections results columns */
 
-#collectionsTable td:nth-child(1){	/* ID column  */
+.collectionRow .idCell{	/* ID column  */
     width:3%;
 }
-#collectionsTable td:nth-child(2){	/* Collection column  */
+.collectionRow .collectionCell{	/* Collection column  */
     width:10%;
 }
-#collectionsTable td:nth-child(3){	/* Source Number column  */
+.collectionRow .sourceNumberCell{	/* Source Number column  */
     width:87%;
 }
 
+
+tr a{ /* column label text*/
+    color: black;
+    text-decoration:none;
+}

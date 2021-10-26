@@ -68,7 +68,8 @@ function getEntryFieldsCheckboxesHTML(){
                     '<input type="checkbox" name="field" id="key" value="key"> Key ' +
                     '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
                     '<input type="checkbox" name="field" id="textIncipit" value="textIncipit"> Text Incipit ' +
-                    '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ';
+                    '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ' +
+                    '<input type="checkbox" name="field" id="notes" value="notes"> Notes ';
 }
 
 function getCollectionFieldsCheckboxesHTML(){    
@@ -85,7 +86,8 @@ function getTableSelection(){
 function initializeEventListeners(){
     //event listener that generates fieldSelect div containing buttons corresponding to fields within table
     tableButtons.addEventListener("click", () => {  closeAdvancedSearch();
-                                                    insertFieldCheckboxes();});
+                                                    insertFieldCheckboxes();
+                                                });
     //event listener / handler for submitting search 
     searchBtn.addEventListener("click", executeSearch);
     //create event listener for buttons
@@ -96,7 +98,14 @@ function initializeEventListeners(){
     });
     resultsPerPageDiv.addEventListener("click", event => setResultsPerPage(event, searchProperties.resultsPerPageOptions));
     searchResultsDiv.ondblclick = openEditorModal;
-    advancedSearchToggle.addEventListener("click", toggleAdvancedSearch)
+    searchResultsDiv.addEventListener("click", handleTableClick);
+    advancedSearchToggle.addEventListener("click", toggleAdvancedSearch);    
+}
+
+function closeAdvancedSearch(){
+    advancedSearchToggle.classList.remove('upArrow');
+    advancedSearchToggle.classList.add('downArrow');    
+    advancedSearchInput.innerHTML = '';
 }
 
 function executeSearch(event){  
@@ -151,7 +160,8 @@ function initializeSearchProperties(){
         this.resultsPerPage = 25,
         this.totalResults = searchResultsData.length,
         this.totalPages = Math.floor(this.totalResults / this.resultsPerPage + 1),
-        this.resultsPerPageOptions = [10, 25, 100, 500]
+        this.resultsPerPageOptions = [10, 25, 100, 500],
+        this.sortBy = {column: 'id', order: 'ascending'};
     };
 }
 
@@ -179,44 +189,74 @@ function getTableHeaderHTML(dataType){
 }
 
 function getEntryTableHeaderHTML(){
-    return  '<tr>' +
-                '<th id="id">ID</td>' +
-                '<th id="collection">Collection</td>' +
-                '<th id="sourceNumber">Source Number</td>' +
-                '<th id="location">Location</td>' +
-                '<th id="title">Title</td>' +
-                '<th id="composer">Composer</td>' +
-                '<th id="vocalPart">Vocal Part</td>' +
-                '<th id="key">Key</td>' +
-                '<th id="melodicIncipit">Melodic Incipit</td>' +
-                '<th id="textIncipit">Text Incipit</td>' +
-                '<th id="isSecular">Secular</td>' +
-            '</tr>';
+    return  `<tr id="entriesTableHead">
+                <th id="id"><a href="javascript:void(0)" class="headerText">ID${getArrowIfNeeded('id')}</a></td>
+                <th id="collection"><a href="javascript:void(0)" class="headerText">Collection${getArrowIfNeeded('collection')}</a></td>
+                <th id="sourceNumber"><a href="javascript:void(0)" class="headerText">Source Number${getArrowIfNeeded('sourceNumber')}</a></td>
+                <th id="location"><a href="javascript:void(0)" class="headerText">Location${getArrowIfNeeded('location')}</a></td>
+                <th id="title"><a href="javascript:void(0)" class="headerText">Title${getArrowIfNeeded('title')}</a></td>
+                <th id="composer"><a href="javascript:void(0)" class="headerText">Composer${getArrowIfNeeded('composer')}</a></td>
+                <th id="vocalPart"><a href="javascript:void(0)" class="headerText">Vocal Part${getArrowIfNeeded('vocalPart')}</a></td>
+                <th id="key"><a href="javascript:void(0)" class="headerText">Key${getArrowIfNeeded('key')}</a></td>
+                <th id="melodicIncipit"><a href="javascript:void(0)" class="headerText">Melodic Incipit${getArrowIfNeeded('melodicIncipit')}</a></td>
+                <th id="textIncipit"><a href="javascript:void(0)" class="headerText">Text Incipit${getArrowIfNeeded('textIncipit')}</a></td>
+                <th id="isSecular" class="isSecularCell"><a href="javascript:void(0)" class="headerText">Secular${getArrowIfNeeded('isSecular')}</a></td>
+                <th id="notes"><a href="javascript:void(0)" class="headerText">Notes${getArrowIfNeeded('notes')}</a></td>
+            </tr>`;
 }
 
+//determine if arrow, which indicates column being sorted, should be inserted
+function getArrowIfNeeded(columnName){
+    if(sortingByColumn(columnName)){
+        if(searchProperties.sortBy.order === 'ascending'){
+            return getDownwardArrowHTML();
+        } else if(searchProperties.sortBy.order === 'descending'){
+            return getUpwardArrowHTML();
+        }
+    } else{
+        return '';
+    }    
+}
+
+//determine if column is that which data is being sorted by
+function sortingByColumn(columnName){
+    return columnName === searchProperties.sortBy.column
+}
+
+function getDownwardArrowHTML(){
+    console.log('getting arrow');
+    return '<i id="columnArrow" class="headerText downArrow"></i>';
+}
+
+function getUpwardArrowHTML(){
+    return '<i id="columnArrow" class="headerText upArrow"></i>';
+}
+
+
 function getSourceTableHeaderHTML(){
-    return '<tr>' +
-                '<th id="id">ID</td>' +
-                '<th id="collection">Collection</td>' +
-                '<th id="sourceNumber">Source Number</td>' +
-                '<th id="callNumber">Call Number</td>' +
-                '<th id="author">Author</td>' +
-                '<th id="title">Title</td>' +
-                '<th id="inscription">Inscription</td>' +
-                '<th id="description">Description</td>' +
-            '</tr>';
+    return `<tr id="sourcesTableHead">
+                <th id="id"><a href="javascript:void(0)" class="headerText">ID${getArrowIfNeeded('id')}</a></td>
+                <th id="collection"><a href="javascript:void(0)" class="headerText">Collection${getArrowIfNeeded('collection')}</a></td>
+                <th id="sourceNumber"><a href="javascript:void(0)" class="headerText">Source Number${getArrowIfNeeded('sourceNumber')}</a></td>
+                <th id="callNumber"><a href="javascript:void(0)" class="headerText">Call Number${getArrowIfNeeded('callNumber')}</a></td>
+                <th id="author"><a href="javascript:void(0)" class="headerText">Author${getArrowIfNeeded('author')}</a></td>
+                <th id="title"><a href="javascript:void(0)" class="headerText">Title${getArrowIfNeeded('title')}</a></td>
+                <th id="inscription"><a href="javascript:void(0)" class="headerText">Inscription${getArrowIfNeeded('inscription')}</a></td>
+                <th id="description"><a href="javascript:void(0)" class="headerText">Description${getArrowIfNeeded('description')}</a></td>
+            </tr>`;
 }
 
 function getCollectionTableHeaderHTML(){
-    return '<tr class="collectionRow">' +
-                '<th id="id">ID</td>' +
-                '<th id="collection">Collection</td>' +
-                '<th id="description">Description</td>' +
-            '</tr>';
+    return `<tr id="collectionsTableHead">
+                <th id="id"><a href="javascript:void(0)" class="headerText">ID${getArrowIfNeeded('id')}</a></td>
+                <th id="collection"><a href="javascript:void(0)" class="headerText">Collection${getArrowIfNeeded('collection')}</a></td>
+                <th id="description"><a href="javascript:void(0)" class="headerText">Description${getArrowIfNeeded('description')}</a></td>
+            </tr>`;
 }
 
 function getTableBodyHTML(dataType, data){  
-    data.sort((a, b) => a.id - b.id);    
+    // data.sort((a, b) => a[searchProperties.sortBy] - b[searchProperties.sortBy]);  
+    data.sort(searchProperties.sortBy.order === 'ascending' ? sortAscending : sortDescending);
     let htmlStr = '';
     //get range of results to display
     let lastResultIndex = searchProperties.curPage * searchProperties.resultsPerPage;
@@ -226,6 +266,26 @@ function getTableBodyHTML(dataType, data){
             htmlStr += getTableRowHTML(dataType, data[index]);;
         }
     return htmlStr;    
+}
+
+function sortAscending(a, b){
+    //first sort by current column
+    if(a[searchProperties.sortBy.column] < b[searchProperties.sortBy.column]) return -1;
+    if(a[searchProperties.sortBy.column] > b[searchProperties.sortBy.column]) return 1;
+    //if they are the same, sort by id
+    if(a.id < b.id) return -1;
+    if(a.id > b.id) return 1;
+
+}
+
+function sortDescending(a, b){
+    //first sort by current column
+    if(a[searchProperties.sortBy.column] > b[searchProperties.sortBy.column]) return -1;
+    if(a[searchProperties.sortBy.column] < b[searchProperties.sortBy.column]) return 1;
+    //if they are the same, sort by id
+    if(a.id > b.id) return -1;
+    if(a.id < b.id) return 1;
+
 }
 
 function getTableRowHTML(dataType, data){   
@@ -241,14 +301,14 @@ function getTableRowHTML(dataType, data){
 
 function getSourceTableRowHTML(source){
     return '<tr class="sourceRow">' +
-                `<td id="id"><a href="${webHostURL}/getSource?id=${source.id}" target="_blank">${source.id}</a></td>` +
-                `<td id="collection">${source.collection}</td>` +
-                `<td id="sourceNumber">${source.sourceNumber}</td>` +
-                `<td id="callNumber">${source.callNumber}</td>` +
-                `<td id="author">${source.author}</td>` +
-                `<td id="title">${source.title}</td>` +
-                `<td id="inscription" contenteditable="false"><pre>${source.inscription}</pre></td>` +
-                `<td id="description"><pre>${source.description}</pre></td>` +
+                `<td class="idCell" id="id"><a href="${webHostURL}/getSource?id=${source.id}" target="_blank">${source.id}</a></td>` +
+                `<td class="collectionCell" id="collection">${source.collection}</td>` +
+                `<td class="sourceNumberCell" id="sourceNumber">${source.sourceNumber}</td>` +
+                `<td class="callNumberCell" id="callNumber">${source.callNumber}</td>` +
+                `<td class="authorCell" id="author">${source.author}</td>` +
+                `<td class="titleCell" id="title">${source.title}</td>` +
+                `<td class="inscriptionCell" id="inscription" contenteditable="false"><pre>${source.inscription}</pre></td>` +
+                `<td class="descriptionCell" id="description"><pre>${source.description}</pre></td>` +
             '</tr>';
 }
 
@@ -262,19 +322,20 @@ function getEntryTableHTML(entries){
 
 function getEntryTableRowHTML(entry){
     return '<tr class="entryRow">' +
-                `<td id="id"><a href="${webHostURL}/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
-                `<td id="collection">${entry.collection}</td>` +
-                `<td id="sourceNumber">${entry.sourceNumber}</td>` +
-                `<td id="location">${entry.location}</td>` +
-                `<td id="title">${entry.title}</td>` +
-                `<td id="composer">${entry.composer}</td>` +
-                `<td id="vocalPart">${entry.vocalPart}</td>` +
-                `<td id="key">${entry.key}</td>` +
-                `<td id="melodicIncipit">${entry.melodicIncipit}</td>` +
-                `<td id="textIncipit">${entry.textIncipit}</td>` +
-                `<td class="isSecularCol">` +
+                `<td class="idCell" id="id"><a href="${webHostURL}/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
+                `<td class="collectionCell" id="collection">${entry.collection}</td>` +
+                `<td class="sourceNumberCell" id="sourceNumber">${entry.sourceNumber}</td>` +
+                `<td class="locationCell" id="location">${entry.location}</td>` +
+                `<td class="titleCell" id="title">${entry.title}</td>` +
+                `<td class="composerCell" id="composer">${entry.composer}</td>` +
+                `<td class="vocalPartCell" id="vocalPart">${entry.vocalPart}</td>` +
+                `<td class="keyCell" id="key">${entry.key}</td>` +
+                `<td class="melodicIncipitCell" id="melodicIncipit">${entry.melodicIncipit}</td>` +
+                `<td class="textIncipitCell" id="textIncipit">${entry.textIncipit}</td>` +
+                `<td class="isSecularCell" id="isSecular">` +
                    `<input type="checkbox" class="isSecularData" ${entry.isSecular === 'true' ? "checked" : ""} disabled>` + 
                 `</td>` +
+                `<td class="notesCell" id="notes">${entry.notes}</td>` +
             '</tr>'; 
 }
 
@@ -287,9 +348,9 @@ function getCollectionResultTableHTML(collections){
 
 function getCollectionTableRowHTML(collection){
     return '<tr class="collectionRow">' +
-                `<td id="id"><a href="${webHostURL}/getCollection?id=${collection.id}" target="_blank">${collection.id}</a></td>` +
-                `<td id="collection">${collection.collection}</td>` +
-                `<td id="description">${collection.description}</td>` +
+                `<td class="idCell" id="id"><a href="${webHostURL}/getCollection?id=${collection.id}" target="_blank">${collection.id}</a></td>` +
+                `<td class="collectionCell" id="collection">${collection.collection}</td>` +
+                `<td class="descriptionCell" id="description">${collection.description}</td>` +
             '</tr>';        
 }
 
@@ -519,7 +580,7 @@ function getCellClicked(element){
 
 //makes sure that cell clicked in table is not part of header and is not database ID
 function isEditableCell(cellClicked){
-    return cellClicked.nodeName !== "TH" && cellClicked.id !== "id"
+    return cellClicked.nodeName == "TD" && cellClicked.id !== "id"
 }
 
 function constructModal(cellClicked){
@@ -566,6 +627,8 @@ function getEntryFormHTML(entry){
             `<input type="text" id="textIncipit" class="searchBox" name="textIncipit" value="${entry.textIncipit}" onfocus="this.select()"><br>` +
             `<label for="isSecular">Secular:</label>` +
             `<input type="text" id="isSecular" class="searchBox" name="isSecular" value="${entry.isSecular}" onfocus="this.select()"><br>` +
+            `<label for="notes">Notes:</label>` +
+            `<input type="text" id="notes" class="searchBox" name="notes" value="${entry.notes}" onfocus="this.select()"><br>` +
             `<button id="updateRow">Update</button>` +
             `<button id="deleteRow">Delete</button>`;
 }
@@ -623,6 +686,7 @@ function focusSelectedField(cellClicked){
 
 //gets input element corresponding to field of cell clicked
 function getMatchingFormField(cellClicked){
+    console.log(cellClicked);
     let clickedId = cellClicked.id;     //id of clicked cell
     //find matching id within modal form
     for(let i = 0, len = modalForm.childNodes.length; i < len; i++){
@@ -667,6 +731,7 @@ function updateTableRow(event, tableRow){
     event.preventDefault();
     let xhr = new XMLHttpRequest();
     xhr.open('POST', getHTTPRequestURL(modalForm), true);
+    console.log(getHTTPRequestURL(modalForm));
     xhr.send();
     closeModal();
     xhr.onload = function(){
@@ -776,13 +841,19 @@ function getAdvancedSearchHTMLEntries(){
             
             '<label for="melodicIncipit">Melodic Incipit:</label>' +
             '<input type="text" id="melodicIncipit" name="melodicIncipit" class="longText">' +
-            'Notes Only<a href="javascript:void(0)">(?)</a></>:     <input type="checkbox" id="notesOnly" value="notesOnly"><br>' +
+
+            'Notes Only<a href="javascript:void(0)">(?)</a></>:' +   
+            '<input type="hidden" name="notesOnly" value="">' +  
+            '<input type="checkbox" id="notesOnly" name="notesOnly" value="true"><br>' +
             
             '<label for="textIncipit">Text Incipit:</label>' +
             '<input type="text" id="textIncipit" name="textIncipit" class="longText">' +
             
             '<label for="isSecular">Secular:</label>' +
-            '<input type="text" id="isSecular" name="isSecular" class="longText">';
+            '<input type="text" id="isSecular" name="isSecular" class="longText"><br>' +
+            
+            '<label for="notes">Notes:</label>' +
+            '<input type="text" id="notes" name="notes" class="longText">';
 }
 
 function getAdvancedSearchHTMLSources(){
@@ -822,8 +893,71 @@ function getAdvancedSearchHTMLCollections(){
             '<input type="text" id="description" name="description" class="longText"><br>';
 }
 
-function closeAdvancedSearch(){
-    advancedSearchToggle.classList.remove('upArrow');
-    advancedSearchToggle.classList.add('downArrow');    
-    advancedSearchInput.innerHTML = '';
+function handleTableClick(event){
+    if(isTableHeaderText(event.target)){  
+        sortByColumn(event.target);
+    }
 }
+
+function isTableHeaderText(clicked){
+    return clicked.className.indexOf('headerText') !== -1;
+}
+
+function sortByColumn(elementClicked){
+    setSortProps(elementClicked);
+    insertSearchResults();
+    // removePreviousArrow();
+}
+
+//set props that determine column sorting within searchProperties object
+function setSortProps(elementClicked){
+    const columnName = getColumnName(elementClicked);
+    if(sortingByDifferentColumn(columnName)){
+        setSortByColumnName(columnName);
+        setSortOrder('ascending');
+    } else{
+        reverseSortOrder();
+    }
+}
+
+function getColumnName(elementClicked){    
+    if(isHeaderText(elementClicked)){
+        return elementClicked.parentElement.id;
+    } else if(isArrow(elementClicked)){ 
+        //arrow is within separate element from text, so must go two levels above to get column
+        return elementClicked.parentElement.parentElement.id;
+    }
+}
+
+function sortingByDifferentColumn(columnName){
+    return columnName !== searchProperties.sortBy.column; 
+}
+
+function setSortByColumnName(columnName){
+    searchProperties.sortBy.column = columnName;
+}
+
+function setSortOrder(order){
+    //sort order will either be ascending or descending
+    searchProperties.sortBy.order = order;
+}
+
+function reverseSortOrder(){
+    if(searchProperties.sortBy.order === 'ascending'){
+        searchProperties.sortBy.order = 'descending';
+    } else{
+        searchProperties.sortBy.order = 'ascending';
+    }
+
+}
+
+//column header text was clicked (not the arrow next to text)
+function isHeaderText(elementClicked){
+    return elementClicked.nodeName === 'A'; //header text is within anchor element
+}
+
+//arrow next to column label was clicked
+function isArrow(elementClicked){
+    return elementClicked.nodeName === 'I'; //arrows are within 
+}
+

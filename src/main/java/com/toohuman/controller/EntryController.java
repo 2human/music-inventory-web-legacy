@@ -75,6 +75,7 @@ public class EntryController {
 		resultSet.addAll(repo.findByMelodicIncipit(keyword));
 		resultSet.addAll(repo.findByTextIncipit(keyword));
 		resultSet.addAll(repo.findByIsSecular(keyword));
+		resultSet.addAll(repo.findByNotes(keyword));
 		
 		return resultSet;
 	}
@@ -104,6 +105,7 @@ public class EntryController {
 			if(curResult.getMelodicIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
 			if(curResult.getTextIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
 			if(curResult.getIsSecular().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+			if(curResult.getNotes().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
 		}
 		return filteredSet;
 	}
@@ -168,6 +170,9 @@ public class EntryController {
 				case "isSecular":
 					resultSet.addAll(repo.findByIsSecular(keyword));
 					break;
+				case "notes":
+					resultSet.addAll(repo.findByNotes(keyword));
+					break;
 			}
 		}
 		return resultSet;
@@ -221,6 +226,9 @@ public class EntryController {
 					case "isSecular":
 						if(curResult.getIsSecular().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
 						break;
+					case "notes":
+						if(curResult.getNotes().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
+						break;
 				}
 			}
 		}
@@ -229,17 +237,19 @@ public class EntryController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table", "id", "sourceNumber", "location",
-			"collection", "title", "composer", "vocalPart", "key", "melodicIncipit", "textIncipit", "isSecular"})
+			"collection", "title", "composer", "vocalPart", "key", "melodicIncipit", "notesOnly", "textIncipit", "isSecular", "notes"})
 	public Set<Entry> advancedSearch(@RequestParam String searchText, @RequestParam String table, @RequestParam String id,
 			@RequestParam String sourceNumber, @RequestParam String location, @RequestParam String collection, @RequestParam String title,
 			@RequestParam String composer, @RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit,
-			@RequestParam String textIncipit, @RequestParam String isSecular) {
+			@RequestParam String notesOnly, @RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 		System.out.println("advancedsearch");
+		boolean searchNotesOnly = notesOnly.indexOf("true") != -1 ? true : false;	//determines if melodic incipit search will
+																					// only search included digits
 		
 		Set<Entry> resultSet = getKeywordSearchResultSet(searchText);	//filter first by keywords
 		
 		resultSet = getAdvancedResultSet(resultSet, id, sourceNumber, location, collection,	//filter by each individual field
-				title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular);
+				title, composer, vocalPart, key, melodicIncipit, searchNotesOnly, textIncipit, isSecular, notes);
 
 		return resultSet;		
 	}
@@ -258,19 +268,28 @@ public class EntryController {
 	
 	//get results by checking each field in advanced search
 	private Set<Entry> getAdvancedResultSet(Set<Entry> resultSet, String id, String sourceNumber, String location, String collection,
-			String title, String credit, String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular){
+			String title, String composer, String vocalPart, String key, String melodicIncipit, boolean searchNotesOnly, String textIncipit, String isSecular, 
+			String notes){
 		
 		if(id.length() > 0) resultSet = getFilteredByIdSet(id, resultSet);
 		if(collection.length() > 0) resultSet = getFilteredByCollectionSet(collection, resultSet);
 		if(sourceNumber.length() > 0) resultSet = getFilteredBySourceNumberSet(sourceNumber, resultSet);
 		if(location.length() > 0) resultSet = getFilteredByLocationSet(location, resultSet);
 		if(title.length() > 0) resultSet = getFilteredByTitleSet(title, resultSet);
-		if(credit.length() > 0) resultSet = getFilteredByComposerSet(credit, resultSet);
+		if(composer.length() > 0) resultSet = getFilteredByComposerSet(composer, resultSet);
 		if(vocalPart.length() > 0) resultSet = getFilteredByVocalPartSet(vocalPart, resultSet);
 		if(key.length() > 0) resultSet = getFilteredByKeySet(key, resultSet);
-		if(melodicIncipit.length() > 0) resultSet = getFilteredByMelodicIncipitSet(melodicIncipit, resultSet);
+		if(melodicIncipit.length() > 0) {
+			if(searchNotesOnly) {
+				resultSet = getFilteredByMelodicIncipitSetNotesOnly(melodicIncipit, resultSet);	//perform notes only melodic incipit search
+			} else {
+				resultSet = getFilteredByMelodicIncipitSet(melodicIncipit, resultSet);			//perform regular melodic incipit
+			}
+			
+		}
 		if(textIncipit.length() > 0) resultSet = getFilteredByTextIncipitSet(textIncipit, resultSet);
 		if(isSecular.length() > 0) resultSet = getFilteredByIsSecularSet(isSecular, resultSet);
+		if(isSecular.length() > 0) resultSet = getFilteredByNotesSet(notes, resultSet);
 		
 		return resultSet;	
 	}	
@@ -326,10 +345,10 @@ public class EntryController {
 		return workingSet;		
 	}
 	
-	private Set<Entry> getFilteredByComposerSet(String credit, Set<Entry> resultSet){
+	private Set<Entry> getFilteredByComposerSet(String composer, Set<Entry> resultSet){
 		Set<Entry> workingSet = new HashSet<Entry>();
 		for(Entry result: resultSet) {
-			if(result.getComposer().toLowerCase().indexOf(credit.toLowerCase()) != -1) workingSet.add(result);			
+			if(result.getComposer().toLowerCase().indexOf(composer.toLowerCase()) != -1) workingSet.add(result);			
 		}
 		return workingSet;		
 	}
@@ -358,6 +377,16 @@ public class EntryController {
 		return workingSet;		
 	}
 	
+	//perform notes only melodic incipit search
+	private Set<Entry> getFilteredByMelodicIncipitSetNotesOnly(String melodicIncipit, Set<Entry> resultSet){
+		Set<Entry> workingSet = new HashSet<Entry>();
+		for(Entry result: resultSet) {
+			//remove non-digits from both search string as well as result string to determine if digits match
+			if(result.getMelodicIncipit().replaceAll("\\D","").indexOf(melodicIncipit.replaceAll("\\D","")) != -1) workingSet.add(result);			
+		}
+		return workingSet;		
+	}
+	
 	
 	private Set<Entry> getFilteredByTextIncipitSet(String textIncipit, Set<Entry> resultSet){
 		Set<Entry> workingSet = new HashSet<Entry>();
@@ -375,15 +404,23 @@ public class EntryController {
 		return workingSet;		
 	}	
 	
+	private Set<Entry> getFilteredByNotesSet(String notes, Set<Entry> resultSet){
+		Set<Entry> workingSet = new HashSet<Entry>();
+		for(Entry result: resultSet) {
+			if(result.getNotes().toLowerCase().indexOf(notes.toLowerCase()) != -1) workingSet.add(result);			
+		}
+		return workingSet;		
+	}
+	
 	//updates entry information when user clicks "submit" in editEntry form
-	@RequestMapping(value = "/createEntry", params = {"collection", "sourceNumber", "location", "title", "credit", "vocalPart",
-													"key", "melodicIncipit", "textIncipit", "isSecular"})
+	@RequestMapping(value = "/createEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
+													"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
 	public ModelAndView createEntry(@RequestParam String collection, @RequestParam int sourceNumber,
-							@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-							@RequestParam String textIncipit, @RequestParam String isSecular) {
+							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 		//construct/new entry object to database with update information
-		Entry entry = new Entry(collection, sourceNumber, location, title, credit, vocalPart, key, melodicIncipit, textIncipit, isSecular);
+		Entry entry = new Entry(collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
 		repo.save(entry);
 		
 		//generate page with updated information
@@ -399,12 +436,12 @@ public class EntryController {
 		return mv;		
 	}
 	
-	@RequestMapping(value = "/deleteEntry", params = {"collection", "sourceNumber", "location", "title", "credit", "vocalPart",
-			"key", "melodicIncipit", "textIncipit", "isSecular"})
+	@RequestMapping(value = "/deleteEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
+			"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
 	public ModelAndView deleteEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
-									@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+									@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 									@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-									@RequestParam String textIncipit, @RequestParam String isSecular) {
+									@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 		//construct/new entry object to database with update information
 		Entry entry =  repo.findById(id).orElse(new Entry());
 		repo.delete(entry);		
@@ -416,12 +453,12 @@ public class EntryController {
 		return mv;
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, value = "/entries", params = {"collection", "sourceNumber", "location", "title", "credit", "vocalPart",
-			"key", "melodicIncipit", "textIncipit", "isSecular"})
+	@RequestMapping(method = RequestMethod.DELETE, value = "/entries", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
+			"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
 	public Entry delete(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
-									@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+									@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 									@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-									@RequestParam String textIncipit, @RequestParam String isSecular) {
+									@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 		//construct/new entry object to database with update information
 		Entry entry =  repo.findById(id).orElse(new Entry());
 		repo.delete(entry);	
@@ -451,11 +488,11 @@ public class EntryController {
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping(method = RequestMethod.POST, value = "/entries")
 	public Entry postEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
-			@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+			@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 			@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-			@RequestParam String textIncipit, @RequestParam String isSecular) {
+			@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 				//construct/new entry object to database with update information
-				Entry entry = new Entry(id, collection, sourceNumber, location, title, credit, vocalPart, key, melodicIncipit, textIncipit, isSecular);
+				Entry entry = new Entry(id, collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
 				repo.save(entry);
 				entry =  repo.findById(id).orElse(new Entry());
 				return entry;
@@ -464,11 +501,11 @@ public class EntryController {
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping("/updateEntry")
 	public ModelAndView updateEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
-							@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-							@RequestParam String textIncipit, @RequestParam String isSecular) {
+							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 		//construct/new entry object to database with update information
-		Entry entry = new Entry(id, collection, sourceNumber, location, title, credit, vocalPart, key, melodicIncipit, textIncipit, isSecular);
+		Entry entry = new Entry(id, collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
 		repo.save(entry);
 		
 		//generate page with updated information
@@ -482,11 +519,11 @@ public class EntryController {
 	//update entry and return JSON object instead of web page
 		@RequestMapping("/updateEntryTable")
 		public Entry updateEntryTable(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
-								@RequestParam String location, @RequestParam String title, @RequestParam String credit,
+								@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 								@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-								@RequestParam String textIncipit, @RequestParam String isSecular) {
+								@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
 			//construct/new entry object to database with update information
-			Entry entry = new Entry(id, collection, sourceNumber, location, title, credit, vocalPart, key, melodicIncipit, textIncipit, isSecular);
+			Entry entry = new Entry(id, collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
 			repo.save(entry);
 			entry =  repo.findById(id).orElse(new Entry());
 			return entry;
