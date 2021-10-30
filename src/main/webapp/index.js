@@ -1,12 +1,19 @@
+// import { isArrow } from "./js/test.js";
+import { getFieldCheckboxesHTML } from "./js/html/Checkbox.js";
+import { getAdvancedSearchHTML } from "./js/html/AdvancedSearch.js";
+import { getModalFormHTML } from "./js/html/ModalForm.js"; 
+import { getResultTableHTML, getTableRowHTML } from "./js/html/ResultTable.js"; 
+import { getPageBtnsHTML } from "./js/html/PageButtons.js";
+import { getSortByColumnProps } from "./js/functions/SortByColumn.js";
+import { getResultsMessage } from "./js/html/SearchResultsMessage.js";
+import { getResultsPerPageSelectorHTML } from "./js/html/ResultsPerPageSelector.js";
 
-/**
- * 
- */
-//TODO change from id's to classes in html
 
 const webHostURL = "http://localhost:8080";
-// const webHostURL = "http://ec2-3-144-221-89.us-east-2.compute.amazonaws.com";
+const domainURL = "http://localhost:8080";
 
+// const webHostURL = "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com";
+// const domainURL = "http://www.sacredmusicinventory.org"
 
 const tableButtons = document.getElementById('tableSelect');    
 const fieldDiv = document.getElementById('fieldSelect');
@@ -23,64 +30,13 @@ const advancedSearchInput = document.getElementById('advancedSearchInput');
 const advancedSearchToggle = document.getElementById('advancedSearchArrow');
 
 let searchProperties;
-let searchResultsData;
+let searchResultsData = [];
 
 insertFieldCheckboxes();        //insert field checkboxes for default table selection
 initializeEventListeners();
 
 function insertFieldCheckboxes(){
     fieldDiv.innerHTML = getFieldCheckboxesHTML(getTableSelection()); //display fields for that element
-}
-
-function getFieldCheckboxesHTML(tableSelection){
-    //generate fields corresponding to those within sources table 
-    switch(tableSelection){
-        //source radio button clicked
-        case "sources":
-            return getSourceFieldsCheckboxesHMTML();
-        //entries radio button clicked
-        case "entries": 
-            return getEntryFieldsCheckboxesHTML();
-        case "collections": 
-            return getCollectionFieldsCheckboxesHTML();
-    }
-}
-
-function getSourceFieldsCheckboxesHMTML(){
-    return 'Field(s):  <input type="checkbox" name="field" id="id" value="id"> ID ' +
-                    '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-                    '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
-                    '<input type="checkbox" name="field" id="callNumber" value="callNumber"> Call Number ' +
-                    '<input type="checkbox" name="field" id="author" value="author"> Author ' +
-                    '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-                    '<input type="checkbox" name="field" id="inscription" value="inscription"> Inscription ' +
-                    '<input type="checkbox" name="field" id="description" value="description"> Description ';
-}
-
-function getEntryFieldsCheckboxesHTML(){  
-    return 'Field(s):  <input type="checkbox" name="field" id="id" value="id"> ID ' +
-                    '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-                    '<input type="checkbox" name="field" id="sourceNumber" value="sourceNumber"> Source Number ' +
-                    '<input type="checkbox" name="field" id="location" value="location"> Location ' +
-                    '<input type="checkbox" name="field" id="title" value="title"> Title ' +
-                    '<input type="checkbox" name="field" id="composer" value="composer"> Composer ' +
-                    '<input type="checkbox" name="field" id="vocalPart" value="vocalPart"> Vocal Part ' +
-                    '<input type="checkbox" name="field" id="key" value="key"> Key ' +
-                    '<input type="checkbox" name="field" id="melodicIncipit" value="melodicIncipit"> Melodic Incipit ' +
-                    '<input type="checkbox" name="field" id="textIncipit" value="textIncipit"> Text Incipit ' +
-                    '<input type="checkbox" name="field" id="isSecular" value="isSecular"> Secular ' +
-                    '<input type="checkbox" name="field" id="notes" value="notes"> Notes ';
-}
-
-function getCollectionFieldsCheckboxesHTML(){    
-    return 'Field(s):  <input type="checkbox" name="field" id="id" value="id"> ID ' +
-                    '<input type="checkbox" name="field" id="collection" value="collection"> Collection ' +
-                    '<input type="checkbox" name="field" id="description" value="description"> Description';
-}
-
-//gets table currently selected with radio button
-function getTableSelection(){
-    return tableButtons.children.find( button => button.checked === true );
 }
 
 function initializeEventListeners(){
@@ -138,12 +94,13 @@ function getSearchParams(form){
 }
 
 function generateSearchResultsDisplay(){
-    initializeSearchProperties();    
+    initializeSearchProperties(getTableSelection(), searchResultsData);    
     insertSearchResults();
     insertPageButtons();  
     insertResultsMessage();  
     insertResultsPerPageSelector();
 }
+
 function getTableSelection(){
     //determine which table radio button is selected
     let searchForm = document.getElementById('search');
@@ -154,210 +111,29 @@ function requestSuccessful(requestStatus){
     return requestStatus == 200;
 }
 
-function initializeSearchProperties(){
+//contains data for how to format search results.
+function initializeSearchProperties(table, data){
     searchProperties = new function(){
-        this.curPage = 1,
+        this.curPage = 1,                   //result page currently being viewed
+        this.dataType = table,              //data type corresponds to table selection
         this.resultsPerPage = 25,
-        this.totalResults = searchResultsData.length,
+        this.totalResults = data.length,   
         this.totalPages = Math.floor(this.totalResults / this.resultsPerPage + 1),
-        this.resultsPerPageOptions = [10, 25, 100, 500],
-        this.sortBy = {column: 'id', order: 'ascending'};
+        this.resultsPerPageOptions = [10, 25, 100, 500],    //user options for results per pages
+        this.sortBy = {column: 'id', order: 'ascending'}    //determines how to sort result data in table
+        this.domainURL = domainURL,                         //domain for web app 
+        this.webHostURL = webHostURL;                       //direct URL to server
     };
 }
 
 function insertSearchResults(){    
-    searchResultsDiv.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
-}
-
-function getResultTableHTML(dataType, data){
-    if(!searchResultsData[0]) return '';    //return empty string if data is empty
-    return  `<table id=${dataType}Table>` + 
-                getTableHeaderHTML(dataType) +
-                getTableBodyHTML(dataType, data) +
-            '</table>';
-}
-
-function getTableHeaderHTML(dataType){   
-    switch(dataType){
-        case "entries": 
-            return getEntryTableHeaderHTML();
-        case "sources":
-            return getSourceTableHeaderHTML();
-        case "collections":
-            return getCollectionTableHeaderHTML();
-    }
-}
-
-function getEntryTableHeaderHTML(){
-    return  `<tr id="entriesTableHead">
-                <th id="id"><a href="javascript:void(0)" class="headerText">ID${getArrowIfNeeded('id')}</a></td>
-                <th id="collection"><a href="javascript:void(0)" class="headerText">Collection${getArrowIfNeeded('collection')}</a></td>
-                <th id="sourceNumber"><a href="javascript:void(0)" class="headerText">Source Number${getArrowIfNeeded('sourceNumber')}</a></td>
-                <th id="location"><a href="javascript:void(0)" class="headerText">Location${getArrowIfNeeded('location')}</a></td>
-                <th id="title"><a href="javascript:void(0)" class="headerText">Title${getArrowIfNeeded('title')}</a></td>
-                <th id="composer"><a href="javascript:void(0)" class="headerText">Composer${getArrowIfNeeded('composer')}</a></td>
-                <th id="vocalPart"><a href="javascript:void(0)" class="headerText">Vocal Part${getArrowIfNeeded('vocalPart')}</a></td>
-                <th id="key"><a href="javascript:void(0)" class="headerText">Key${getArrowIfNeeded('key')}</a></td>
-                <th id="melodicIncipit"><a href="javascript:void(0)" class="headerText">Melodic Incipit${getArrowIfNeeded('melodicIncipit')}</a></td>
-                <th id="textIncipit"><a href="javascript:void(0)" class="headerText">Text Incipit${getArrowIfNeeded('textIncipit')}</a></td>
-                <th id="isSecular" class="isSecularCell"><a href="javascript:void(0)" class="headerText">Secular${getArrowIfNeeded('isSecular')}</a></td>
-                <th id="notes"><a href="javascript:void(0)" class="headerText">Notes${getArrowIfNeeded('notes')}</a></td>
-            </tr>`;
-}
-
-//determine if arrow, which indicates column being sorted, should be inserted
-function getArrowIfNeeded(columnName){
-    if(sortingByColumn(columnName)){
-        if(searchProperties.sortBy.order === 'ascending'){
-            return getDownwardArrowHTML();
-        } else if(searchProperties.sortBy.order === 'descending'){
-            return getUpwardArrowHTML();
-        }
-    } else{
-        return '';
-    }    
-}
-
-//determine if column is that which data is being sorted by
-function sortingByColumn(columnName){
-    return columnName === searchProperties.sortBy.column
-}
-
-function getDownwardArrowHTML(){
-    console.log('getting arrow');
-    return '<i id="columnArrow" class="headerText downArrow"></i>';
-}
-
-function getUpwardArrowHTML(){
-    return '<i id="columnArrow" class="headerText upArrow"></i>';
-}
-
-
-function getSourceTableHeaderHTML(){
-    return `<tr id="sourcesTableHead">
-                <th id="id"><a href="javascript:void(0)" class="headerText">ID${getArrowIfNeeded('id')}</a></td>
-                <th id="collection"><a href="javascript:void(0)" class="headerText">Collection${getArrowIfNeeded('collection')}</a></td>
-                <th id="sourceNumber"><a href="javascript:void(0)" class="headerText">Source Number${getArrowIfNeeded('sourceNumber')}</a></td>
-                <th id="callNumber"><a href="javascript:void(0)" class="headerText">Call Number${getArrowIfNeeded('callNumber')}</a></td>
-                <th id="author"><a href="javascript:void(0)" class="headerText">Author${getArrowIfNeeded('author')}</a></td>
-                <th id="title"><a href="javascript:void(0)" class="headerText">Title${getArrowIfNeeded('title')}</a></td>
-                <th id="inscription"><a href="javascript:void(0)" class="headerText">Inscription${getArrowIfNeeded('inscription')}</a></td>
-                <th id="description"><a href="javascript:void(0)" class="headerText">Description${getArrowIfNeeded('description')}</a></td>
-            </tr>`;
-}
-
-function getCollectionTableHeaderHTML(){
-    return `<tr id="collectionsTableHead">
-                <th id="id"><a href="javascript:void(0)" class="headerText">ID${getArrowIfNeeded('id')}</a></td>
-                <th id="collection"><a href="javascript:void(0)" class="headerText">Collection${getArrowIfNeeded('collection')}</a></td>
-                <th id="description"><a href="javascript:void(0)" class="headerText">Description${getArrowIfNeeded('description')}</a></td>
-            </tr>`;
-}
-
-function getTableBodyHTML(dataType, data){  
-    // data.sort((a, b) => a[searchProperties.sortBy] - b[searchProperties.sortBy]);  
-    data.sort(searchProperties.sortBy.order === 'ascending' ? sortAscending : sortDescending);
-    let htmlStr = '';
-    //get range of results to display
-    let lastResultIndex = searchProperties.curPage * searchProperties.resultsPerPage;
-    let firstResultIndex = lastResultIndex - searchProperties.resultsPerPage;
-    //start at first result for data range and end at last result or final result in data set
-    for(let index = firstResultIndex; index < lastResultIndex && index < searchProperties.totalResults; index++){
-            htmlStr += getTableRowHTML(dataType, data[index]);;
-        }
-    return htmlStr;    
-}
-
-function sortAscending(a, b){
-    //first sort by current column
-    if(a[searchProperties.sortBy.column] < b[searchProperties.sortBy.column]) return -1;
-    if(a[searchProperties.sortBy.column] > b[searchProperties.sortBy.column]) return 1;
-    //if they are the same, sort by id
-    if(a.id < b.id) return -1;
-    if(a.id > b.id) return 1;
-
-}
-
-function sortDescending(a, b){
-    //first sort by current column
-    if(a[searchProperties.sortBy.column] > b[searchProperties.sortBy.column]) return -1;
-    if(a[searchProperties.sortBy.column] < b[searchProperties.sortBy.column]) return 1;
-    //if they are the same, sort by id
-    if(a.id > b.id) return -1;
-    if(a.id < b.id) return 1;
-
-}
-
-function getTableRowHTML(dataType, data){   
-    switch(dataType){
-        case "entries": 
-            return getEntryTableRowHTML(data);
-        case "sources":
-            return getSourceTableRowHTML(data);
-        case "collections":
-            return getCollectionTableRowHTML(data);
-    }
-}
-
-function getSourceTableRowHTML(source){
-    return '<tr class="sourceRow">' +
-                `<td class="idCell" id="id"><a href="${webHostURL}/getSource?id=${source.id}" target="_blank">${source.id}</a></td>` +
-                `<td class="collectionCell" id="collection">${source.collection}</td>` +
-                `<td class="sourceNumberCell" id="sourceNumber">${source.sourceNumber}</td>` +
-                `<td class="callNumberCell" id="callNumber">${source.callNumber}</td>` +
-                `<td class="authorCell" id="author">${source.author}</td>` +
-                `<td class="titleCell" id="title">${source.title}</td>` +
-                `<td class="inscriptionCell" id="inscription" contenteditable="false"><pre>${source.inscription}</pre></td>` +
-                `<td class="descriptionCell" id="description"><pre>${source.description}</pre></td>` +
-            '</tr>';
-}
-
-function getEntryTableHTML(entries){
-    return  '<table id="entryTable">' +
-                getEntryTableHeaderHTML() +
-                getTableBodyHTML(entries) +                    
-            '</table>';
-      
-}
-
-function getEntryTableRowHTML(entry){
-    return '<tr class="entryRow">' +
-                `<td class="idCell" id="id"><a href="${webHostURL}/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
-                `<td class="collectionCell" id="collection">${entry.collection}</td>` +
-                `<td class="sourceNumberCell" id="sourceNumber">${entry.sourceNumber}</td>` +
-                `<td class="locationCell" id="location">${entry.location}</td>` +
-                `<td class="titleCell" id="title">${entry.title}</td>` +
-                `<td class="composerCell" id="composer">${entry.composer}</td>` +
-                `<td class="vocalPartCell" id="vocalPart">${entry.vocalPart}</td>` +
-                `<td class="keyCell" id="key">${entry.key}</td>` +
-                `<td class="melodicIncipitCell" id="melodicIncipit">${entry.melodicIncipit}</td>` +
-                `<td class="textIncipitCell" id="textIncipit">${entry.textIncipit}</td>` +
-                `<td class="isSecularCell" id="isSecular">` +
-                   `<input type="checkbox" class="isSecularData" ${entry.isSecular === 'true' ? "checked" : ""} disabled>` + 
-                `</td>` +
-                `<td class="notesCell" id="notes">${entry.notes}</td>` +
-            '</tr>'; 
-}
-
-function getCollectionResultTableHTML(collections){    
-    return  '<table id="collectionTable">' + 
-                getCollectionTableHeaderHTML() + 
-                getTableBodyHTML(collections) + 
-            '</table>';
-}
-
-function getCollectionTableRowHTML(collection){
-    return '<tr class="collectionRow">' +
-                `<td class="idCell" id="id"><a href="${webHostURL}/getCollection?id=${collection.id}" target="_blank">${collection.id}</a></td>` +
-                `<td class="collectionCell" id="collection">${collection.collection}</td>` +
-                `<td class="descriptionCell" id="description">${collection.description}</td>` +
-            '</tr>';        
+    searchResultsDiv.innerHTML = getResultTableHTML(searchProperties, searchResultsData);
 }
 
 function insertPageButtons(){
-    let btnHTML = '';
+    let btnHTML = '';                   //no buttons by default
     if(searchProperties.totalPages > 1){
-        btnHTML = getPageSelectorBtnsHTML(); //construct page buttons for search results        
+        btnHTML = getPageBtnsHTML(searchProperties); //construct page buttons for search results        
     }
     pageBtnDiv.innerHTML = btnHTML;          //add button html to page
     pageBtnDivBot.innerHTML = btnHTML;
@@ -365,155 +141,10 @@ function insertPageButtons(){
 
 //insert messaging displaying total results, and range of results being displayed
 function insertResultsMessage(){
-    resultsMessage.innerHTML = getResultsMessage();
+    resultsMessage.innerHTML = getResultsMessage(searchProperties);
 }
 
-//construct buttons that allow user to select search result page
-function getPageSelectorBtnsHTML(){
-    let maxButtons = 8;    
-    let bounds = getPageBtnBounds(searchProperties, maxButtons);
-    let btnHTMLStr = getPreviousAndFirstPageBtnsHTML(searchProperties.curPage, bounds.lowerBound) +
-        getInnerPageBtnsHtML(searchProperties, bounds) +
-        getLastAndNextPageBtnsHTML(searchProperties, bounds.upperBound);    
-    return btnHTMLStr;
-}
-
-//
-function getPageBtnBounds(searchProperties, maxButtons){
-    //determines range of buttons to create when navigating search page results
-    //first and last page buttons always created, so the boundaries for buttons that can possibly be created here
-    //are between the 2nd and 2nd to last pages
-    //increment equally in each direction to start, then allocate rest to whatever boundary remains
-    //until max buttons reached
-    let totalButtons = 0,                       //current tally of buttons that will be created
-        lowerBound = searchProperties.curPage,           //lower and upper bounds start at current page
-        upperBound = searchProperties.curPage,           //and are incremented until their boundaries are reached
-        totalPages = searchProperties.totalPages;
-    while(totalButtons < maxButtons &&
-         (lowerBound > 2 || upperBound < totalPages - 1)){  //both 2nd page button and 2nd to last have yet to be created 
-        if(lowerBound > 2){                      //second page not added
-            lowerBound--;
-            totalButtons++;
-        }
-        if(upperBound < totalPages - 1 && totalButtons !== maxButtons){ //second to last page not added and all buttons not created
-            upperBound++;           
-            totalButtons++;
-        }        
-    }
-    return { upperBound: upperBound, lowerBound: lowerBound }
-}
-
-function getPreviousAndFirstPageBtnsHTML(curPage, lowerBound){    
-    //disable buttons if first page currently being viewd
-    let htmlStr = getPageBtnHTML('Previous', curPage) + 
-                getPageBtnHTML(1, curPage);
-    if(lowerBound > 2){     //if second page button will not be created
-        htmlStr += ' ... ';    //put dots between first and proceeding buttons
-    }
-    return htmlStr;
-}
-
-function getPageBtnHTML(pageNumber, curPage){
-    if(isDisabledBtn(pageNumber, curPage)){
-        return getDisabledPageBtnHTML(pageNumber);
-    } else{
-        return getActivePageBtnHTML(pageNumber);
-    }
-}
-
-//destermine if button should be disabled
-function isDisabledBtn(pageNumber, curPage){
-    if(curPage === pageNumber){     //page corresponding to page button number selected
-        return true;
-    } else if(pageNumber === 'Previous' && curPage === 1){  //cannot select previous if on first page
-        return true;
-    } else if (pageNumber === 'Next' && curPage === searchProperties.totalPages){   //cannot select next if of last page
-        return true;
-    } else{
-        return false;
-    }    
-}
-
-function getDisabledPageBtnHTML(pageNumber){
-    return `<button class="pageBtns" disabled>${pageNumber}</button>`;
-}
-
-function getActivePageBtnHTML(pageNumber){
-    return `<button class="pageBtns">${pageNumber}</button>`
-}
-
-function getInnerPageBtnsHtML(searchProperties, bounds){
-    let btnHTML = "";
-    //generate all buttons between lower and upper bounds (inclusive) previously determined
-    for(let pageNumber = bounds.lowerBound; pageNumber <= bounds.upperBound; pageNumber++){
-        //prevent duplicates of first and last page, which are always going to be created
-        if(pageNumber !== 1 && pageNumber !== searchProperties.totalPages){
-            btnHTML += getPageBtnHTML(pageNumber, searchProperties.curPage);
-        }
-    }
-    return btnHTML;
-}
-
-function getLastAndNextPageBtnsHTML(searchProperties, upperBound){
-    let htmlStr = '';
-    let totalPages = searchProperties.totalPages;
-    //if not last page, add normal page buttons
-    if(upperBound < totalPages - 1){     //if there is gap between core buttons and end button
-        htmlStr += ' ... ';               //add dots
-    }
-    htmlStr +=   getPageBtnHTML(totalPages, searchProperties.curPage) + 
-                getPageBtnHTML('Next', searchProperties.curPage);
-    return htmlStr;
-
-}
-
-function getResultsMessage(){
-    if(searchProperties.totalResults === 0){
-        return getNoResultsMessage();
-    }    
-    else if(searchProperties.totalPages === 1){
-        return getSinglePageResultsMessage(searchProperties.totalResults);
-    } else{
-        return getMultiPageResultsMessage(searchProperties);
-    } 
-}
-
-function getNoResultsMessage(){
-    return '<b>No results found...<b><br><br>';
-}
-
-function getSinglePageResultsMessage(totalResults){
-    if(totalResults === 1){
-        return `<b>Displaying ${totalResults} result...</b><br><br>`;   //display 'results' in singular form
-    }
-    return `<b>Displaying ${totalResults} results...</b><br><br>`;      //display 'results' in plural form
-}
-
-//result message containing range of results
-function getMultiPageResultsMessage(searchProperties){
-    let lastResult = getLastResultNumber(searchProperties);
-    let firstResult = getFirstResultNumber(searchProperties);
-    return `<br><b>Displaying ${firstResult}-${lastResult} of ${searchProperties.totalResults} results...</b><br>`;
-}
-
-function getLastResultNumber(searchProperties){
-    //gets last resultnumber of current search result display for search results message
-    if(viewingLastPage(searchProperties)){
-        return searchProperties.totalResults;   //last result number is same as total results
-    } else{
-        return parseInt(searchProperties.curPage * searchProperties.resultsPerPage);
-    }
-}
-
-function viewingLastPage(searchProperties){
-    return searchProperties.curPage == searchProperties.totalPages;
-}
-
-function getFirstResultNumber(searchProperties){
-    //gets first result number of current search result display for search results message
-    return parseInt((searchProperties.curPage - 1) * searchProperties.resultsPerPage + 1);
-}
-
+//TODO change name and put scroll to within if
 function scrollToTop(event){  
     if(event.target.nodeName === 'BUTTON'){ //only scroll to top if button was clicked, not random part of div
         window.scrollTo(0, 130);
@@ -523,22 +154,8 @@ function scrollToTop(event){
 //inserts links that allow user to select desired results per page
 function insertResultsPerPageSelector(){       
     if(searchProperties.totalResults !== 0){
-        resultsPerPageDiv.innerHTML = getResultsPerPageHTML(searchProperties.resultsPerPage, searchProperties.resultsPerPageOptions);
+        resultsPerPageDiv.innerHTML = getResultsPerPageSelectorHTML(searchProperties);
     } else resultsPerPageDiv.innerHTML = '';
-}
-
-//generate links that allow user to select results per page
-function getResultsPerPageHTML(curResultsPerPage, resultsPerPageOptions){
-    let resultsPerPageHTML = 'Results Per Page: ';
-    resultsPerPageOptions.forEach( resultsOption => {
-        if(curResultsPerPage == resultsOption){             //if current selection
-            resultsPerPageHTML += resultsOption + '  ';     //add only text with no hyperlink
-        } else{                                             //otherwise construct text with hyperlink
-            resultsPerPageHTML += `<a href="javascript:void(null);" id="${resultsOption}" class="resultsPerPageLink">${resultsOption}</a>   `;
-        }
-    });
-    resultsPerPageHTML += '<br><br>';
-    return resultsPerPageHTML;
 }
 
 function setResultsPerPage(event){
@@ -553,7 +170,7 @@ function setResultsPerPage(event){
             searchProperties.resultsPerPage = resultsPerPage;
             searchProperties.totalPages = Math.floor(searchProperties.totalResults / searchProperties.resultsPerPage + 1);
         }
-        searchResultsDiv.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
+        searchResultsDiv.innerHTML = getResultTableHTML(searchProperties, searchResultsData);
         insertPageButtons(searchProperties);
         insertResultsMessage();
         insertResultsPerPageSelector();
@@ -575,7 +192,6 @@ function getCellClicked(element){
         return element.parentElement;
     }
     else return element;
-
 }
 
 //makes sure that cell clicked in table is not part of header and is not database ID
@@ -585,86 +201,7 @@ function isEditableCell(cellClicked){
 
 function constructModal(cellClicked){
     let tableRow = cellClicked.parentElement;
-    modalForm.innerHTML = getFormHTML(getTableSelection(), getRowData(tableRow));     
-}
-
-/**
- * Get html for form that will be displayed in search table modal.
- * @param {*} row Row selected within search table containing information that will populate modal form.
- */
-
-function getFormHTML(dataType, rowData){    
-    switch(dataType){
-        case "entries":
-            return getEntryFormHTML(rowData);
-        case "sources":
-            return getSourceFormHTML(rowData);
-        case "collections":
-            return getCollectionFormHTML(rowData);
-    }
-}
-//create form that pre-fills data from table row
-function getEntryFormHTML(entry){
-    return `<label for="ID">ID:</label>` +
-            `<input type="text" id="id" class="searchBox" name="id" value="${entry.id}" readonly><br>` +
-            `<label for="collection">Collection:</label>` +
-            `<input type="text" id="collection" class="searchBox" name="collection" value="${entry.collection}" onfocus="this.select()"><br>` +
-            `<label for="sourceNumber">Source Number:</label>` +
-            `<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="${entry.sourceNumber}" onfocus="this.select()"><br>` +
-            `<label for="location">Location:</label>` +
-            `<input type="text" id="location" class="searchBox" name="location" value="${entry.location}" onfocus="this.select()"><br>` +
-            `<label for="title">Title:</label>` +
-            `<input type="text" id="title" class="searchBox" name="title" value="${entry.title}" onfocus="this.select()"><br>` +
-            `<label for="composer">Composer:</label>` +
-            `<input type="text" id="composer" class="searchBox" name="composer" value="${entry.composer}" onfocus="this.select()"><br>` +
-            `<label for="vocalPart">Vocal Part:</label>` +
-            `<input type="text" id="vocalPart" class="searchBox" name="vocalPart" value="${entry.vocalPart}" onfocus="this.select()"><br>` +
-            `<label for="key">Key:</label>` +
-            `<input type="text" id="key" class="searchBox" name="key" value="${entry.key}" onfocus="this.select()"><br>` +
-            `<label for="melodicIncipit">Melodic Incipit:</label>` +
-            `<input type="text" id="melodicIncipit" class="searchBox" name="melodicIncipit" value="${entry.melodicIncipit}" onfocus="this.select()"><br>` +
-            `<label for="textIncipit">Text Incipit:</label>` +
-            `<input type="text" id="textIncipit" class="searchBox" name="textIncipit" value="${entry.textIncipit}" onfocus="this.select()"><br>` +
-            `<label for="isSecular">Secular:</label>` +
-            `<input type="text" id="isSecular" class="searchBox" name="isSecular" value="${entry.isSecular}" onfocus="this.select()"><br>` +
-            `<label for="notes">Notes:</label>` +
-            `<input type="text" id="notes" class="searchBox" name="notes" value="${entry.notes}" onfocus="this.select()"><br>` +
-            `<button id="updateRow">Update</button>` +
-            `<button id="deleteRow">Delete</button>`;
-}
-
-//create form that pre-fills data from table row
-function getSourceFormHTML(source){
-    return `<label for="ID">ID:</label>` +
-            `<input type="text" id="id" class="searchBox" name="id" value="${source.id}" readonly><br>` +
-            `<label for="collection">Collection:</label>` +
-            `<input type="text" id="collection" class="searchBox" name="collection" value="${source.collection}" onfocus="this.select()"><br>` +
-            `<label for="sourceNumber">Source Number:</label>` +
-            `<input type="text" id="sourceNumber" class="searchBox" name="sourceNumber" value="${source.sourceNumber}" onfocus="this.select()"><br>` +
-            `<label for="callNumber">Call Number:</label>` +
-            `<input type="text" id="callNumber" class="searchBox" name="callNumber" value="${source.callNumber}" onfocus="this.select()"><br>` +
-            `<label for="author">Author:</label>` +
-            `<input type="text" id="author" class="searchBox" name="author" value="${source.author}" onfocus="this.select()"><br>` +
-            `<label for="title">Title:</label>` +
-            `<input type="text" id="title" class="searchBox" name="title" value="${source.title}" onfocus="this.select()"><br>` +
-            `<label for="inscription">Inscription:</label>` +
-            `<textarea inline="text" id="inscription" class="searchBox" name="inscription" onfocus="this.select()">${source.inscription}</textarea><br>` +
-            `<label for="description">Description:</label>` +      
-            `<textarea inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">${source.description}</textarea><br>` +
-            `<button id="updateRow">Update</button>` +
-            `<button id="deleteRow">Delete</button>`;
-
-}
-
-function getCollectionFormHTML(collection){
-    return `<label for="ID">ID:</label>` + 
-            `<input type="text" id="id" class="searchBox" name="id" value="${collection.id}" readonly><br>` + 
-            `<label for="collection">Collection:</label>` + 
-            `<input type="text" id="collection" class="searchBox" name="collection" value="${collection.collection}" onfocus="this.select()"><br>` + 
-            `<label for="description">Description:</label>` + 
-            `<textarea th:inline="text" id="description" class="searchBox" name="description" onfocus="this.select()">${collection.description}</textarea><br>` + 
-            `<button id="updateRow">Update</button>` +
-            `<button id="deleteRow">Delete</button>`;
+    modalForm.innerHTML = getModalFormHTML(searchProperties.dataType, getRowData(tableRow));     
 }
 
 function getRowData(row){
@@ -686,7 +223,6 @@ function focusSelectedField(cellClicked){
 
 //gets input element corresponding to field of cell clicked
 function getMatchingFormField(cellClicked){
-    console.log(cellClicked);
     let clickedId = cellClicked.id;     //id of clicked cell
     //find matching id within modal form
     for(let i = 0, len = modalForm.childNodes.length; i < len; i++){
@@ -750,12 +286,11 @@ function updateSearchResultsData(updatedRowData){
 
 //updated data being displayed
 function updateSearchResultsDisplay(tableRow, updatedRowData){
-    tableRow.innerHTML = getTableRowHTML(getTableSelection(), updatedRowData)
+    tableRow.innerHTML = getTableRowHTML(searchProperties.dataType, updatedRowData, domainURL)
 }
 
 
 function deleteTableRow(event, tableRow){    
-    console.log('Deleting');                 
     event.preventDefault();
     let xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(modalForm));
@@ -780,7 +315,7 @@ function selectResultPage(event){
         } else{                             //if page number was clicked, set page to page number
         searchProperties.curPage = parseInt(btnClicked.innerText);
         }              
-        searchResultsDiv.innerHTML = getResultTableHTML(getTableSelection(), searchResultsData);
+        searchResultsDiv.innerHTML = getResultTableHTML(searchProperties, searchResultsData);
         insertPageButtons(searchProperties);
         insertResultsMessage();
     }
@@ -791,7 +326,7 @@ function toggleAdvancedSearch(event){
         openAdvancedSearch();
     } else{
         closeAdvancedSearch();
-        insertFieldCheckboxes(getTableSelection());
+        insertFieldCheckboxes(searchProperties.dataType);
     }
 }
 
@@ -799,98 +334,7 @@ function openAdvancedSearch(){
     advancedSearchToggle.classList.remove('downArrow');
     advancedSearchToggle.classList.add('upArrow');
     fieldDiv.innerHTML = '';
-    advancedSearchInput.innerHTML = getAdvancedSearchHTML(getTableSelection());
-}
-
-function getAdvancedSearchHTML(dataType){
-    switch(dataType){
-        case "sources":
-            return getAdvancedSearchHTMLSources();
-        case "entries":
-            return getAdvancedSearchHTMLEntries();      
-        case "collections":
-            return getAdvancedSearchHTMLCollections();      
-    }
-}
-
-
-function getAdvancedSearchHTMLEntries(){
-    return '<label for="Id">Id:</label>' +
-            '<input type="text" id="id" name="id" class="shortText">' +
-            
-            '<label for="sourceNumber">Source Number:</label>' +
-            '<input type="text" id="sourceNumber" name="sourceNumber" class="shortText">' +
-            
-            '<label for="location">Location:</label>' +
-            '<input type="text" id="location" name="location" class="shortText"><br>' +
-            
-            '<label for="collection">Collection:</label>' +
-            '<input type="text" id="collection" name="collection" class="longText">' +
-            
-            '<label for="title">Title:</label>' +
-            '<input type="text" id="title" name="title" class="longText"><br>' +
-            
-            '<label for="composer">Composer:</label>' +
-            '<input type="text" id="composer"  name="composer" class="longText">' +
-            
-            '<label for="vocalPart">Vocal Part:</label>' +
-            '<input type="text" id="vocalPart" name="vocalPart" class="longText"><br>' +
-            
-            '<label for="key">Key:</label>' +
-            '<input type="text" id="key" name="key" class="longText">' +
-            
-            '<label for="melodicIncipit">Melodic Incipit:</label>' +
-            '<input type="text" id="melodicIncipit" name="melodicIncipit" class="longText">' +
-
-            'Notes Only<a href="javascript:void(0)">(?)</a></>:' +   
-            '<input type="hidden" name="notesOnly" value="">' +  
-            '<input type="checkbox" id="notesOnly" name="notesOnly" value="true"><br>' +
-            
-            '<label for="textIncipit">Text Incipit:</label>' +
-            '<input type="text" id="textIncipit" name="textIncipit" class="longText">' +
-            
-            '<label for="isSecular">Secular:</label>' +
-            '<input type="text" id="isSecular" name="isSecular" class="longText"><br>' +
-            
-            '<label for="notes">Notes:</label>' +
-            '<input type="text" id="notes" name="notes" class="longText">';
-}
-
-function getAdvancedSearchHTMLSources(){
-    return '<label for="Id">Id:</label>' +
-            '<input type="text" id="id" name="id" class="shortText">' +
-            
-            '<label for="sourceNumber">Source Number:</label>' +
-            '<input type="text" id="sourceNumber" name="sourceNumber" class="shortText"><br>' +
-            
-            '<label for="collection">Collection:</label>' +
-            '<input type="text" id="collection" name="collection" class="longText">' +
-            
-            '<label for="callNumber">Call Number:</label>' +
-            '<input type="text" id="callNumber" name="callNumber" class="longText"><br>' +
-            
-            '<label for="author">Author:</label>' +
-            '<input type="text" id="author"  name="author" class="longText">' +
-            
-            '<label for="title">Title:</label>' +
-            '<input type="text" id="title" name="title" class="longText"><br>' +
-            
-            '<label for="inscription">Inscription:</label>' +
-            '<input type="text" id="inscription" name="inscription" class="longText">' +
-            
-            '<label for="description">Description:</label>' +
-            '<input type="text" id="description" name="description" class="longText">';
-}
-
-function getAdvancedSearchHTMLCollections(){
-    return '<label for="Id">Id:</label>' +
-            '<input type="text" id="id" name="id" class="shortText"><br>' +
-            
-            '<label for="collection">Collection:</label>' +
-            '<input type="text" id="collection" name="collection" class="longText"><br>' +
-            
-            '<label for="description">Description:</label>' +
-            '<input type="text" id="description" name="description" class="longText"><br>';
+    advancedSearchInput.innerHTML = getAdvancedSearchHTML(searchProperties.dataType);
 }
 
 function handleTableClick(event){
@@ -904,60 +348,19 @@ function isTableHeaderText(clicked){
 }
 
 function sortByColumn(elementClicked){
-    setSortProps(elementClicked);
+    setSortProps(getSortByColumnProps(searchProperties.sortBy, elementClicked));
+    resetPageNumber();
     insertSearchResults();
-    // removePreviousArrow();
+    insertPageButtons();  
+    insertResultsMessage();  
+    insertResultsPerPageSelector();
 }
 
-//set props that determine column sorting within searchProperties object
-function setSortProps(elementClicked){
-    const columnName = getColumnName(elementClicked);
-    if(sortingByDifferentColumn(columnName)){
-        setSortByColumnName(columnName);
-        setSortOrder('ascending');
-    } else{
-        reverseSortOrder();
-    }
+function setSortProps(sortByProps){
+    searchProperties.sortBy = sortByProps; 
 }
 
-function getColumnName(elementClicked){    
-    if(isHeaderText(elementClicked)){
-        return elementClicked.parentElement.id;
-    } else if(isArrow(elementClicked)){ 
-        //arrow is within separate element from text, so must go two levels above to get column
-        return elementClicked.parentElement.parentElement.id;
-    }
-}
-
-function sortingByDifferentColumn(columnName){
-    return columnName !== searchProperties.sortBy.column; 
-}
-
-function setSortByColumnName(columnName){
-    searchProperties.sortBy.column = columnName;
-}
-
-function setSortOrder(order){
-    //sort order will either be ascending or descending
-    searchProperties.sortBy.order = order;
-}
-
-function reverseSortOrder(){
-    if(searchProperties.sortBy.order === 'ascending'){
-        searchProperties.sortBy.order = 'descending';
-    } else{
-        searchProperties.sortBy.order = 'ascending';
-    }
-
-}
-
-//column header text was clicked (not the arrow next to text)
-function isHeaderText(elementClicked){
-    return elementClicked.nodeName === 'A'; //header text is within anchor element
-}
-
-//arrow next to column label was clicked
-function isArrow(elementClicked){
-    return elementClicked.nodeName === 'I'; //arrows are within 
+function resetPageNumber(){
+    searchProperties.curPage = 1;
 }
 

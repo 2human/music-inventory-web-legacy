@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.toohuman.dao.SourcesRepo;
+import com.toohuman.filters.SourceResultFilter;
 import com.toohuman.model.Sources;
 
 //TODO change it so that source number does not stay the same in creating new sources
 //TODO learn difference between post and put request, and add to all controllers
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com" }, maxAge = 3600)
 public class SourcesController {
 	
 	@Autowired
@@ -245,92 +246,17 @@ public class SourcesController {
 	private Set<Sources> getAdvancedResultSet(Set<Sources> resultSet, String id, String collection, String sourceNumber, 
 			String callNumber, String author, String title, String inscription, String description){
 		
-		if(id.length() > 0) resultSet = getFilteredByIdSet(id, resultSet);
-		if(collection.length() > 0) resultSet = getFilteredByCollectionSet(collection, resultSet);
-		if(sourceNumber.length() > 0) resultSet = getFilteredBySourceNumberSet(sourceNumber, resultSet);
-		if(callNumber.length() > 0) resultSet = getFilteredByCallNumberSet(callNumber, resultSet);
-		if(author.length() > 0) resultSet = getFilteredByAuthorSet(author, resultSet);
-		if(title.length() > 0) resultSet = getFilteredByTitleSet(title, resultSet);
-		if(inscription.length() > 0) resultSet = getFilteredByInscriptionSet(inscription, resultSet);
-		if(description.length() > 0) resultSet = getFilteredByDescriptionSet(description, resultSet);
+		if(id.length() > 0) resultSet = SourceResultFilter.getFilteredByIdSet(id, resultSet);
+		if(collection.length() > 0) resultSet = SourceResultFilter.getFilteredByCollectionSet(collection, resultSet);
+		if(sourceNumber.length() > 0) resultSet = SourceResultFilter.getFilteredBySourceNumberSet(sourceNumber, resultSet);
+		if(callNumber.length() > 0) resultSet = SourceResultFilter.getFilteredByCallNumberSet(callNumber, resultSet);
+		if(author.length() > 0) resultSet = SourceResultFilter.getFilteredByAuthorSet(author, resultSet);
+		if(title.length() > 0) resultSet = SourceResultFilter.getFilteredByTitleSet(title, resultSet);
+		if(inscription.length() > 0) resultSet = SourceResultFilter.getFilteredByInscriptionSet(inscription, resultSet);
+		if(description.length() > 0) resultSet = SourceResultFilter.getFilteredByDescriptionSet(description, resultSet);
 		
 		return resultSet;	
-	}	
-	
-	private Set<Sources> getFilteredByIdSet(String id, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {
-			try {
-				if(result.getId() == Integer.parseInt(id)) workingSet.add(result);
-//				resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
-			} catch(Exception e) {
-//				System.out.println("NaN entered as ID");
-			}			
-		}
-		return workingSet;
 	}
-	
-	private Set<Sources> getFilteredByCollectionSet(String collection, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {
-			if(result.getCollection().toLowerCase().indexOf(collection.toLowerCase()) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}
-	
-	private Set<Sources> getFilteredBySourceNumberSet(String sourceNumber, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {			
-			try {
-				if(result.getSourceNumber() == Integer.parseInt(sourceNumber)) workingSet.add(result);
-			} catch(Exception e) {
-	//			System.out.println("NaN entered as sourceNumber");
-			}			
-		}
-		return workingSet;		
-	}
-	
-	private Set<Sources> getFilteredByCallNumberSet(String callNumber, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {
-			if(result.getCallNumber().toLowerCase().indexOf(callNumber) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}
-	
-	private Set<Sources> getFilteredByAuthorSet(String author, Set<Sources> resultSet){
-		System.out.println(resultSet.size());
-		Set<Sources> workingSet = new HashSet<Sources>();
-		
-		for(Sources result: resultSet) {
-			if(result.getAuthor().toLowerCase().indexOf(author.toLowerCase()) != -1) workingSet.add(result);			
-		}		System.out.println(workingSet.size());
-		return workingSet;		
-	}
-	
-	private Set<Sources> getFilteredByTitleSet(String title, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {
-			if(result.getTitle().toLowerCase().indexOf(title.toLowerCase()) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}
-	
-	private Set<Sources> getFilteredByInscriptionSet(String inscription, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {
-			if(result.getInscription().toLowerCase().indexOf(inscription.toLowerCase()) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}
-	
-	private Set<Sources> getFilteredByDescriptionSet(String description, Set<Sources> resultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		for(Sources result: resultSet) {
-			if(result.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}	
 	
 	
 	@RequestMapping("/getSource")

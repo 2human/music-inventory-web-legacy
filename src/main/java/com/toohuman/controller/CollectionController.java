@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.toohuman.dao.CollectionRepo;
+import com.toohuman.filters.CollectionResultFilter;
 import com.toohuman.model.Collection;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com", "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com" }, maxAge = 3600)
 public class CollectionController {
 
 	@Autowired
@@ -175,42 +176,12 @@ public class CollectionController {
 	//get results by checking each field in advanced search
 	private Set<Collection> getAdvancedResultSet(Set<Collection> resultSet, String id, String collection, String description){
 	
-		if(id.length() > 0) resultSet = getFilteredByIdSet(id, resultSet);
-		if(collection.length() > 0) resultSet = getFilteredByCollectionSet(collection, resultSet);
-		if(description.length() > 0) resultSet = getFilteredByDescriptionSet(description, resultSet);
+		if(id.length() > 0) resultSet = CollectionResultFilter.getFilteredByIdSet(id, resultSet);
+		if(collection.length() > 0) resultSet = CollectionResultFilter.getFilteredByCollectionSet(collection, resultSet);
+		if(description.length() > 0) resultSet = CollectionResultFilter.getFilteredByDescriptionSet(description, resultSet);
 		
 		return resultSet;	
 	}	
-	
-	private Set<Collection> getFilteredByIdSet(String id, Set<Collection> resultSet){
-		Set<Collection> workingSet = new HashSet<Collection>();
-		for(Collection result: resultSet) {
-			try {
-				if(result.getId() == Integer.parseInt(id)) workingSet.add(result);
-//					resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
-			} catch(Exception e) {
-//					System.out.println("NaN entered as ID");
-			}			
-		}
-		return workingSet;
-	}
-	
-	private Set<Collection> getFilteredByCollectionSet(String collection, Set<Collection> resultSet){
-		Set<Collection> workingSet = new HashSet<Collection>();
-		for(Collection result: resultSet) {
-			if(result.getCollection().toLowerCase().indexOf(collection.toLowerCase()) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}
-	
-	private Set<Collection> getFilteredByDescriptionSet(String description, Set<Collection> resultSet){
-		Set<Collection> workingSet = new HashSet<Collection>();
-		for(Collection result: resultSet) {
-			if(result.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) workingSet.add(result);			
-		}
-		return workingSet;		
-	}		
-		
 	//get page containing information for single collection
 	@RequestMapping("/getCollection")
 	public ModelAndView getCollection(@RequestParam int id) {
@@ -293,7 +264,7 @@ public class CollectionController {
 	}
 	
 	//delete collection entry and return collection that was deleted
-	@RequestMapping("/collections")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/collections", params = {"id", "collection", "description"})
 	public Collection delete(@RequestParam int id, @RequestParam(value="collection") String collectionName, @RequestParam String description) {
 		//construct collection object and update database
 		Collection collection = repo.findById(id).orElse(new Collection());

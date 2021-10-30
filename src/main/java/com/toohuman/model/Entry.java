@@ -155,16 +155,12 @@ public class Entry {
 		this.notes = notes;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "Entry [id=" + id + ", collection=" + collection + ", sourceNumber=" + sourceNumber + ", location="
 				+ location + ", title=" + title + ", composer=" + composer + ", vocalPart=" + vocalPart + ", key=" + key
 				+ ", melodicIncipit=" + melodicIncipit + ", textIncipit=" + textIncipit + ", isSecular=" + isSecular
 				+ "]";
-	}	
-
-	
+	}		
 	
 }

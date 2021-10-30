@@ -3,7 +3,7 @@ Steps:
 2. Copy URL from "connect" starting at "ubuntu..."
 3. In Putty, paste into Host Name, and then go to SSH, Auth, and select PPK file. Connect.
 
-ubuntu@ec2-3-144-221-89.us-east-2.compute.amazonaws.com
+ubuntu@ec2-3-128-55-111.us-east-2.compute.amazonaws.com
 
 4. Run the following commands: (ignore errors)
 
@@ -31,8 +31,6 @@ sudo apt install docker-compose
 5. Open Filezilla, go to Edit > Setttings > SFTP; add Putty Key file
  
 6. Enter same path to Host: and then click connect
-
-ubuntu@ec2-3-144-32-160.us-east-2.compute.amazonaws.com
 
 7. Paste project into Ubuntu folder. Do not past it to home, as this causes error.
 

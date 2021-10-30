@@ -135,7 +135,7 @@ tr:nth-child(even){
 }
 
 
-tr a{ /* column label text*/
+th a{ /* column label text*/
     color: black;
     text-decoration:none;
 }

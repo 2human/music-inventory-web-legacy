@@ -2,12 +2,12 @@ C:\Users\Andrew\Documents\Computer Science\STS Workspace\MusicEntriesWeb
 
 docker build . -t music-entries-web
 
-docker run -p 8080:8080 --name mew -d mew
-docker run -p 8080:8080 --name mew --link mew-mysql:mysql -d mew
+docker run -p 8088:8080 --name mew -d mew xx
+docker run -p 8080:8080 --name mew --link mew-mysql:mysql -d mew xx
 
 docker run -p 80:80 --name mew -d mew --restart=always
 docker update mew --restart=always
-docker update --restart=on-failure
+--restart=on-failure
 
 
 xx docker run --name test-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -e MYSQL_USER=2h -e MYSQL_PASSWORD=password -p 3367:3306 -d mysql:8 xx
