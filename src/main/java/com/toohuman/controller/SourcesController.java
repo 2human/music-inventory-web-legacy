@@ -27,14 +27,6 @@ public class SourcesController {
 	@Autowired
 	SourcesRepo repo;
 	
-	
-//	
-//	@RequestMapping("/")
-//	public String home() {
-//		
-//		return "home";		
-//	}
-	
 	@RequestMapping(method = RequestMethod.GET, value="/sources", params = {})
 	public List<Sources> getAll(){
 		return repo.findAll();
@@ -52,7 +44,7 @@ public class SourcesController {
 		//iterate through each keyword, and filter out results that do not contain keyword
 		for(int i = 1; i < keywords.length; i++) {					
 			oldResultSet = resultSet;
-			resultSet = getFilteredResultSet(keywords[i], oldResultSet);
+			resultSet = SourceResultFilter.getFilteredByKeywordSet(keywords[i], oldResultSet);
 		}		
 		return resultSet;
 	}
@@ -77,32 +69,6 @@ public class SourcesController {
 		workingSet.addAll(repo.findByInscription(keyword));
 		workingSet.addAll(repo.findByDescription(keyword));
 		
-		return workingSet;
-	}
-	
-	//get filtered result set by filtering existing set, checking all fields
-	private Set<Sources> getFilteredResultSet(String keyword, Set<Sources> curResultSet){
-		Set<Sources> workingSet = new HashSet<Sources>();
-		//check each current result, adding only those containing current keyword to filtered set
-		for(Sources curResult: curResultSet) {
-			try {
-				if(curResult.getId() == Integer.parseInt(keyword)) workingSet.add(curResult);
-//				resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
-				} catch(Exception e) {
-//					System.out.println("NaN entered as ID");
-				}
-			if(curResult.getCollection().indexOf(keyword) != -1) workingSet.add(curResult);
-			try {
-				if(curResult.getSourceNumber() == Integer.parseInt(keyword)) workingSet.add(curResult);
-			} catch(Exception e) {
-//				System.out.println("NaN entered as sourceNumber");
-			}
-			if(curResult.getCallNumber().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
-			if(curResult.getTitle().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
-			if(curResult.getAuthor().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
-			if(curResult.getInscription().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
-			if(curResult.getInscription().toLowerCase().indexOf(keyword.toLowerCase()) != -1) workingSet.add(curResult);
-		}
 		return workingSet;
 	}
 	
@@ -210,10 +176,7 @@ public class SourcesController {
 			
 		}
 		return workingSet;
-	}
-	
-	
-	
+	}	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/sources", params = {"searchText", "table", "id", "sourceNumber", "collection",
 																			"callNumber", "author", "title", "inscription", "description"})
@@ -237,7 +200,7 @@ public class SourcesController {
 		Set<Sources> oldResultSet = new HashSet<Sources>();			//placeholder set
 		for(int i = 1; i < keywords.length; i++) {				//starting at second keyword, filter by each keyword
 			oldResultSet = resultSet;
-			resultSet = getFilteredResultSet(keywords[i], oldResultSet);	//filter results by current keyword			
+			resultSet = SourceResultFilter.getFilteredByKeywordSet(keywords[i], oldResultSet);	//filter results by current keyword			
 		}		
 		return resultSet;
 	}

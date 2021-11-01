@@ -48,7 +48,7 @@ public class EntryController {
 		//iterate through each keyword, and filter out results that do not contain keyword
 		for(int i = 1; i < keywords.length; i++) {					
 			oldResultSet = resultSet;
-			resultSet = getFilteredResultSet(keywords[i], oldResultSet);
+			resultSet = EntryResultFilter.getFilteredResultSet(keywords[i], oldResultSet);
 		}		
 		return resultSet;
 	}
@@ -79,36 +79,6 @@ public class EntryController {
 		resultSet.addAll(repo.findByNotes(keyword));
 		
 		return resultSet;
-	}
-	
-	//get filtered result set by filtering existing set, checking all fields
-	private Set<Entry> getFilteredResultSet(String keyword, Set<Entry> curResultSet){
-		Set <Entry> filteredSet = new HashSet<Entry>();
-		//check each current result, adding only those containing current keyword to filtered set
-		for(Entry curResult: curResultSet) {
-			try {
-				if(curResult.getId() == Integer.parseInt(keyword)) filteredSet.add(curResult);
-//				resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
-				} catch(Exception e) {
-					System.out.println("NaN entered as ID");
-				}
-			if(curResult.getCollection().indexOf(keyword) != -1) filteredSet.add(curResult);
-			try {
-				if(curResult.getSourceNumber() == Integer.parseInt(keyword)) filteredSet.add(curResult);
-			} catch(Exception e) {
-				System.out.println("NaN entered as sourceNumber");
-			}
-			if(curResult.getLocation().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getTitle().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getComposer().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getVocalPart().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getKey().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getMelodicIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getTextIncipit().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getIsSecular().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-			if(curResult.getNotes().toLowerCase().indexOf(keyword.toLowerCase()) != -1) filteredSet.add(curResult);
-		}
-		return filteredSet;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table", "field"})
@@ -262,7 +232,7 @@ public class EntryController {
 		Set<Entry> oldResultSet = new HashSet<Entry>();			//placeholder set
 		for(int i = 1; i < keywords.length; i++) {				//starting at second keyword, filter by each keyword
 			oldResultSet = resultSet;
-			resultSet = getFilteredResultSet(keywords[i], oldResultSet);	//filter results by current keyword			
+			resultSet = EntryResultFilter.getFilteredResultSet(keywords[i], oldResultSet);	//filter results by current keyword			
 		}		
 		return resultSet;
 	}
