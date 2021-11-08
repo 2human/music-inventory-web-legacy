@@ -12,4 +12,15 @@ public class WebMainController {
     public String home() {
         return "index.html";
     }
+    
+    @RequestMapping(value = "/guide")
+    public String guide() {
+        return "guide.html";
+    }
+    
+    @RequestMapping(value = "/about")
+    public String about() {
+        return "about.html";
+    }
+    
 }

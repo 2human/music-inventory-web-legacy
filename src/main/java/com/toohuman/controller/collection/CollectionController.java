@@ -1,4 +1,4 @@
-package com.toohuman.controller;
+package com.toohuman.controller.collection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +19,8 @@ import com.toohuman.filters.CollectionResultFilter;
 import com.toohuman.model.Collection;
 
 @RestController
-@CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com", "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com" }, maxAge = 3600)
+@CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com",
+		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org" }, maxAge = 3600)
 public class CollectionController {
 
 	@Autowired

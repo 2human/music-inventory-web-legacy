@@ -1,4 +1,4 @@
-package com.toohuman.controller;
+package com.toohuman.controller.entry;
 
 /**
  * @author farsor
@@ -24,7 +24,8 @@ import com.toohuman.filters.EntryResultFilter;
 import com.toohuman.model.Entry;
 
 @RestController
-@CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com" }, maxAge = 3600)
+@CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com",
+		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org" }, maxAge = 3600)
 public class EntryController {
 
 	@Autowired

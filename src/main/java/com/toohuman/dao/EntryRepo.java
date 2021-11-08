@@ -42,9 +42,6 @@ public interface EntryRepo extends JpaRepository<Entry, Integer> {
 	@Query("from Entry where notes LIKE %?1%")
 	List<Entry> findByNotes(String notes);
 	
-	@Query("from Entry where notes LIKE %?1%")
-	List<Entry> findByNotesPitchOnly(String notes);
-	
 }
 
 	
