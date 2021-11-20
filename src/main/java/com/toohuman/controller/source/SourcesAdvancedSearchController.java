@@ -142,8 +142,7 @@ public class SourcesAdvancedSearchController {
 			resultSet = getKeywordSearchResultSet(searchText);
 		}		
 		
-		return resultSet;	
-		
+		return resultSet;			
 	}
 	
 	//TODO: this is repeated in keyword search controller; get rid of this

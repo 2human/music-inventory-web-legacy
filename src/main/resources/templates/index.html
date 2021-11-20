@@ -6,18 +6,19 @@
     <link rel="stylesheet" href="styles/main.css">    
     <link rel="stylesheet" href="styles/table.css"> 
     <link rel="stylesheet" href="styles/searchForm.css"> 
+    <link rel="stylesheet" href="styles/navigation.css"> 
     <link rel="shortcut icon" href="#">
     <title>Music Collections</title>
 </head>
 <body id="searchPageBody">
-    <ul id="navigation">
-        <ul class="navigation" onclick="window.location.href = '/';">Search</button>
-        <button class="navigation" onclick="window.location.href = '/guide';">Guide</button>
-        <button class="navigation" onclick="window.location.href = '/about';">About</button>
-    </ul>
-    <h1>Search</h1>
+    <div id="navigation">
+        <a href="/" class="navOption">Search</a>
+        <a href="/guide" class="navOption">Guide</a>
+        <a href="/about" class="navOption">About</a>
+    </div>
     <!--Form for searching database-->
-    <form id="search">
+    <form id="searchForm">
+        <h1>Search Inventory</h1>
         <!--Text box for performing search-->
         <b>Keyword(s):</b>
         <input autofocus="autofocus" name="searchText" id="searchform" class="searchTextInput" size="60" maxlength="200" value="">
