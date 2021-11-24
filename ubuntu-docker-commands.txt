@@ -5,6 +5,8 @@ Steps:
 
 ubuntu@ec2-3-128-55-111.us-east-2.compute.amazonaws.com
 
+update > sudo apt update
+
 4. Run the following commands: (ignore errors)
 
 sudo apt-get update
