@@ -14,11 +14,11 @@
 	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a>
     <form action="updateCollection">
         <label for="Id">Id:</label>
-        <input type="text" id="id" name="id" th:value="${collection.getId()}" autofocus readonly>
+        <input type="text" id="id" name="id" class="form__input" th:value="${collection.getId()}" autofocus readonly>
         <label for="collection">Collection:</label>
-        <input type="text" id="collection" name="collection" th:value="${collection.getCollection()}">
+        <input type="text" id="collection" name="collection" class="form__input" th:value="${collection.getCollection()}">
         <label for="description">Description:</label>
-        <textarea th:inline="text" id="description" name="description">[[${collection.getDescription()}]]</textarea>
+        <textarea th:inline="text" id="description" class="form__input" name="description" class="form__textarea">[[${collection.getDescription()}]]</textarea>
         <input type="submit" value="Submit">
         <input type="submit" value="Delete" formaction="deleteCollection">
     </form>         
