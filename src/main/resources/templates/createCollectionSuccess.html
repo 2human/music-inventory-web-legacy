@@ -11,9 +11,9 @@
 	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a><br><br>
    	<div th:text="${'Collection with ID ' + collection.getId() + ' successfully created.'}"></div><br><br>
     <form action="createCollection">
-        <label for="collection">Collection:</label>
+        <label for="collection" class="form__label">Collection:</label>
         <input type="text" id="collection" name="collection">
-        <label for="description">Description:</label>
+        <label for="description" class="form__label">Description:</label>
         <textarea th:inline="text" id="description" name="description" class="form__textarea"></textarea>
         <input type="submit" value="Submit">
     </form>         

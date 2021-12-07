@@ -11,25 +11,33 @@
     <title>Sacred Music Inventory</title>
 </head>
 <body id="searchPageBody">
-    <section class="section-navigation">
-        <div class="navigation">
-            <a href="/" class="navigation__link">Search</a>
-            <a href="/guide" class="navigation__link">Guide</a>
-            <a href="/about" class="navigation__link">About</a>
-        </div>
-    </section>    
+    <header class="navigation">
+        <img src="images/logo.jpg" alt="Logo" class="navigation__logo" width="100">
+        <nav class="navigation__nav">            
+            <ul class="navigation__list">
+                <li class="navigation__item"><a href="#" class="navigation__link">Home</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link">Search</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link">Shop</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link">About</a></li>
+            </ul>
+        </nav>
+        <a class="navigation__button" href="#">Donate</a>
+    </header>
     <!--Form for searching database-->
     <main>
-        <section class="section-search-form">
-            <form id="search-form">
-                <h1 class="heading-primary">Search Inventory</h1>
-                <!--Text box for performing search-->
-                <label for="searchText" class="form__label form__label--keyword u-margin-right-tiny">Keyword(s):</label>
-                <input autofocus="autofocus" name="searchText" id="search-form" class="form__input" size="60" maxlength="200" value="">
-                <button id="submit-search" class="btn btn--blue">Search</button>
-                <i id="advanced-search-toggle" class="down-arrow down-arrow--black"></i>
+        <section class="section-search-form u-margin-left-huge">
+            <form id="search-form" class="search-form">
+                <div class="u-margin-bottom-small">
+                    <!--Text box for performing search-->
+                    <input autofocus="autofocus" name="searchText" id="search-form" class="form__input form__input--keyword" 
+                                                            placeholder=" Keyword(s)" size="60" maxlength="200" value="">
+                    <button id="submit-search" class="btn btn--blue">Search</button>
+                </div>
+                <a href="javascript:void(0)" id="advanced-search-toggle" class="btn-text btn-text__advanced-search">
+                    Open Advanced Search<i class="down-arrow btn-text__down-arrow"></i>
+                </a>
                 <!--Select which database table to search-->
-                <div id="table-select" class="table-select">  
+                <div id="table-select" class="u-margin-bottom-tiny">  
                     <input type="radio" name="table" value="collections" >
                     Collections
                     <input type="radio" name="table" value="sources" checked="checked">
@@ -39,15 +47,15 @@
                 </div>
                 <!--Div that displays fields that can be searched-->
                 <div id="field-select" class="field-select"></div>        
-                <div id="advanced-search-input" class="advanced-search-input"></div>
+                <div id="advanced-search-input"></div>
             </form>
         </section>
         <!--Div that displays results per page options-->
-        <div id="results-per-page"></div>
+        <div id="results-per-page" class="results-per-page u-margin-left-huge"></div>
         <!--Div that displays buttons for selecting result page number-->
-        <div id="page-buttons"></div>
+        <div id="page-buttons" class="u-margin-left-huge"></div>
         <!--Div that displays buttons for selecting result page number-->
-        <div id="results-message"></div>
+        <div id="results-message" class="u-margin-left-small"></div>
         <!--Table displaying search results-->
         <section id="search-results" class="section-search-results"></section>
         <!--Modal which displays form for editing table row-->
