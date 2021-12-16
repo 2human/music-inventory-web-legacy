@@ -25,39 +25,51 @@
     </header>
     <!--Form for searching database-->
     <main>
-        <section class="section-search-form u-margin-left-huge">
+
+        <section class="section-search-form">
             <form id="search-form" class="search-form">
-                <div class="u-margin-bottom-small">
-                    <!--Text box for performing search-->
-                    <input autofocus="autofocus" name="searchText" id="search-form" class="form__input form__input--keyword" 
-                                                            placeholder=" Keyword(s)" size="60" maxlength="200" value="">
-                    <button id="submit-search" class="btn btn--blue">Search</button>
+                <div class="form__group--keyword-search">
+                    <div class="u-margin-bottom-small">
+                        <!--Text box for performing search-->
+                        <input autofocus="autofocus" name="searchText" id="search-form" class="form__input form__input--keyword" 
+                                                                placeholder="Keyword(s)" size="60" maxlength="200" value="">
+                        <button id="submit-search" class="btn btn--blue">Search</button>
+                    </div>
+                    <a href="javascript:void(0)" id="advanced-search-toggle" class="btn-text btn-text__advanced-search">
+                        Open Advanced Search<i class="down-arrow btn-text__down-arrow"></i>
+                    </a>
+                    <!--Select which database table to search-->
+                    <div id="table-select" class="u-margin-bottom-tiny">  
+                        <input class="form__radio-button" type="radio" name="table" value="collections" id="collections">
+                        <label for="collections"><b>Collections</b></label>                        
+                        <input class="form__radio-button" type="radio" name="table" value="sources" checked="checked" id="sources">
+                        <label for="sources"><b>Sources</b></label>                        
+                        <input class="form__radio-button" type="radio" name="table" value="entries" id="entries">
+                        <label for="entries"><b>Entries</b></label>
+                    </div>
+                    <!--Div that displays fields that can be searched-->
+                    <div id="field-select" class="field-select"></div>                            
                 </div>
-                <a href="javascript:void(0)" id="advanced-search-toggle" class="btn-text btn-text__advanced-search">
-                    Open Advanced Search<i class="down-arrow btn-text__down-arrow"></i>
-                </a>
-                <!--Select which database table to search-->
-                <div id="table-select" class="u-margin-bottom-tiny">  
-                    <input type="radio" name="table" value="collections" >
-                    Collections
-                    <input type="radio" name="table" value="sources" checked="checked">
-                    Sources
-                    <input type="radio" name="table" value="entries">
-                    Entries
-                </div>
-                <!--Div that displays fields that can be searched-->
-                <div id="field-select" class="field-select"></div>        
-                <div id="advanced-search-input"></div>
+                <div id="advanced-search-input" class="advanced-search"></div>
             </form>
         </section>
-        <!--Div that displays results per page options-->
-        <div id="results-per-page" class="results-per-page u-margin-left-huge"></div>
-        <!--Div that displays buttons for selecting result page number-->
-        <div id="page-buttons" class="u-margin-left-huge"></div>
-        <!--Div that displays buttons for selecting result page number-->
-        <div id="results-message" class="u-margin-left-small"></div>
-        <!--Table displaying search results-->
-        <section id="search-results" class="section-search-results"></section>
+
+        <section id="search-results-section" class="section-search-results">   
+            <div id="margin-hack-top" class="u-margin-bottom-tiny"></div>
+            <div id="search-properties" class="search-properties">
+                <!--Div that displays buttons for selecting result page number-->
+                <div id="results-message" class="results-message"></div>
+                <!--Div that displays buttons for selecting result page number-->
+                <div id="page-buttons" class="page-select page-select__top"></div>
+                <div id="results-per-page" class="results-per-page"></div>
+            </div> 
+            <!--Table displaying search results-->
+            <div id="search-results"></div>
+            <!--Div that displays buttons for selecting page number at bottom of page-->
+            <div id="page-buttons-bottom" class="page-select page-select__bottom"></div>     
+            <div id="margin-hack-bot" class="u-margin-top-tiny"></div>
+        </section>  
+
         <!--Modal which displays form for editing table row-->
         <div id="editor-modal" class="modal">
             <!-- Modal content -->
@@ -66,8 +78,6 @@
                 <form id="editor-modal-form"></form>
             </div>          
         </div>
-        <!--Div that displays buttons for selecting page number at bottom of page-->
-        <section id="page-buttons-bottom" class="page-buttons-bottom"></div>
     </main>
     <script type="module" src='index.js'></script>     
 </body>

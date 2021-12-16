@@ -1,5 +1,7 @@
 C:\Users\Andrew\Documents\Computer Science\STS Workspace\MusicEntriesWeb
 
+sudo mvn clean install
+
 docker build . -t music-entries-web
 
 docker run -p 8088:8080 --name mew -d mew xx

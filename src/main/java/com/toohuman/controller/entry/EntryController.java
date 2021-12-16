@@ -25,7 +25,8 @@ import com.toohuman.model.Entry;
 
 @RestController
 @CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com",
-		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org" }, maxAge = 3600)
+		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org",
+		"http://musicinventoryapp.com", "http://www.musicinventoryapp.com"}, maxAge = 3600)
 public class EntryController {
 
 	@Autowired

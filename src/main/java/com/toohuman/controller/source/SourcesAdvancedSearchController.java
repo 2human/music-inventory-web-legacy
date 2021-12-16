@@ -22,7 +22,8 @@ import com.toohuman.model.Sources;
 //TODO learn difference between post and put request, and add to all controllers
 @RestController
 @CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com",
-		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org" }, maxAge = 3600)
+		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org",
+		"http://musicinventoryapp.com", "http://www.musicinventoryapp.com"}, maxAge = 3600)
 public class SourcesAdvancedSearchController {
 	
 	@Autowired
