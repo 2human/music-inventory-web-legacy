@@ -1,0 +1,10 @@
+#navigation{
+	margin: 2rem 0 0 2rem;
+	color: white;
+}
+.navOption{
+	margin-right: 1.5em;
+	display: inline;	
+    font-size: 1.25rem;
+    text-decoration:none;
+}

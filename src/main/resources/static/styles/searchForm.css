@@ -1,0 +1,82 @@
+
+
+#searchForm {
+	margin: 1.25rem 0  0 2rem;	
+}
+
+h1 {
+    font-family: Arial, Helvetica, Verdana, "Bitstream Vera Sans", SunSans-Regular, sans-serif;
+    font-size: 1.75em;
+    margin-bottom: 0.5em;
+    color: #195383;
+}
+
+.searchTextInput{
+	border-radius: 5px;
+}
+
+#tableSelect, #fieldSelect{
+    margin-left:6em;
+}
+
+/* Andvanced search form properties */
+
+#advancedSearchInput{
+	margin-top: .5em
+}
+
+#advancedSearchInput input{
+	border-radius: 5px;
+	margin-right: 1em
+}
+
+#advancedSearchInput .shortText{
+	width:10em;
+}
+
+#advancedSearchInput .longText{
+	width: 19.8em;
+}
+
+#advancedSearchInput label{
+	display:inline-block;
+	width: 9em;
+	font-weight:bold;
+	margin-bottom: .5em;
+}
+
+.hintLink{  
+	background: none!important;
+	border: none;
+	padding: 0!important;
+	/*optional*/
+	font-family: arial, sans-serif;
+	font-size:1em;
+	/*input has OS specific font-family*/
+	color: #069;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+#advancedSearchArrow {
+  border: solid black;
+  border-width: 0 1.5px 1.5px 0;
+  margin-left:.5em;
+  display: inline-block;
+  cursor:pointer;
+}
+
+.downArrow{	
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);	
+	padding:2px 3px 4px 3px;
+	margin-bottom:.15em;
+}
+
+.upArrow{
+	transform: rotate(-135deg);
+	-webkit-transform: rotate(-135deg);	
+	padding:4px 3px 2px 3px;
+	margin-top:5px;
+}
+

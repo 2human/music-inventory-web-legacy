@@ -1,0 +1,54 @@
+.advanced-search {
+
+    &__row {
+        width: 60rem;
+        margin: 0 auto;;
+    }
+
+    &__row:not(:last-child) {
+        margin-bottom: .75rem;
+    }
+
+    &__group {
+        display: inline-block;
+        position: relative;
+    }   
+
+    &__group:not(:last-child) {
+        margin-right: .5rem;
+    }
+
+    &__input, &__select {
+        display: block;
+    }
+
+
+    &__label {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-left: 1rem;
+        margin-top: .1rem;
+        display: block;    
+        transition: all .4s;    
+    } 
+    
+    &__input:placeholder-shown + &__label{       //adjacent sibling selector (+), ~ can be used for general siblings
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-2.5rem);
+    }
+
+    &__pitches-only {
+        font-size: 1.2rem;
+        font-weight: 700;
+        z-index: 50;
+        position: absolute;
+        right: .5rem;
+        top: 2.95rem;
+        // transition: all .6s;    
+    }
+    
+    // &__input:placeholder-shown ~ &__pitches-only {       //adjacent sibling selector (+), ~ can be used for general siblings
+    //     transform: translateX(-11.5rem);
+    // }
+}

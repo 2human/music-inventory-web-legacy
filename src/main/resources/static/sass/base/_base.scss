@@ -1,0 +1,20 @@
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;    /* makes it so all elements will inherit this property */
+}
+
+html {
+    //Defines what 1 rem is
+    font-size: 62.5%;
+}
+
+body {    
+    box-sizing: border-box; /* border/padding not be added to width/height */
+    min-width: 114rem;
+    max-width: 200rem;
+	background-color: #FFF;
+    padding: 7rem .5rem 0;
+}

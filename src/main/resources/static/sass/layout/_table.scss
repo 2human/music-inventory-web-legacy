@@ -1,0 +1,111 @@
+.table {
+	font-size: 1.1rem;
+	white-space: pre-line; 
+	width: 100% ;
+	border-collapse: collapse;
+	border-top: .1px solid black;
+	word-break: break-word;    
+	border-bottom: .5px solid rgb(219, 219, 219);
+
+    &__header {
+        text-align: left;	
+        border-bottom: .1px solid black;
+        height:2em;
+    }
+
+    &__data {
+        vertical-align: top;
+        padding: .25em;
+        border-left: 1px solid rgb(219, 219, 219);
+        &:nth-child(1){	
+            border-left: none;
+        }
+    }
+
+    &__row:nth-child(even) {
+        background-color: #EBEBEB;  //make every other row white
+    }
+
+    &__entry-cell--is-secular {        
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    //Entry columns
+
+    &__entry-column--id{
+        width:3%;
+    }
+    &__entry-column--collection {
+        width:10%;        
+    }
+    &__entry-column--source-number {
+        width:4%;
+    }    
+    &__entry-column--location {
+        width:8%;
+    }
+    &entry-column--title {
+        width:8%;
+    }
+    &__entry-column--composer{
+        width:8%;
+    }
+    &__entry-column--vocal-part{
+        width: 9%;
+    }
+    &__entry-column--key{
+        width:6%;	
+    }
+    &__entry-column--melodic-incipit{
+        width:14%;	
+    }
+    &__entry-column--text-incipit{
+        width:14%;	        
+    }
+    &__entry-column--is-secular{
+        width:5%;	
+    }
+    &__entry-column--notes{
+        width:11%;
+    }
+
+    //Source Columns
+
+    &__source-column--id{
+        width:3%;
+    }
+    &__source-column--collection{
+        width:9%;
+    }
+    &__source-column--source-number{
+        width:4%; 
+    }
+    &__source-column--call-number{
+        width:8.5%;
+    }
+    &__source-column--author{
+        width:8.5%;
+    }
+    &__source-column--title{
+        width:9%;
+    }
+    &__source-column--inscriptions{
+        width:28%;
+    }
+    &__source-column--description{
+        width:30%;	
+    }
+
+    //Collection Columns
+
+    &__collection-column--id {
+        width:3%;
+    }
+    &__collection-column--collection {
+        width:10%;
+    }
+    &__collection-column--description {
+        width:87%;
+    }
+}

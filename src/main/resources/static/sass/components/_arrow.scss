@@ -1,0 +1,38 @@
+.down-arrow{	
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);	
+	padding:2px 3px 4px 3px;
+	margin-bottom:.15em;
+    margin-left:.5em;
+    border: solid black; 
+    border-width: 0 1.5px 1.5px 0;
+    display: inline-block;
+    cursor:pointer;
+
+    &--black {
+        border: solid black; 
+        border-width: 0 1.5px 1.5px 0;
+    }
+}
+
+.up-arrow{
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);	
+	padding:2px 3px 4px 3px;
+	margin-bottom: -.1em;
+    margin-left:.5em;
+    border: solid black; 
+    border-width: 1.5px 0 0 1.5px;
+    display: inline-block;
+    cursor:pointer;
+
+    &--blue {
+        border: solid $color-link-blue;
+        border-width: 1.5px 0 0 1.5px;  
+    }
+    
+    &--black {
+        border: solid black; 
+        border-width: 1.5px 0 0 1.5px;
+    }
+}
