@@ -76,7 +76,7 @@ function getAdvancedSearchHTMLEntries(){
             <input type="text" id="melodicIncipit" name="melodicIncipit" class="form__input form__input--long advanced-search__input" placeholder="Melodic Incipit">
             <label class="advanced-search__label u-inline-block" for="melodicIncipit">Melodic Incipit</label>
             <span class="advanced-search__pitches-only">
-                Pitches Only<a href="javascriptvoid(0)">(?)</a>:  
+                Pitches Only<a href="javascript:void(0)">(?)</a>:  
                 <input type="hidden" name="pitchesOnly" value="">  
                 <input type="checkbox" id="pitchesOnly" name="pitchesOnly" value="true">
             </span>

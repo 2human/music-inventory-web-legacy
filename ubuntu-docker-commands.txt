@@ -5,6 +5,7 @@ Steps:
 2. Copy URL from "connect" starting at "ubuntu..."
 3. In Putty, paste into Host Name, and then go to SSH, Auth, and select PPK file. Connect.
 
+sftp://ubuntu@ec2-3-128-55-111.us-east-2.compute.amazonaws.com
 ubuntu@ec2-3-128-55-111.us-east-2.compute.amazonaws.com
 elastic ip - 3.128.55.111
 
@@ -46,5 +47,6 @@ sudo apt install docker-compose
 sudo apt update
 sudo apt install maven
 
+git add *
 git commit -a -m "Integrated ability to handle pre-parsed files"
 git push -u origin master

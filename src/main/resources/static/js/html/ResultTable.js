@@ -29,7 +29,7 @@ function getTableColGroupHTML(dataType){
 function getEntryTableColGroupHTML(){
     return `
         <colgroup>
-            <col class="table__entry-column--id">
+            <col class="table__entry-column--expand">
             <col class="table__entry-column--collection">
             <col class="table__entry-column--source-number">
             <col class="table__entry-column--location">
@@ -49,7 +49,7 @@ function getEntryTableColGroupHTML(){
 function getSourceTableColGroupHTML(){
     return `
         <colgroup>
-            <col class="table__source-column--id">
+            <col class="table__source-column--expand">
             <col class="table__source-column--collection">
             <col class="table__source-column--source-number">
             <col class="table__source-column--call-number">
@@ -66,7 +66,7 @@ function getSourceTableColGroupHTML(){
 function getCollectionTableColGroupHTML(){
     return `
         <colgroup>
-            <col class="table__collection-column--id">
+            <col class="table__collection-column--expand">
             <col class="table__collection-column--collection">
             <col class="table__collection-column--description">
         </colgroup>    
@@ -89,7 +89,7 @@ function getTableHeaderHTML(searchProperties){
 function getEntryTableHeaderHTML(searchProperties){
     return  `
             <tr id="entriesTableHead">
-                <th id="id" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">ID${getArrowIfNeeded('id', searchProperties)}</a></th>
+                <th id="expand" class="table__header"></th>
                 <th id="collection" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Collection${getArrowIfNeeded('collection', searchProperties)}</a></th>
                 <th id="sourceNumber" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Source Number${getArrowIfNeeded('sourceNumber', searchProperties)}</a></th>
                 <th id="location" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Location${getArrowIfNeeded('location', searchProperties)}</a></th>
@@ -134,7 +134,7 @@ function getUpwardArrowHTML(){
 
 function getSourceTableHeaderHTML(searchProperties){
     return `<tr id="sourcesTableHead">
-                <th id="id" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">ID${getArrowIfNeeded('id', searchProperties)}</a></th>
+                <th id="expand" class="table__header"></th>
                 <th id="collection" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Collection${getArrowIfNeeded('collection', searchProperties)}</a></th>
                 <th id="sourceNumber" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Source Number${getArrowIfNeeded('sourceNumber', searchProperties)}</a></th>
                 <th id="callNumber" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Call Number${getArrowIfNeeded('callNumber', searchProperties)}</a></th>
@@ -147,7 +147,7 @@ function getSourceTableHeaderHTML(searchProperties){
 
 function getCollectionTableHeaderHTML(searchProperties){
     return `<tr id="collectionsTableHead">
-                <th id="id" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">ID${getArrowIfNeeded('id', searchProperties)}</a></th>
+                <th id="expand" class="table__header"></th>
                 <th id="collection" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Collection${getArrowIfNeeded('collection', searchProperties)}</a></th>
                 <th id="description" class="table__header"><a href="javascript:void(0)" class="table__header-text btn-text">Description${getArrowIfNeeded('description', searchProperties)}</a></th>
             </tr>`;
@@ -202,30 +202,39 @@ export function getTableRowHTML(dataType, data, domainURL){
 }
 
 function getSourceTableRowHTML(source, domainURL){
-    return '<tr class="table__row">' +
-                `<td class="idCell table__data" id="id"><a href="${domainURL}/getSource?id=${source.id}" target="_blank">${source.id}</a></td>` +
-                `<td class="collectionCell table__data" id="collection">${source.collection}</td>` +
-                `<td class="sourceNumberCell table__data" id="sourceNumber">${source.sourceNumber}</td>` +
-                `<td class="callNumberCell table__data" id="callNumber">${source.callNumber}</td>` +
-                `<td class="authorCell table__data" id="author">${source.author}</td>` +
-                `<td class="titleCell table__data" id="title">${source.title}</td>` +
-                `<td class="inscriptionCell table__data u-retain-indentation" id="inscription">${source.inscription}</td>` +
-                `<td class="descriptionCell table__data u-retain-indentation" id="description">${source.description}</td>` +
+    return `<tr class="table__row" id="${source.id}">` +
+                `<td class="table__data" id="expand">                
+                    <svg class="btn-magnify">
+                        <use xlink:href="images/sprite.svg#icon-magnifying-glass"></use>
+                    </svg>
+                </td>` +
+                `<td class="table__data" id="collection">${source.collection}</td>` +
+                `<td class="table__data" id="sourceNumber">${source.sourceNumber}</td>` +
+                `<td class="table__data" id="callNumber">${source.callNumber}</td>` +
+                `<td class="table__data" id="author">${source.author}</td>` +
+                `<td class="table__data" id="title">${source.title}</td>` +
+                `<td class="table__data u-retain-indentation" id="inscription">${source.inscription}</td>` +
+                `<td class="table__data u-retain-indentation" id="description">${source.description}</td>` +
             '</tr>';
 }
 
 function getEntryTableRowHTML(entry, domainURL){
-    return '<tr class="table__row">' +
-                `<td class="idCell table__data" id="id"><a href="${domainURL}/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
-                `<td class="collectionCell table__data" id="collection">${entry.collection}</td>` +
-                `<td class="sourceNumberCell table__data" id="sourceNumber">${entry.sourceNumber}</td>` +
-                `<td class="locationCell table__data" id="location">${entry.location}</td>` +
-                `<td class="titleCell table__data" id="title">${entry.title}</td>` +
-                `<td class="composerCell table__data" id="composer">${entry.composer}</td>` +
-                `<td class="vocalPartCell table__data" id="vocalPart">${entry.vocalPart}</td>` +
-                `<td class="keyCell table__data" id="key">${entry.key}</td>` +
-                `<td class="melodicIncipitCell table__data" id="melodicIncipit">${entry.melodicIncipit}</td>` +
-                `<td class="textIncipitCell table__data" id="textIncipit">${entry.textIncipit}</td>` +
+    return `<tr class="table__row" id="${entry.id}">` +
+                // `<td class="table__data" id="id"><a href="${domainURL}/getEntry?id=${entry.id}" target="_blank">${entry.id}</a></td>` +
+                `<td class="table__data" id="expand">                
+                    <svg class="btn-magnify">
+                        <use xlink:href="images/sprite.svg#icon-magnifying-glass"></use>
+                    </svg>
+                </td>` +
+                `<td class="table__data" id="collection">${entry.collection}</td>` +
+                `<td class="table__data" id="sourceNumber">${entry.sourceNumber}</td>` +
+                `<td class="table__data" id="location">${entry.location}</td>` +
+                `<td class="table__data" id="title">${entry.title}</td>` +
+                `<td class="table__data" id="composer">${entry.composer}</td>` +
+                `<td class="table__data" id="vocalPart">${entry.vocalPart}</td>` +
+                `<td class="table__data" id="key">${entry.key}</td>` +
+                `<td class="table__data" id="melodicIncipit">${entry.melodicIncipit}</td>` +
+                `<td class="table__data" id="textIncipit">${entry.textIncipit}</td>` +
                 `<td class="table__data table__entry-cell--is-secular" id="isSecular">` +
                    `<input type="checkbox" class="isSecularData" ${entry.isSecular === 'true' ? "checked" : ""} disabled>` + 
                 `</td>` +
@@ -234,9 +243,13 @@ function getEntryTableRowHTML(entry, domainURL){
 }
 
 function getCollectionTableRowHTML(collection, domainURL){
-    return '<tr class="table__row">' +
-                `<td class="idCell table__data" id="id"><a href="${domainURL}/getCollection?id=${collection.id}" target="_blank">${collection.id}</a></td>` +
-                `<td class="collectionCell table__data" id="collection">${collection.collection}</td>` +
-                `<td class="descriptionCell table__data" id="description">${collection.description}</td>` +
-            '</tr>';        
+    return `<tr class="table__row" id="${collection.id}">` +
+                `<td class="table__data" id="expand">                
+                    <svg class="btn-magnify">
+                        <use xlink:href="images/sprite.svg#icon-magnifying-glass"></use>
+                    </svg>
+                </td>` +
+                `<td class="table__data" id="collection">${collection.collection}</td>` +
+                `<td class="table__data" id="description">${collection.description}</td>` +
+            '</tr>';
 }

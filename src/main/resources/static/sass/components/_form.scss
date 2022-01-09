@@ -23,18 +23,45 @@
       width: 50rem;
       margin-bottom: 0;
       vertical-align: middle;
+      margin-right: .5rem;
+
+      @include respond(phone-land) {
+        width: 25%;   //this is just to reset the property so that it will fill element
+        flex-grow: 1;
+      }
+
     }
 
     &--short {
-      width:14.32rem;
+      width: 14.32rem;      
+
+      @include respond(phone-land) { 
+        width: 23.75rem;   
+      }      
+
+      @include respond(phone-port) { 
+        width: 14.32rem;   
+      }
     }
 
     &--long {
-      width: 29.5rem;      
+      width: 29.5rem;    
+
+      @include respond(phone-land) { 
+        width: 23.75rem;   
+      }      
+
+      @include respond(phone-port) { 
+        width: 29.5rem;   
+      }
     }
 
     &--extra-long {
       width: 72rem;
+
+      @include respond(tab-port) { 
+        width: 56rem;   
+      }      
     }
   }
 
@@ -48,13 +75,36 @@
   }
 
   &__textarea {
-    border-radius: .4rem;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    font-family: inherit;       //inputs do not inherit font family by default
+    color: inherit;    
+    border-radius: .2rem;
+    background-color: rgba($color-white, .5);
+    padding: .5rem 1rem; 
+    border-color: white;
     width: 72rem;
     height: 10rem;
     resize: none;
-    font-family: inherit;
-    margin-bottom: .5rem;
+    
+    font-size: 1.4rem;
+    font-family: inherit;       //inputs do not inherit font family by default
+    color: inherit;    
+    border-radius: .2rem;
+    background-color: rgba($color-white, .5);
+    padding: .5rem 1rem; 
+    border-color: white;
+
+    &:not(:last-child) {
+      margin-bottom: .75rem;
+    }    
+
+    @include respond(tab-port) { 
+      width: 56rem;   
+    }      
+
+    @include respond(phone-land) { 
+      width: 100%;      
+    }
   }
 
   &__label {
@@ -70,16 +120,39 @@
     }
   }  
 
+  &__checkbox-section {
+    display: inline-block;
+    width: 58rem;
+
+    @include respond(phone-land) {
+        width: 90%;
+    }
+  }
+
   &__checkbox-group {
     display: inline-block;
   }
 
-  &__group--keyword-search {
-    width: 60rem;
-    margin: 0 auto;
+  &__group{
+    &--basic-search {
+      width: 64rem;
+      margin: 0 auto;
+
+      @include respond(phone-land) {
+        width: 100%;   
+      }
+    }  
+
+    &--keyword {
+      @include respond(phone-land) {
+        display: flex;
+      }
+    }
   }
 
   &__radio-button, &__checkbox {
-    vertical-align: text-top;
+    vertical-align: text-bottom;
+    width: 1.5rem;
   }
+
 }

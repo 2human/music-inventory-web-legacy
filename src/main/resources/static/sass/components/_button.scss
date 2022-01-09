@@ -7,10 +7,21 @@
 	border: none;
 	border-radius: 5rem;
 	cursor: pointer;
-	transition: all .3s ease 0s;
+	transition: all .2s ease 0s;
 	text-decoration: none;
 	vertical-align: middle;
-	box-shadow: 0 1rem 2rem rgba($color-black, .2);
+	// box-shadow: 0 1rem 2rem rgba($color-black, .2);	
+
+	&:hover {
+		transform: translateY(-.3rem);
+		box-shadow: 0 1rem 2rem rgba($color-black, .2);  /* subtle shadow with .2 opacity */ 
+	}
+
+	&:active {
+		outline: none;
+		transform: translateY(-.1rem);
+		box-shadow: 0 .5rem 1rem rgba($color-black, .2);  /* smaller shadow to make it look pushed down */
+    }
 
 	&__page-btn {
 		padding: 0;
@@ -26,8 +37,25 @@
 
 		&:not(:last-child){
 			margin-right: .6rem;
+
+			@include respond(phone-port) {
+				margin-right: .4rem;
+			}     
 		}
 
+        @include respond(phone-port) {
+			width: 3.1rem;
+			height: 3.1rem;
+			font-size: 1.3rem;
+        }       
+
+	}
+
+	&__increment-btn {		//next / previous page buttons
+
+        @include respond(phone-land) {
+			display: none;
+        }       
 	}
 
 	/*page buttons that are selected and disabled */
@@ -85,6 +113,13 @@
 		transform: translateY(-1.8rem);
 	}
 } 
+
+.btn-magnify {
+	height: 2rem;
+	width: 2rem;
+	cursor: pointer;
+	@include center-horizontal-vertical;
+}
 
   
 /* The Close Button */

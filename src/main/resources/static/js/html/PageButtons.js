@@ -67,11 +67,13 @@ function isDisabledBtn(pageNumber, searchProperties){
 }
 
 function getDisabledPageBtnHTML(pageNumber){
-    return `<button class="btn btn--blue btn__page-btn" disabled>${pageNumber}</button>`;
+    let addIncrementClass = (pageNumber === "Previous" || pageNumber === "Next");   //allows adding of additional class for next/previous
+    return `<button class="btn btn--blue btn__page-btn ${addIncrementClass ? "btn__increment-btn" : ""}" disabled>${pageNumber}</button>`;
 }
 
 function getActivePageBtnHTML(pageNumber){
-    return `<button class="btn btn--blue btn__page-btn">${pageNumber}</button>`
+    let addIncrementClass = (pageNumber === "Previous" || pageNumber === "Next");   //allows adding of additional class for next/previous
+    return `<button class="btn btn--blue btn__page-btn ${addIncrementClass ? "btn__increment-btn" : ""}">${pageNumber}</button>`;
 }
 
 function getInnerPageBtnsHtML(searchProperties, bounds){

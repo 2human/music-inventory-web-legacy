@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/main.css">    
     <link rel="stylesheet" href="styles/table.css"> 
@@ -12,7 +13,7 @@
 </head>
 <body id="searchPageBody">
     <header class="navigation">
-        <img src="images/logo.jpg" alt="Logo" class="navigation__logo" width="100">
+        <img src="images/logo-small.jpg" alt="Logo" class="navigation__logo" width="100">
         <nav class="navigation__nav">            
             <ul class="navigation__list">
                 <li class="navigation__item"><a href="#" class="navigation__link">Home</a></li>
@@ -21,15 +22,15 @@
                 <li class="navigation__item"><a href="#" class="navigation__link">About</a></li>
             </ul>
         </nav>
-        <a class="navigation__button" href="#">Donate</a>
+        <a class="btn navigation__button" href="#">Donate</a>
     </header>
     <!--Form for searching database-->
     <main>
 
         <section class="section-search-form">
             <form id="search-form" class="search-form">
-                <div class="form__group--keyword-search">
-                    <div class="u-margin-bottom-small">
+                <div class="form__group--basic-search">
+                    <div class="form__group--keyword u-margin-bottom-small">
                         <!--Text box for performing search-->
                         <input autofocus="autofocus" name="searchText" id="search-form" class="form__input form__input--keyword" 
                                                                 placeholder="Keyword(s)" size="60" maxlength="200" value="">
@@ -56,15 +57,15 @@
 
         <section id="search-results-section" class="section-search-results">   
             <div id="margin-hack-top" class="u-margin-bottom-tiny"></div>
+            <!--Div that displays buttons for selecting result page number-->
+            <div id="page-buttons" class="page-select page-select__top"></div>
             <div id="search-properties" class="search-properties">
                 <!--Div that displays buttons for selecting result page number-->
                 <div id="results-message" class="results-message"></div>
-                <!--Div that displays buttons for selecting result page number-->
-                <div id="page-buttons" class="page-select page-select__top"></div>
                 <div id="results-per-page" class="results-per-page"></div>
             </div> 
             <!--Table displaying search results-->
-            <div id="search-results"></div>
+            <div id="search-results" class="search-results"></div>
             <!--Div that displays buttons for selecting page number at bottom of page-->
             <div id="page-buttons-bottom" class="page-select page-select__bottom"></div>     
             <div id="margin-hack-bot" class="u-margin-top-tiny"></div>
@@ -75,7 +76,7 @@
             <!-- Modal content -->
             <div class="modal__content">
                 <span class="close" id="closeModal">&times;</span>
-                <form id="editor-modal-form"></form>
+                <form id="editor-modal-form" class="edit-form"></form>
             </div>          
         </div>
     </main>

@@ -14,6 +14,7 @@
 @import "components/page-select";
 @import "components/results-per-page";
 @import "components/results-message";
+@import "components/field-select";
 
 @import "layout/grid";
 @import "layout/table";
@@ -22,6 +23,11 @@
 @import "layout/search-form";
 @import "layout/advanced-search";
 @import "layout/search-properties";
+@import "layout/search-results";
+@import "layout/single-view-table";
+@import "layout/single-view-nav";
+@import "layout/edit-form";
 
 @import "pages/home";
 @import "pages/search";
+@import "pages/single-view";

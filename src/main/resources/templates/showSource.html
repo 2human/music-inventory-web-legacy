@@ -2,50 +2,60 @@
 <html lang="en" xmlns:th="www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="styles/normalize.css">
-    <link rel="stylesheet" href="styles/editSources.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/style-sass.css">
     <title>View Source</title>
 </head>
 <body>
-	<a th:href="@{http://www.sacredmusicinventory.org/getSource(id=${sources.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://www.sacredmusicinventory.org/editSource(id=${sources.getId()})}"><button>Edit Mode</button></a>
-	<a th:href="@{http://www.sacredmusicinventory.org/getSource(id=${sources.getId() + 1})}"><button>Next</button></a>
-	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a>
-    <table>
-        <tr>
-            <td>Id:</td>
-            <td th:text="${sources.getId()}"></td>
-        </tr>
-        <tr>
-            <td>Collection:</td>
-            <td th:text="${sources.getCollection()}"></td>
-        </tr>
-        <tr>
-            <td>Source Number:</td>
-            <td th:text="${sources.getSourceNumber()}"></td>
-        </tr>
-        <tr>
-            <td>Call Number:</td>
-            <td th:text="${sources.getCallNumber()}"></td>
-        </tr>
-        <tr>
-            <td>Author:</td>
-            <td th:text="${sources.getAuthor()}"></td>
-        </tr>
-        <tr>
-            <td>Title:</td>
-            <td th:text="${sources.getTitle()}"></td>
-        </tr>
-        <tr>
-            <td>Inscription:</td>
-            <td th:text="${sources.getInscription()}"></td>
-        </tr>
-        <tr>
-            <td>Description:</td>
-            <td th:text="${sources.getDescription()}"></td>
-        </tr>
-    </table>
+    <div class="view-single-row">
+        <section class="section-single-view">
 
+            <table class="table table--single-view">
+                <colgroup>
+                    <col class="table__single-view-column--label">
+                    <col class="table__single-view-column--data">
+                </colgroup>    
+                <tr class="table__row">
+                    <td class="table__data">Id:</td>
+                    <td class="table__data" th:text="${sources.getId()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Collection:</td>
+                    <td class="table__data" th:text="${sources.getCollection()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Source Number:</td>
+                    <td class="table__data" th:text="${sources.getSourceNumber()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Call Number:</td>
+                    <td class="table__data" th:text="${sources.getCallNumber()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Author:</td>
+                    <td class="table__data" th:text="${sources.getAuthor()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Title:</td>
+                    <td class="table__data" th:text="${sources.getTitle()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Inscription:</td>
+                    <td class="table__data u-retain-indentation" th:text="${sources.getInscription()}"></td>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data">Description:</td>
+                    <td class="table__data u-retain-indentation" th:text="${sources.getDescription()}"></td>
+                </tr>
+            </table>
+
+            <div class="view-data-buttons">
+                <a class="btn" th:href="@{http://www.musicinventoryapp.com/getSource(id=${sources.getId() - 1})}">Previous</a>
+                <a class="btn" th:href="@{http://www.musicinventoryapp.com/editSource(id=${sources.getId()})}">Edit Mode</a>
+                <a class="btn" th:href="@{http://www.musicinventoryapp.com/getSource(id=${sources.getId() + 1})}">Next</a>
+            </div>
+        </section>
+    </div>
 
 
 </body>

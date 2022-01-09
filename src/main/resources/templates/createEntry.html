@@ -2,13 +2,14 @@
 <html lang="en" xmlns:th="www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/editSources.css">
     <title>Create Entry</title>
 </head>
 
 <body>
-	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a><br><br>
+	<a th:href="@{http://www.musicinventoryapp.com}"><button>Home</button></a><br><br>
     <form action="createEntry">
         <label for="collection">Collection:</label>
         <input type="text" id="collection" name="collection">

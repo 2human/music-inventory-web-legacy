@@ -21,7 +21,16 @@
 
     &__item {
         display: inline-block;
-        padding: 0 2rem;
+        padding: 0 2rem;       
+
+        @include respond(phone-land) {
+            padding: 0 1rem; 
+        }       
+
+        @include respond(phone-port) {    
+            display: block;
+            text-align: center;
+        }
     }
 
     &__link {
@@ -39,19 +48,7 @@
     }
 
     &__button {
-        padding: .9rem 2.5rem;
-        color: #fff;
-        background-color: #000;
-        border: none;
-        border-radius: 5rem;
-        cursor: pointer;
-        transition: all .3s ease 0s;
-        text-decoration: none;
-        box-shadow: 0 .5rem 1rem rgba($color-black, .15);
-
-        &:hover {
-            color: #0088a9;
-        }
+      font-size: 1.6rem;
     }
 
     &__logo {

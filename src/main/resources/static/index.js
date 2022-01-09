@@ -1,12 +1,12 @@
-// import { isArrow } from "./js/test.js";
-import { getFieldCheckboxesHTML } from "./js/html/Checkbox.js";
+import { getFieldCheckboxesHTML } from "./js/html/FieldCheckboxes.js";
 import { getAdvancedSearchHTML } from "./js/html/AdvancedSearch.js";
-import { getModalFormHTML } from "./js/html/ModalForm.js"; 
+import { getEditFormHTML } from "./js/html/EditForm.js"; 
 import { getResultTableHTML, getTableRowHTML } from "./js/html/ResultTable.js"; 
 import { getPageBtnsHTML } from "./js/html/PageButtons.js";
 import { getSortByColumnProps } from "./js/functions/SortByColumn.js";
 import { getResultsMessage } from "./js/html/SearchResultsMessage.js";
 import { getResultsPerPageSelectorHTML } from "./js/html/ResultsPerPageSelector.js";
+import { getSingleView } from "./js/html/SingleView.js";
 
 console.log(location);
 
@@ -16,7 +16,7 @@ const webHostURL = "http://localhost:8080";
 const domainURL = "http://localhost:8080";
 
 // const webHostURL = "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com";
-// const domainURL = "http://www.sacredmusicinventory.org";
+// const domainURL = "http://musicinventoryapp.com";
 
 const tableButtons = document.getElementById('table-select');    
 const fieldDiv = document.getElementById('field-select');
@@ -62,6 +62,7 @@ function initializeEventListeners(){
     });
     resultsPerPageDiv.addEventListener("click", event => setResultsPerPage(event, searchProperties.resultsPerPageOptions));
     searchResultsDiv.ondblclick = openEditorModal;
+    // searchResultsDiv.ondblclick = openSingleView;
     searchResultsDiv.addEventListener("click", handleTableClick);
     advancedSearchToggle.addEventListener("click", toggleAdvancedSearch);    
 }
@@ -126,6 +127,8 @@ function generateSearchResultsDisplay(){
     insertResultsPerPageSelector();
     insertMarginHacks();
     insertSearchPropertiesDivStyle();
+    searchResultsDiv.style.overflow = 'auto';
+
 }
 
 function getTableSelection(){
@@ -146,7 +149,7 @@ function initializeSearchProperties(table, data){
         this.totalResults = data.length,   
         this.totalPages = Math.floor(this.totalResults / this.resultsPerPage + 1),
         this.resultsPerPageOptions = [10, 25, 100, 500],    //user options for results per pages
-        this.sortBy = {column: 'id', order: 'ascending'}    //determines how to sort result data in table
+        this.sortBy = {column: 'collection', order: 'ascending'}    //determines how to sort result data in table
         this.domainURL = domainURL,                         //domain for web app 
         this.webHostURL = webHostURL;                       //direct URL to server
     };
@@ -184,6 +187,21 @@ function insertResultsPerPageSelector(){
     } else resultsPerPageDiv.innerHTML = '';
 }
 
+function isMagnifyBtn(cellClicked) {
+    //the USE or SVG element can each be triggered when magnify button is clicked
+    return cellClicked.classList.value.indexOf("btn-magnify") !== -1 ||         //SVG magnify button element triggered
+        cellClicked.parentElement.classList.value.indexOf("btn-magnify") !== -1;    //USE element within SVG element triggered
+}
+
+function openSingleView(event) {
+    console.log('getting single-view');
+    let cellClicked = getTableCellClicked(event.target);
+    let tableRow = cellClicked.parentElement;
+    modalForm.innerHTML = getSingleView(searchProperties.dataType, getRowData(tableRow));  
+    openModal();
+    addModalEventListeners(cellClicked, false);
+}
+
 function insertMarginHacks(){
     marginHackTopDiv.innerHTML = '&nbsp;';
     marginHackBotDiv.innerHTML = '&nbsp;';
@@ -213,34 +231,37 @@ function setResultsPerPage(event){
 }
 
 function openEditorModal(event){
-    let cellClicked = getCellClicked(event.target);
+    let cellClicked = getTableCellClicked(event.target);
     if(isEditableCell(cellClicked)){     //if cell clicked is not table header and not the id column
         constructModal(cellClicked);
         openModal();
         focusSelectedField(cellClicked);
-        addModalEventListeners(cellClicked);
+        addModalEventListeners(cellClicked, true);
     }
 }
 
-function getCellClicked(element){
-    if(element.nodeName === 'PRE'){ //some cells have pre-divs within, in which case parent cell must be returned
+function getTableCellClicked(element){
+    let nodeName = element.nodeName;
+    if(nodeName === 'PRE' || nodeName === 'svg'){ //some cells have PRE or SVG elements within, in which case parent cell must be returned
         return element.parentElement;
-    }
-    else return element;
+    } else if(nodeName === 'use') {
+         //USE elements contained within SVG elements which are contained within table cell, so table cell is two elements above
+        return element.parentElement.parentElement;
+    } else return element;
 }
 
 //makes sure that cell clicked in table is not part of header and is not database ID
 function isEditableCell(cellClicked){
-    return cellClicked.nodeName == "TD" && cellClicked.id !== "id"
+    return cellClicked.nodeName == "TD" && cellClicked.id !== "expand";
 }
 
 function constructModal(cellClicked){
     let tableRow = cellClicked.parentElement;
-    modalForm.innerHTML = getModalFormHTML(searchProperties.dataType, getRowData(tableRow));     
+    modalForm.innerHTML = getEditFormHTML(searchProperties.dataType, getRowData(tableRow));    
 }
 
 function getRowData(row){
-    return searchResultsData.find( data => data.id === getRowID(row));
+    return searchResultsData.find( data => data.id === parseInt(row.id));
 }
 
 function getRowID(row){
@@ -268,17 +289,19 @@ function getMatchingFormField(cellClicked){
     return null;
 }
 
-function addModalEventListeners(cellClicked){    
-    let updateBtn = document.getElementById('updateRow');
-    let tableRow = cellClicked.parentElement;        //table row element of cell clicked
-    updateBtn.addEventListener("click", event => updateTableRow(event, tableRow));  
-    let deleteBtn = document.getElementById("deleteRow");
-    deleteBtn.addEventListener("click", (event) => deleteTableRow(event, tableRow)); 
-    let closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
-    //clicking x will close modal
-    closeModalBtn.onclick = function() {
-        closeModal();
-    }    
+function addModalEventListeners(cellClicked, isEditorModal){    
+    if(isEditorModal){
+        let updateBtn = document.getElementById('updateRow');
+        let tableRow = cellClicked.parentElement;        //table row element of cell clicked
+        updateBtn.addEventListener("click", event => updateTableRow(event, tableRow));  
+        let deleteBtn = document.getElementById("deleteRow");
+        deleteBtn.addEventListener("click", (event) => deleteTableRow(event, tableRow)); 
+        let closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
+        //clicking x will close modal
+        closeModalBtn.onclick = function() {
+            closeModal();
+        }    
+    }
     //clicking outside of modal content will close modal
     window.onclick = function(event) {
         if (event.target == modal) {
@@ -396,13 +419,16 @@ function openAdvancedSearch(){
 }
 
 function handleTableClick(event){
-    if(isTableHeaderText(event.target)){  
-        sortByColumn(event.target);
+    let cellClicked = event.target;
+    if(isTableHeaderText(cellClicked)){  
+        sortByColumn(cellClicked);
+    } else if(isMagnifyBtn(cellClicked)){
+        openSingleView(event);
     }
 }
 
 function isTableHeaderText(clicked){
-    return clicked.className.indexOf('table__header-text') !== -1;
+    return clicked.parentElement.nodeName === 'TH';
 }
 
 function sortByColumn(elementClicked){

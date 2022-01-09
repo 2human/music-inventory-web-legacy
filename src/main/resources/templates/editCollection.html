@@ -2,23 +2,24 @@
 <html lang="en" xmlns:th="www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/normalize.css">
     <link rel="stylesheet" href="styles/editSources.css">
     <title>Edit Collection</title>
 </head>
 
 <body>
-	<a th:href="@{http://www.sacredmusicinventory.org/editCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
-	<a th:href="@{http://www.sacredmusicinventory.org/getCollection(id=${collection.getId()})}"><button>Read Mode</button></a>
-	<a th:href="@{http://www.sacredmusicinventory.org/editCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
-	<a th:href="@{http://www.sacredmusicinventory.org}"><button>Home</button></a>
+	<a th:href="@{http://www.musicinventoryapp.com/editCollection(id=${collection.getId() - 1})}"><button>Previous</button></a>
+	<a th:href="@{http://www.musicinventoryapp.com/getCollection(id=${collection.getId()})}"><button>Read Mode</button></a>
+	<a th:href="@{http://www.musicinventoryapp.com/editCollection(id=${collection.getId() + 1})}"><button>Next</button></a>
+	<a th:href="@{http://www.musicinventoryapp.com}"><button>Home</button></a>
     <form action="updateCollection">
         <label for="Id">Id:</label>
         <input type="text" id="id" name="id" class="form__input" th:value="${collection.getId()}" autofocus readonly>
         <label for="collection">Collection:</label>
         <input type="text" id="collection" name="collection" class="form__input" th:value="${collection.getCollection()}">
         <label for="description">Description:</label>
-        <textarea th:inline="text" id="description" class="form__input" name="description" class="form__textarea">[[${collection.getDescription()}]]</textarea>
+        <textarea th:inline="text" id="description" class="form__input form__textarea" name="description">[[${collection.getDescription()}]]</textarea>
         <input type="submit" value="Submit">
         <input type="submit" value="Delete" formaction="deleteCollection">
     </form>         

@@ -13,10 +13,38 @@
 	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   
 	&__content {
-	  background-color: #fefefe;
+	  background-color: #F8F8F8;
+	  border-radius: 1rem;
 	  margin: 3% auto;
 	  padding: 1.25em;
-	  border: 1px solid #888;
-	  width: 100rem;
+	  width: 86rem;
+
+      @include respond(tab-port) { 
+		width: 70rem;
+		margin: 5% auto;  
+      }      
+
+      @include respond(phone-land) { 
+        width: 95%; 
+		margin: 7% auto;  
+      }
+
+	  @include respond(phone-port) { 
+        width: 95%; 
+		margin: 10% auto;  
+      }
 	}
+
+    &__input {
+		
+		&:not(:last-child) {
+			margin-bottom: .75rem;
+		}		
+		
+		&:disabled, 
+		&[disabled] {
+			background-color: grey;
+
+		}
+    }
   }
