@@ -1,0 +1,14 @@
+.edit-form {
+
+	&__btn-group {
+		margin: 1rem 0;
+		text-align: center;
+	}
+
+	&__btn {
+
+		&:not(:last-child) {
+			margin-right: 2rem;
+		}
+	}
+}

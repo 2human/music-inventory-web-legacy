@@ -70,7 +70,6 @@ function initializeEventListeners(){
 function handleTableSelect(){
     
     closeAdvancedSearch();
-    updateDataType();
     //TODO check to see if advanced search is open then make it so advanced search stays open if it is
     insertFieldCheckboxes();
     
@@ -86,11 +85,8 @@ function closeAdvancedSearch(){
     advancedSearchToggle.childNodes[0].nodeValue = 'Open Advanced Search'; //change inner text without affecting nodes
 }
 
-function updateDataType(){
-    searchProperties.dataType = getTableSelection();
-}
-
 function executeSearch(event){  
+    updateDataType();
     event.preventDefault();   
     let xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(searchForm));;
@@ -103,6 +99,11 @@ function executeSearch(event){
             generateSearchResultsDisplay();
         } 
     }
+}
+
+//update search properties data type based on current field selection
+function updateDataType(){
+    searchProperties.dataType = getTableSelection();
 }
 
 //TODO this has to be fixed so that it goes by domain name

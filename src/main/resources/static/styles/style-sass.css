@@ -236,10 +236,7 @@ body {
   height: 2rem;
   width: 2rem;
   cursor: pointer;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); }
+  margin-top: -1rem; }
 
 /* The Close Button */
 .close {

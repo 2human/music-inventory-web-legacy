@@ -1,0 +1,15 @@
+//views single row of data from table
+.view-data-buttons {
+    padding: 2rem;
+    text-align: center;
+}
+
+.section-single-view {
+    margin: 0 auto;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    background-color: #F8F8F8;
+    border-radius: 1rem;    
+	box-shadow: 0 .75rem 2rem rgba($color-black, .2);       //add mix-in?
+    width: 65rem;
+}
