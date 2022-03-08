@@ -12,8 +12,8 @@ console.log(location);
 
 ////table selection messed up because not initiating when doing advanced search
 
-const webHostURL = "http://localhost:8080";
-const domainURL = "http://localhost:8080";
+const webHostURL = "https://localhost:443";
+const domainURL = "https://localhost:443";
 
 // const webHostURL = "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com";
 // const domainURL = "http://musicinventoryapp.com";
