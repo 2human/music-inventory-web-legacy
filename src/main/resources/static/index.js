@@ -12,11 +12,11 @@ console.log(location);
 
 ////table selection messed up because not initiating when doing advanced search
 
-const webHostURL = "https://localhost:443";
-const domainURL = "https://localhost:443";
+// const webHostURL = "http://localhost:8080";
+// const domainURL = "http://localhost:8080";
 
-// const webHostURL = "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com";
-// const domainURL = "http://musicinventoryapp.com";
+const webHostURL = "http://ec2-3-128-55-111.us-east-2.compute.amazonaws.com";
+const domainURL = "http://musicinventoryapp.com";
 
 const tableButtons = document.getElementById('table-select');    
 const fieldDiv = document.getElementById('field-select');
@@ -75,19 +75,24 @@ function handleTableSelect(){
     
 }
 
+
 function closeAdvancedSearch(){
     let arrow = advancedSearchToggle.getElementsByTagName("I")[0];
+    //change direction of arrow
     arrow.classList.remove('up-arrow');
     arrow.classList.remove('btn-text__up-arrow');
     arrow.classList.add('down-arrow');  
     arrow.classList.add('btn-text__down-arrow');  
+    //remove advanced search form
     advancedSearchInput.innerHTML = '';
+    //change text of advanced search toggle
     advancedSearchToggle.childNodes[0].nodeValue = 'Open Advanced Search'; //change inner text without affecting nodes
 }
 
 function executeSearch(event){  
-    updateDataType();
+    updateDataType(); //ensures that correct table is queried  
     event.preventDefault();   
+    insertLoadingSpinner();
     let xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(searchForm));;
     xhr.open('GET', getHTTPRequestURL(searchForm), true);
@@ -104,6 +109,23 @@ function executeSearch(event){
 //update search properties data type based on current field selection
 function updateDataType(){
     searchProperties.dataType = getTableSelection();
+}
+
+function insertLoadingSpinner() {    
+    clearSearchResultSection();
+    searchResultsDiv.innerHTML = getSpinnerHTML();
+}
+
+function getSpinnerHTML() {
+    return '<div class="spinner__container"><div class="spinner__animation"/></div>';
+}
+
+function clearSearchResultSection() {    
+    searchResultsDiv.innerHTML = '';
+    pageBtnDiv.innerHTML = '';          //add button html to page
+    pageBtnDivBot.innerHTML = '';
+    resultsMessage.innerHTML = '';
+    resultsPerPageDiv.innerHTML = '';
 }
 
 //TODO this has to be fixed so that it goes by domain name

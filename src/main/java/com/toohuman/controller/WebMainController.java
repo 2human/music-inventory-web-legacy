@@ -23,4 +23,14 @@ public class WebMainController {
         return "about.html";
     }
     
+    @RequestMapping(value = "login")
+    public String login() {
+		return "login.html";
+    }
+    
+    @RequestMapping(value = "/editmode") 
+    public String editMode() {
+    	return "editmode.html";
+    }
+    
 }

@@ -39,4 +39,16 @@ UPDATE entries
 SET entry_is_secular = 1
 WHERE entry_is_secular = "true"
 
+
+Setting up SSL key
+1. Open command prompt as administrator
+2. Go to: C:\Program Files\Java\jdk-17.0.2\bin>3. 
+3. Execute command: keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
+4. Copy to route folder
+5. Set up HTTPS by inserting the following into your application.properties folder:
+		server.port: 443
+		server.ssl.key-store: keystore.p12
+		server.ssl.key-store-password: password
+		server.ssl.keyStoreType: PKCS12
+		server.ssl.keyAlias: tomcat
    
