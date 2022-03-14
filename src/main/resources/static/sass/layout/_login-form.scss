@@ -1,0 +1,15 @@
+.login-form {
+  position: relative;
+  background-color: #F8F8F8;
+  display: block;
+  margin: 0 auto;
+  padding: 2rem 6rem;
+  border-radius: 1rem;
+  width: 40rem;
+  box-shadow: 0 .75rem 2rem rgba($color-black, .2);
+
+  @include respond(phone-land) {
+    padding: 1rem 3rem;        
+  }
+
+} 

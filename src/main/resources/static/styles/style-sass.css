@@ -661,6 +661,19 @@ body {
 .edit-form__btn:not(:last-child) {
   margin-right: 2rem; }
 
+.login-form {
+  position: relative;
+  background-color: #F8F8F8;
+  display: block;
+  margin: 0 auto;
+  padding: 2rem 6rem;
+  border-radius: 1rem;
+  width: 40rem;
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.2); }
+  @media only screen and (max-width: 37.5em) {
+    .login-form {
+      padding: 1rem 3rem; } }
+
 .section-navigation {
   margin: 2rem 0 0; }
 
