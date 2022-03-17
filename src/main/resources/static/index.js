@@ -1,6 +1,6 @@
 import { getFieldCheckboxesHTML } from "./js/html/FieldCheckboxes.js";
 import { getAdvancedSearchHTML } from "./js/html/AdvancedSearch.js";
-import { getEditFormHTML } from "./js/html/EditForm.js"; 
+import { getEditFormHTML, getDeletePromptHTML, getModalBtnHTML } from "./js/html/EditForm.js"; 
 import { getResultTableHTML, getTableRowHTML } from "./js/html/ResultTable.js"; 
 import { getPageBtnsHTML } from "./js/html/PageButtons.js";
 import { getSortByColumnProps } from "./js/functions/SortByColumn.js";
@@ -38,6 +38,7 @@ const searchPropertiesDiv = document.getElementById('search-properties');
 //TODO make this better
 let searchProperties;
 let searchResultsData = [];
+let xhr;
 
 document.addEventListener("DOMContentLoaded", () => {
     searchProperties = { dataType: getTableSelection() };
@@ -67,12 +68,10 @@ function initializeEventListeners(){
     advancedSearchToggle.addEventListener("click", toggleAdvancedSearch);    
 }
 
-function handleTableSelect(){
-    
+function handleTableSelect(){    
     closeAdvancedSearch();
     //TODO check to see if advanced search is open then make it so advanced search stays open if it is
-    insertFieldCheckboxes();
-    
+    insertFieldCheckboxes();    
 }
 
 
@@ -91,9 +90,14 @@ function closeAdvancedSearch(){
 
 function executeSearch(event){  
     updateDataType(); //ensures that correct table is queried  
-    event.preventDefault();   
+    event.preventDefault();
+    //abandon requests in progress
+    if(xhr) {
+        xhr.abort();
+        console.log('aborting1');
+    }
     insertLoadingSpinner();
-    let xhr = new XMLHttpRequest();
+    xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(searchForm));;
     xhr.open('GET', getHTTPRequestURL(searchForm), true);
     xhr.send();
@@ -170,7 +174,7 @@ function initializeSearchProperties(table, data){
         this.dataType = table,              //data type corresponds to table selection
         this.resultsPerPage = 25,
         this.totalResults = data.length,   
-        this.totalPages = Math.floor(this.totalResults / this.resultsPerPage + 1),
+        this.totalPages = Math.ceil(this.totalResults / this.resultsPerPage),
         this.resultsPerPageOptions = [10, 25, 100, 500],    //user options for results per pages
         this.sortBy = {column: 'collection', order: 'ascending'}    //determines how to sort result data in table
         this.domainURL = domainURL,                         //domain for web app 
@@ -217,7 +221,6 @@ function isMagnifyBtn(cellClicked) {
 }
 
 function openSingleView(event) {
-    console.log('getting single-view');
     let cellClicked = getTableCellClicked(event.target);
     let tableRow = cellClicked.parentElement;
     modalForm.innerHTML = getSingleView(searchProperties.dataType, getRowData(tableRow));  
@@ -314,12 +317,12 @@ function getMatchingFormField(cellClicked){
 
 function addModalEventListeners(cellClicked, isEditorModal){    
     if(isEditorModal){
-        let updateBtn = document.getElementById('updateRow');
-        let tableRow = cellClicked.parentElement;        //table row element of cell clicked
-        updateBtn.addEventListener("click", event => updateTableRow(event, tableRow));  
-        let deleteBtn = document.getElementById("deleteRow");
-        deleteBtn.addEventListener("click", (event) => deleteTableRow(event, tableRow)); 
-        let closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
+        const tableRow = cellClicked.parentElement;        //table row element of cell clicked
+        const updateBtn = document.getElementById('updateRow'); 
+        const deleteBtn = document.getElementById("deleteRow");
+        updateBtn.addEventListener("click", event => updateTableRow(event, tableRow)); 
+        deleteBtn.addEventListener("click", () => showDeleteRowPrompt(tableRow)); 
+        const closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
         //clicking x will close modal
         closeModalBtn.onclick = function() {
             closeModal();
@@ -370,8 +373,18 @@ function updateSearchResultsDisplay(tableRow, updatedRowData){
     tableRow.innerHTML = getTableRowHTML(searchProperties.dataType, updatedRowData, domainURL)
 }
 
+//prompts user before deleting table row
+function showDeleteRowPrompt(tableRow) {
+    const actionDiv = document.getElementById('modal-action-div');
+    actionDiv.innerHTML = getDeletePromptHTML();
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    confirmDeleteBtn.addEventListener("click", event => deleteTableRow(event, tableRow));
+    cancelDeleteBtn.addEventListener("click", () => hideDeleteRowPrompt(actionDiv, tableRow));
+}
 
-function deleteTableRow(event, tableRow){    
+//delete row currently being viewed in edit form
+function deleteTableRow(event, tableRow){ 
     event.preventDefault();
     let xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(modalForm));
@@ -383,6 +396,15 @@ function deleteTableRow(event, tableRow){
         tableRow.innerHTML = ""; 
         closeModal();
     }
+}
+
+//restores default buttons when user chooses not to delete row
+function hideDeleteRowPrompt(actionDiv, tableRow){
+    actionDiv.innerHTML = getModalBtnHTML();    
+    const updateBtn = document.getElementById('updateRow'); 
+    const deleteBtn = document.getElementById("deleteRow");
+    updateBtn.addEventListener("click", event => updateTableRow(event, tableRow)); 
+    deleteBtn.addEventListener("click", () => showDeleteRowPrompt(tableRow)); 
 }
 
 //view search results page in response to user clicking resultsPageBtn

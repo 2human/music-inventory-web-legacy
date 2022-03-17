@@ -20,18 +20,18 @@
 	  width: 86rem;
 
       @include respond(tab-port) { 
-		width: 70rem;
-		margin: 5% auto;  
+				width: 70rem;
+				margin: 5% auto;  
       }      
 
       @include respond(phone-land) { 
         width: 95%; 
-		margin: 7% auto;  
+				margin: 7% auto;  
       }
 
 	  @include respond(phone-port) { 
         width: 95%; 
-		margin: 10% auto;  
+				margin: 10% auto;  
       }
 	}
 

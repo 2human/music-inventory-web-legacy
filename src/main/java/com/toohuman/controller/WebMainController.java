@@ -31,6 +31,12 @@ public class WebMainController {
     @RequestMapping(value = "/editmode") 
     public String editMode() {
     	return "editmode.html";
+    }   
+
+    
+    @RequestMapping(value = "/create-entry") 
+    public String createEntry() {
+    	return "create-entry.html";
     }
     
 }

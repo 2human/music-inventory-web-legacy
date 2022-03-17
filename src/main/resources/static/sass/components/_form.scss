@@ -112,11 +112,19 @@
     display:inline-block;
     width: 10rem;
     font-weight:bold;
-    vertical-align: top;
 
     &--keyword {
       vertical-align: middle;
       width: 7rem;
+    }
+
+    &--modal {
+      font-size: 1.25rem;
+    }
+
+    &--textarea {      
+      vertical-align: top;
+      font-size: 1.25rem;
     }
   }  
 

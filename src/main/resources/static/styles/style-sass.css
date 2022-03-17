@@ -116,6 +116,9 @@ body {
 .u-inline-block {
   display: inline-block !important; }
 
+.u-text-medium {
+  font-size: 1.6rem; }
+
 .down-arrow {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
@@ -160,7 +163,7 @@ body {
   vertical-align: middle;
   /*page buttons that are selected and disabled */ }
   .btn:hover {
-    transform: translateY(-0.3rem);
+    transform: translateY(-0.2rem);
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
     /* subtle shadow with .2 opacity */ }
   .btn:active {
@@ -191,9 +194,9 @@ body {
     .btn__increment-btn {
       display: none; } }
   .btn:disabled, .btn[disabled] {
-    color: #0088a9; }
+    color: #21a9ca; }
   .btn:hover {
-    color: #0088a9; }
+    color: #21a9ca; }
 
 .btn-text {
   transition: all .3s ease 0s;
@@ -324,11 +327,15 @@ body {
   font-size: 1.2rem;
   display: inline-block;
   width: 10rem;
-  font-weight: bold;
-  vertical-align: top; }
+  font-weight: bold; }
   .form__label--keyword {
     vertical-align: middle;
     width: 7rem; }
+  .form__label--modal {
+    font-size: 1.25rem; }
+  .form__label--textarea {
+    vertical-align: top;
+    font-size: 1.25rem; }
 
 .form__checkbox-section {
   display: inline-block;

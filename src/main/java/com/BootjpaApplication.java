@@ -10,3 +10,4 @@ public class BootjpaApplication {
 		SpringApplication.run(BootjpaApplication.class, args); 
 	}
 }
+	
