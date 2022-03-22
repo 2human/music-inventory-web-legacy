@@ -54,7 +54,7 @@ body {
   text-align: center !important; }
 
 .u-text-top {
-  vertical-align: top; }
+  vertical-align: top !important; }
 
 .u-margin-bottom-tiny {
   margin-bottom: .5rem !important; }
@@ -118,6 +118,9 @@ body {
 
 .u-text-medium {
   font-size: 1.6rem; }
+
+.u-text-bold {
+  font-weight: 500 !important; }
 
 .down-arrow {
   transform: rotate(45deg);
@@ -377,9 +380,11 @@ body {
     .results-per-page {
       font-size: 1.35rem; } }
 
-@media only screen and (max-width: 28.125em) {
-  .results-message {
-    font-size: 1.1rem; } }
+.results-message {
+  font-weight: 700; }
+  @media only screen and (max-width: 28.125em) {
+    .results-message {
+      font-size: 1.1rem; } }
 
 @keyframes spinner {
   0% {
@@ -398,13 +403,19 @@ body {
   border-radius: 50%;
   content: "";
   height: 4rem;
+  width: 4rem;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate3d(-50%, -50%, 0);
-  width: 4rem;
   will-change: transform;
   line-height: 5rem; }
+  .spinner__animation--mini {
+    position: relative;
+    border: solid 3px #cfd0d1;
+    border-bottom-color: #9F9F9C;
+    height: 2rem;
+    width: 2rem; }
 
 .field-select {
   width: 100%; }

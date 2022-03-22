@@ -67,7 +67,6 @@ public class SourcesMiscController {
 		Sources sources = new Sources(collection, sourceNumber, callNumber, author, title, inscription, description);
 		repo.save(sources);
 		sources =  repo.findById(sources.getId()).orElse(new Sources());
-		System.out.println("Returning");
 		return sources;
 		}
 

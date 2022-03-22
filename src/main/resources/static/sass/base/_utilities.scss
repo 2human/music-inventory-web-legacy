@@ -1,5 +1,5 @@
 .u-center-text { text-align: center !important; }
-.u-text-top { vertical-align: top; }
+.u-text-top { vertical-align: top !important; }
 
 .u-margin-bottom-tiny { margin-bottom: .5rem !important; }
 .u-margin-bottom-small { margin-bottom: 2rem !important; }
@@ -25,8 +25,10 @@
 
 .u-retain-indentation { white-space: pre-wrap; }
 
-.u-inline-block { display: inline-block !important }
+.u-inline-block { display: inline-block !important; }
 
 .u-text-medium { font-size: 1.6rem; }
+
+.u-text-bold { font-weight: 500 !important;}
 
 

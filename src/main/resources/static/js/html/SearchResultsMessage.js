@@ -10,21 +10,21 @@ export function getResultsMessage(searchProperties){
 }
 
 function getNoResultsMessage(){
-    return '<b>No results found...';
+    return 'No results found...';
 }
 
 function getSinglePageResultsMessage(totalResults){
     if(totalResults === 1){
-        return `<b>Displaying ${totalResults} result...`;   //display 'results' in singular form
+        return `Displaying ${totalResults} result...`;   //display 'results' in singular form
     }
-    return `<b>Displaying ${totalResults} results...`;      //display 'results' in plural form
+    return `Displaying ${totalResults} results...`;      //display 'results' in plural form
 }
 
 //result message containing range of results
 function getMultiPageResultsMessage(searchProperties){
     let lastResult = getLastResultNumber(searchProperties);
     let firstResult = getFirstResultNumber(searchProperties);
-    return `<b>Displaying ${firstResult}-${lastResult} of ${searchProperties.totalResults} results...`;
+    return `Displaying ${firstResult}-${lastResult} of ${searchProperties.totalResults} results...`;
 }
 
 function getLastResultNumber(searchProperties){

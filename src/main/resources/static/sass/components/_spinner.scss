@@ -21,12 +21,20 @@
     border-radius: 50%;
     content: "";
     height: 4rem;
+    width: 4rem;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate3d(-50%, -50%, 0);
-    width: 4rem;
     will-change: transform;
     line-height: 5rem;
+
+    &--mini {
+      position: relative;
+      border: solid 3px #cfd0d1;
+      border-bottom-color: #9F9F9C;
+      height: 2rem;
+      width: 2rem;
+    }
   }
 }

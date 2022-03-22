@@ -102,22 +102,32 @@ function closeAdvancedSearch(){
 
 function executeSearch(event){  
     event.preventDefault();
+
+    const dataType = getTableSelection();
+    
+    clearSearchResultSection();
+    insertLoadingSpinner(searchResultsDiv);
+
     if(xhr) {
         xhr.abort(); //abandon requests in progress
     }
-    clearSearchResultSection();
-    insertLoadingSpinner(searchResultsDiv);
-    const dataType = getTableSelection();
     xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(searchForm, dataType));;
     xhr.open('GET', getHTTPRequestURL(searchForm, dataType), true);
     xhr.send();
+
     xhr.onload = function(){     
         let request = this;
-        if(requestSuccessful(request.status)){
+        if(requestSuccessful(request.status)){     
             searchResultsData = JSON.parse(request.responseText);
             generateSearchResultsDisplay(dataType);
-        } 
+        } else {                 
+            displaySearchErrorMessage();
+        }
+    }
+
+    xhr.onerror = () => {        
+        displaySearchErrorMessage();
     }
 }
 
@@ -233,6 +243,7 @@ function openSingleView(event) {
     addModalEventListeners(cellClicked);
 }
 
+//creates proper spacing within search results div, allowing result div not to appear before a search is executed
 function insertMarginHacks(){
     marginHackTopDiv.innerHTML = '&nbsp;';
     marginHackBotDiv.innerHTML = '&nbsp;';
@@ -240,6 +251,12 @@ function insertMarginHacks(){
 
 function insertSearchPropertiesDivStyle(){
     searchPropertiesDiv.style.display = 'flex';
+}
+
+function displaySearchErrorMessage() {
+    clearSearchResultSection();      
+    insertMarginHacks();
+    resultsMessage.innerHTML = "There was an error with your search. Please check your connection and try again."
 }
 
 function setResultsPerPage(event){
@@ -306,7 +323,6 @@ function openModal(){
 
 //focus form field corresponding to field that was clicked in table
 function focusSelectedField(cellClicked){
-    console.log(cellClicked);
     getMatchingFormField(cellClicked).focus();  //focus field in form corresponding to field clicked
 }
 
@@ -355,17 +371,26 @@ function closeModal(){
 
 function updateTableRow(event, tableRow){
     event.preventDefault();
+    const modalMessageDiv = document.getElementById('modal-message');
+    insertMiniLoadingSpinner(modalMessageDiv);
     let xhr = new XMLHttpRequest();
     xhr.open('PUT', getHTTPRequestURL(getEditRowForm(), getTableSelection()), true);
     console.log(getHTTPRequestURL(getEditRowForm(), getTableSelection()));
-    closeModal();
     xhr.onload = function(){
         let request = this;
-        let updatedRowData = JSON.parse(request.responseText);
-        //update data array then insert data into table row
-        updateSearchResultsData(updatedRowData);
-        updateSearchResultsDisplay(tableRow, updatedRowData);
-    }
+        if(requestSuccessful(request.status)) {
+            let updatedRowData = JSON.parse(request.responseText);
+            //update data array then insert data into table row
+            updateSearchResultsData(updatedRowData);
+            updateSearchResultsDisplay(tableRow, updatedRowData);
+            closeModal();
+        } else {
+            displayUpdateRowErrorMessage(modalMessageDiv);
+        }
+    };
+    xhr.onerror = () => {
+        displayUpdateRowErrorMessage(modalMessageDiv);
+    };
     xhr.send();
 }
 
@@ -377,6 +402,10 @@ function updateSearchResultsData(updatedRowData){
 //updated data being displayed
 function updateSearchResultsDisplay(tableRow, updatedRowData){
     tableRow.innerHTML = getTableRowHTML(searchProperties.dataType, updatedRowData, domainURL)
+}
+
+function displayUpdateRowErrorMessage(messageDiv) {
+    messageDiv.innerHTML = 'There was an error updating this row. Please check your connection and try again.';
 }
 
 //prompts user before deleting table row
@@ -495,17 +524,41 @@ function addCreateRowEventListeners(dataType) {
 
 function createTableRow(event, dataType) {
     event.preventDefault();
+    const modalMessageDiv = document.getElementById('modal-message');
+    insertMiniLoadingSpinner(modalMessageDiv);
     let xhr = new XMLHttpRequest();
     xhr.open('POST', getHTTPRequestURL(getCreateRowForm(), dataType), true);
     console.log(getHTTPRequestURL(getCreateRowForm(), dataType));
+    console.log('creating');
     xhr.onload = function(){
-        let request = this;
-        let updatedRowData = JSON.parse(request.responseText);
-        //update data array then insert data into table row
-        updateSearchResultsData(updatedRowData);
-        updateSearchResultsDisplay(tableRow, updatedRowData);
-    }
+        if(requestSuccessful(this.status)) {
+            displayCreateRowSucces(modalMessageDiv);
+        } else {
+            displayCreateRowErrorMessage(modalMessageDiv);
+        }
+    };
+
+    xhr.onerror = function(){
+        displayCreateRowErrorMessage(modalMessageDiv);
+    };
+
     xhr.send();
+}    
+
+function insertMiniLoadingSpinner(element) {    
+    element.innerHTML = getMiniSpinnerHTML();
+}
+
+function getMiniSpinnerHTML() {
+    return '<div class="spinner__container"><div class="spinner__animation spinner__animation--mini"/></div>';
+}
+
+function displayCreateRowSucces(messageDiv) {
+    messageDiv.innerHTML = 'Row create successfully.'
+}
+
+function displayCreateRowErrorMessage(messageDiv) {
+    messageDiv.innerHTML = 'There was an error creating a new row. Please check your connection and try again.';
 }
 
 function getCreateRowForm() {

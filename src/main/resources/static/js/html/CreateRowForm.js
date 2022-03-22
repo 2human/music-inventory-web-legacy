@@ -52,6 +52,8 @@ function getCreateEntryFormHTML(){
 
           <label for="notes" class="form__label form__label--modal">Notes:</label>
           <input type="text" id="notes" class="form__input form__input--extra-long modal__input" name="notes" onfocus="this.select()"><br>
+
+          ${getMessageDiv()}
           
           <div id="modal-action-div" class="edit-form__btn-group">
             <button id="create-form-submit" class="btn btn--blue u-margin-right-small">Create</button>
@@ -88,7 +90,7 @@ function getCreateSourceFormHTML(){
           <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label>      
           <textarea inline="text" id="description" class="form__textarea" name="description" onfocus="this.select()"></textarea><br>
 
-          <div id="modal-message"></div>          
+          ${getMessageDiv()}
           
           <div id="modal-action-div" class="edit-form__btn-group">
             <button id="create-form-submit" class="btn btn--blue u-margin-right-small">Create</button>
@@ -109,6 +111,8 @@ function getCreateCollectionFormHTML(){
 
           <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label> 
           <textarea th:inline="text" id="description" class="form__textarea" name="description" onfocus="this.select()"></textarea><br> 
+
+          ${getMessageDiv()}
           
           <div id="modal-action-div" class="edit-form__btn-group">
             <button id="create-form-submit" class="btn btn--blue u-margin-right-small">Create</button>
@@ -116,4 +120,8 @@ function getCreateCollectionFormHTML(){
           </div>
         </form>
           `;
+}
+
+function getMessageDiv() {
+  return '<div id="modal-message" class="u-center-text u-text-bold"></div>';
 }

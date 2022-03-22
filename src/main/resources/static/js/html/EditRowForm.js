@@ -65,6 +65,8 @@ function getEditEntryFormHTML(entry){
 
             <label for="notes" class="form__label form__label--modal">Notes:</label>
             <input type="text" id="notes" class="form__input form__input--extra-long modal__input" name="notes" value="${entry.notes}" onfocus="this.select()"><br>
+
+            ${getMessageDiv()}
             
             ${geActionDivHTML()}
         </form>
@@ -98,6 +100,8 @@ function getEditSourceFormHTML(source){
 
             <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label>      
             <textarea inline="text" id="description" class="form__textarea" name="description" onfocus="this.select()">${source.description}</textarea><br>
+
+            ${getMessageDiv()}
             
             ${geActionDivHTML()}
         </form>
@@ -116,7 +120,9 @@ function getEditCollectionFormHTML(collection){
 
             <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label> 
             <textarea th:inline="text" id="description" class="form__textarea" name="description" onfocus="this.select()">${collection.description}</textarea><br> 
-            
+
+            ${getMessageDiv()}
+
             ${geActionDivHTML()}
         </form>
         `;
@@ -136,3 +142,7 @@ export function getEditFormBtnHTML() {
         <button id="deleteRow" class="btn btn--blue">Delete</button>    
     `;
 }
+
+function getMessageDiv() {
+    return '<div id="modal-message" class="u-center-text u-text-bold"></div>';
+  }
