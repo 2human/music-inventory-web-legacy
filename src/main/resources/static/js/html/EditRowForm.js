@@ -7,11 +7,11 @@
  export function getEditFormHTML(dataType, data){    
     switch(dataType){
         case "entries":
-            return getEntryFormHTML(data);
+            return getEditEntryFormHTML(data);
         case "sources":
-            return getSourceFormHTML(data);
+            return getEditSourceFormHTML(data);
         case "collections":
-            return getCollectionFormHTML(data);
+            return getEditCollectionFormHTML(data);
     }
 }
 
@@ -27,10 +27,11 @@ export function getDeletePromptHTML() {
 }
 
 //create form that pre-fills data from table row
-function getEntryFormHTML(entry){
-    return `
-            <label for="ID" class="form__label form__label--modal">ID:</label>
-            <input type="text" id="id" class="form__input form__input--extra-long modal__input" name="id" value="${entry.id}" readonly><br>
+function getEditEntryFormHTML(entry){
+    return `        
+        <span class="close" id="closeModal">&times;</span>
+        <form id="edit-row-form" class="edit-form">
+            <input type="hidden" id="id" class="form__input form__input--extra-long modal__input" name="id" value="${entry.id}" readonly><br>
 
             <label for="collection" class="form__label form__label--modal">Collection:</label>
             <input type="text" id="collection" class="form__input form__input--extra-long modal__input" name="collection" value="${entry.collection}" onfocus="this.select()"><br>
@@ -51,7 +52,7 @@ function getEntryFormHTML(entry){
             <input type="text" id="vocalPart" class="form__input form__input--extra-long modal__input" name="vocalPart" value="${entry.vocalPart}" onfocus="this.select()"><br>
 
             <label for="key" class="form__label form__label--modal">Key:</label>
-            <input type="text" id="key" class="form__input form__input--extra-long" name="key modal__input" value="${entry.key}" onfocus="this.select()"><br>
+            <input type="text" id="key" class="form__input form__input--extra-long modal__input" name="key" value="${entry.key}" onfocus="this.select()"><br>
 
             <label for="melodicIncipit" class="form__label form__label--modal">Melodic Incipit:</label>
             <input type="text" id="melodicIncipit" class="form__input form__input--extra-long modal__input" name="melodicIncipit" value="${entry.melodicIncipit}" onfocus="this.select()"><br>
@@ -65,15 +66,17 @@ function getEntryFormHTML(entry){
             <label for="notes" class="form__label form__label--modal">Notes:</label>
             <input type="text" id="notes" class="form__input form__input--extra-long modal__input" name="notes" value="${entry.notes}" onfocus="this.select()"><br>
             
-            ${getModalActionDivHTML()}
-            `;
+            ${geActionDivHTML()}
+        </form>
+        `;
 }
 
 //create form that pre-fills data from table row
-function getSourceFormHTML(source){
-    return `
-            <label for="ID" class="form__label form__label--modal">ID:</label>
-            <input type="text" id="id" class="form__input form__input--extra-long modal__input" name="id" value="${source.id}" readonly><br>
+function getEditSourceFormHTML(source){
+    return `           
+        <span class="close" id="closeModal">&times;</span>
+        <form id="edit-row-form" class="edit-form">
+            <input type="hidden" id="id" class="form__input form__input--extra-long modal__input" name="id" value="${source.id}" readonly><br>
 
             <label for="collection" class="form__label form__label--modal">Collection:</label>
             <input type="text" id="collection" class="form__input form__input--extra-long modal__input" name="collection" value="${source.collection}" onfocus="this.select()"><br>
@@ -96,35 +99,38 @@ function getSourceFormHTML(source){
             <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label>      
             <textarea inline="text" id="description" class="form__textarea" name="description" onfocus="this.select()">${source.description}</textarea><br>
             
-            ${getModalActionDivHTML()}
-            `;
+            ${geActionDivHTML()}
+        </form>
+        `;
 
 }
 
-function getCollectionFormHTML(collection){
-    return `
-            <label for="ID" class="form__label form__label--modal">ID:</label> 
-            <input type="text" id="id" class="form__input form__input--extra-long modal__input" name="id" value="${collection.id}" readonly><br> 
+function getEditCollectionFormHTML(collection){
+    return `     
+        <span class="close" id="closeModal">&times;</span>       
+        <form id="edit-row-form" class="edit-form">
+            <input type="hidden" id="id" class="form__input form__input--extra-long modal__input" name="id" value="${collection.id}" readonly><br> 
 
             <label for="collection" class="form__label form__label--modal">Collection:</label> 
             <input type="text" id="collection" class="form__input form__input--extra-long modal__input" name="collection" value="${collection.collection}" onfocus="this.select()"><br> 
 
-            <label for="description" class="form__label form__label--modal">Description:</label> 
-            <textarea th:inline="text" id="description" class="form__textarea" name="description modal__input" onfocus="this.select()">${collection.description}</textarea><br> 
+            <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label> 
+            <textarea th:inline="text" id="description" class="form__textarea" name="description" onfocus="this.select()">${collection.description}</textarea><br> 
             
-            ${getModalActionDivHTML()}
-            `;
+            ${geActionDivHTML()}
+        </form>
+        `;
 }
 
-function getModalActionDivHTML() {
+function geActionDivHTML() {
     return `
         <div id="modal-action-div" class="edit-form__btn-group">
-            ${getModalBtnHTML()}
+            ${getEditFormBtnHTML()}
         </div>
     `;
 }
 
-export function getModalBtnHTML() {
+export function getEditFormBtnHTML() {
     return `    
         <button id="updateRow" class="btn btn--blue u-margin-right-small">Update</button>
         <button id="deleteRow" class="btn btn--blue">Delete</button>    

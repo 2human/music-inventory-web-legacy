@@ -191,6 +191,16 @@ public class CollectionController {
 	
 	//update collection information in database and return updated collection object
 	@RequestMapping(method = RequestMethod.POST, value = "/collections")
+	public Collection createCollection(@RequestParam(value="collection") String collectionName, @RequestParam String description) {
+		//construct collection object and update database
+		Collection collection = new Collection(collectionName, description);
+		repo.save(collection);
+		collection =  repo.findById(collection.getId()).orElse(new Collection());
+		return collection;
+	}
+	
+	//update collection information in database and return updated collection object
+	@RequestMapping(method = RequestMethod.PUT, value = "/collections")
 	public Collection updateCollectionTable(@RequestParam int id, @RequestParam(value="collection") String collectionName, @RequestParam String description) {
 		//construct collection object and update database
 		Collection collection = new Collection(id, collectionName, description);
@@ -202,7 +212,7 @@ public class CollectionController {
 	//create a new database entry for collection and return page containing new collection information
 	//and confirmation of successful creation
 	@RequestMapping(value = "/createCollection", params = {"collection", "description"})
-	public ModelAndView createCollection(@RequestParam(value="collection") String collectionName, @RequestParam String description) {
+	public ModelAndView createCollectionMVC(@RequestParam(value="collection") String collectionName, @RequestParam String description) {
 		//construct collection object and update database
 		Collection collection = new Collection(collectionName, description);
 		repo.save(collection);
@@ -217,9 +227,9 @@ public class CollectionController {
 	
 
 	//update collection information in database and return updated page
-	@RequestMapping(value = "/createCollection", params = {})
+	@RequestMapping(value = "/create-collection", params = {})
 	public ModelAndView createCollection() {
-		ModelAndView mv = new ModelAndView("createCollection.html");
+		ModelAndView mv = new ModelAndView("create-collection.html");
 		return mv;
 	}
 	

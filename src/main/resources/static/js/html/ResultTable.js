@@ -44,7 +44,6 @@ function getEntryTableColGroupHTML(){
             <col class="table__entry-column--notes">
         </colgroup>    
         `;
-
 }
 
 function getSourceTableColGroupHTML(){
@@ -60,7 +59,6 @@ function getSourceTableColGroupHTML(){
             <col class="table__source-column--description">
         </colgroup>    
         `;
-
 }
 
 
@@ -71,7 +69,7 @@ function getCollectionTableColGroupHTML(){
             <col class="table__collection-column--collection">
             <col class="table__collection-column--description">
         </colgroup>    
-            `;
+        `;
 }
 
 

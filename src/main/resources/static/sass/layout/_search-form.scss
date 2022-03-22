@@ -7,6 +7,7 @@
     border-radius: 1rem;
     width: 72rem;
 	box-shadow: 0 .75rem 2rem rgba($color-black, .2);
+    z-index: 5;
 
     @include respond(phone-land) {
         width: 98vw;

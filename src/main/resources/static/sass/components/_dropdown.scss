@@ -1,0 +1,37 @@
+.dropdown {
+
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  z-index: 50;     
+
+  @include respond(tab-port) {
+    display: none; 
+  }     
+
+  &--container {
+    display: inline-block;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: .5rem;
+  }
+
+  &--parent {
+    font-size: 1.6rem;
+  }
+  
+  &--content {
+    display: none;
+    font-size: 1.4rem;
+    padding-left: .5rem;
+  }
+  
+  &:hover &--content,  
+  &:active &--content,    
+  &:focus &--content {
+    display: inline-block;
+  }
+}

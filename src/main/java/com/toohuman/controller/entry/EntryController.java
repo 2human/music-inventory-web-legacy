@@ -266,31 +266,12 @@ public class EntryController {
 		
 		return resultSet;	
 	}	
-	
-	//updates entry information when user clicks "submit" in editEntry form
-	@RequestMapping(value = "/createEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
-														"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
-	public ModelAndView createEntry(@RequestParam String collection, @RequestParam int sourceNumber,
-							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
-							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
-							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
-		System.out.println("saving entry");
-		//construct/new entry object to database with update information
-		Entry entry = new Entry(collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
-		repo.save(entry);
-		
-		//generate page with updated information
-		ModelAndView mv = new ModelAndView("createEntrySuccess.html");
-		mv.addObject(entry);
-		//display page
-		return mv;
-	}
-	
-	@RequestMapping(value = "/createEntry", params = {})
-	public ModelAndView createEntry() {
-		ModelAndView mv = new ModelAndView("createEntry.html");
-		return mv;		
-	}
+	    
+    @RequestMapping(value = "/create-entry") 
+    public ModelAndView createEntry() {
+		ModelAndView mv = new ModelAndView("create-entry.html");
+		return mv;	
+    }
 	
 	@RequestMapping(value = "/deleteEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
 			"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
@@ -342,8 +323,41 @@ public class EntryController {
 	}
 	
 	//updates entry information when user clicks "submit" in editEntry form
+	@RequestMapping(value = "/createEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
+														"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
+	public ModelAndView createEntryMV(@RequestParam String collection, @RequestParam int sourceNumber,
+							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
+							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
+							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
+		System.out.println("saving entry");
+		//construct/new entry object to database with update information
+		Entry entry = new Entry(collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
+		repo.save(entry);
+		
+		//generate page with updated information
+		ModelAndView mv = new ModelAndView("create-entry.html");
+		mv.addObject(entry);
+		//display page
+		return mv;
+	}
+	
+	//creates entry when user clicks "submit" in editEntry form
 	@RequestMapping(method = RequestMethod.POST, value = "/entries")
-	public Entry postEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public Entry createEntry(@RequestParam String collection, @RequestParam int sourceNumber,
+			@RequestParam String location, @RequestParam String title, @RequestParam String composer,
+			@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
+			@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
+
+				//construct/new entry object to database with update information
+				Entry entry = new Entry(collection, sourceNumber, location, title, composer, vocalPart, key, melodicIncipit, textIncipit, isSecular, notes);
+				repo.save(entry);
+				entry =  repo.findById(entry.getId()).orElse(new Entry());
+				return entry;
+	}
+	
+	//updates entry information when user clicks "submit" in editEntry form
+	@RequestMapping(method = RequestMethod.PUT, value = "/entries")
+	public Entry updateExistingEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
 			@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 			@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 			@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -352,7 +366,8 @@ public class EntryController {
 				repo.save(entry);
 				entry =  repo.findById(id).orElse(new Entry());
 				return entry;
-		}
+	}
+	
 	
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping("/updateEntry")

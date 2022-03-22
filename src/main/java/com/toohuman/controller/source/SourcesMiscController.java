@@ -60,8 +60,19 @@ public class SourcesMiscController {
 		return mv;
 	}	
 
-	@RequestMapping(method = RequestMethod.POST, value = "/sources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public Sources updateSourcesTable(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	@RequestMapping(method = RequestMethod.POST, value = "/sources", params = {"collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
+	public Sources createSource(@RequestParam String collection, @RequestParam int sourceNumber,
+					@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
+					@RequestParam String inscription, @RequestParam String description) {
+		Sources sources = new Sources(collection, sourceNumber, callNumber, author, title, inscription, description);
+		repo.save(sources);
+		sources =  repo.findById(sources.getId()).orElse(new Sources());
+		System.out.println("Returning");
+		return sources;
+		}
+
+	@RequestMapping(method = RequestMethod.PUT, value = "/sources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
+	public Sources updateSource(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
 					@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 					@RequestParam String inscription, @RequestParam String description) {
 		Sources sources = new Sources(id, collection, sourceNumber, callNumber, author, title, inscription, description);

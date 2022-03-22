@@ -1,12 +1,13 @@
 import { getFieldCheckboxesHTML } from "./js/html/FieldCheckboxes.js";
 import { getAdvancedSearchHTML } from "./js/html/AdvancedSearch.js";
-import { getEditFormHTML, getDeletePromptHTML, getModalBtnHTML } from "./js/html/EditForm.js"; 
+import { getEditFormHTML, getDeletePromptHTML, getEditFormBtnHTML } from "./js/html/EditRowForm.js"; 
 import { getResultTableHTML, getTableRowHTML } from "./js/html/ResultTable.js"; 
 import { getPageBtnsHTML } from "./js/html/PageButtons.js";
 import { getSortByColumnProps } from "./js/functions/SortByColumn.js";
 import { getResultsMessage } from "./js/html/SearchResultsMessage.js";
 import { getResultsPerPageSelectorHTML } from "./js/html/ResultsPerPageSelector.js";
-import { getSingleView } from "./js/html/SingleView.js";
+import { getSingleView } from "./js/html/ViewRow.js";
+import { getCreateRowFormHTML } from "./js/html/CreateRowForm.js";
 
 console.log(location);
 
@@ -21,12 +22,12 @@ const domainURL = "http://localhost:8080";
 const tableButtons = document.getElementById('table-select');    
 const fieldDiv = document.getElementById('field-select');
 const searchBtn = document.getElementById('submit-search');
-const modal = document.getElementById("editor-modal");     
+const modal = document.getElementById("editor-modal");
 const pageBtnDiv = document.getElementById('page-buttons');
 const pageBtnDivBot = document.getElementById('page-buttons-bottom');
 const searchResultsDiv = document.getElementById('search-results');
 const searchForm = document.getElementById('search-form');
-const modalForm = document.getElementById("editor-modal-form");
+const modalContentDiv = document.getElementById("modal-content");
 const resultsMessage = document.getElementById("results-message");     
 const resultsPerPageDiv = document.getElementById('results-per-page');
 const advancedSearchInput = document.getElementById('advanced-search-input'); 
@@ -34,6 +35,9 @@ const advancedSearchToggle = document.getElementById('advanced-search-toggle');
 const marginHackTopDiv = document.getElementById('margin-hack-top');
 const marginHackBotDiv = document.getElementById('margin-hack-bot');
 const searchPropertiesDiv = document.getElementById('search-properties');
+const createCollectionBtn = document.getElementById('create-collection');
+const createSourceBtn = document.getElementById('create-source');
+const createEntryBtn = document.getElementById('create-entry');
 
 //TODO make this better
 let searchProperties;
@@ -66,14 +70,22 @@ function initializeEventListeners(){
     // searchResultsDiv.ondblclick = openSingleView;
     searchResultsDiv.addEventListener("click", handleTableClick);
     advancedSearchToggle.addEventListener("click", toggleAdvancedSearch);    
+    createCollectionBtn.addEventListener("click", event => openCreateRowModal(event, 'collections'));
+    createSourceBtn.addEventListener("click", event => openCreateRowModal(event, 'sources'));
+    createEntryBtn.addEventListener("click", event => openCreateRowModal(event, 'entries'));
 }
 
 function handleTableSelect(){    
+    updateDataType();
     closeAdvancedSearch();
     //TODO check to see if advanced search is open then make it so advanced search stays open if it is
     insertFieldCheckboxes();    
 }
 
+//update search properties data type based on current field selection
+function updateDataType(){
+    searchProperties.dataType = getTableSelection();
+}
 
 function closeAdvancedSearch(){
     let arrow = advancedSearchToggle.getElementsByTagName("I")[0];
@@ -89,35 +101,28 @@ function closeAdvancedSearch(){
 }
 
 function executeSearch(event){  
-    updateDataType(); //ensures that correct table is queried  
     event.preventDefault();
-    //abandon requests in progress
     if(xhr) {
-        xhr.abort();
-        console.log('aborting1');
+        xhr.abort(); //abandon requests in progress
     }
-    insertLoadingSpinner();
+    clearSearchResultSection();
+    insertLoadingSpinner(searchResultsDiv);
+    const dataType = getTableSelection();
     xhr = new XMLHttpRequest();
-    console.log(getHTTPRequestURL(searchForm));;
-    xhr.open('GET', getHTTPRequestURL(searchForm), true);
+    console.log(getHTTPRequestURL(searchForm, dataType));;
+    xhr.open('GET', getHTTPRequestURL(searchForm, dataType), true);
     xhr.send();
     xhr.onload = function(){     
         let request = this;
         if(requestSuccessful(request.status)){
             searchResultsData = JSON.parse(request.responseText);
-            generateSearchResultsDisplay();
+            generateSearchResultsDisplay(dataType);
         } 
     }
 }
 
-//update search properties data type based on current field selection
-function updateDataType(){
-    searchProperties.dataType = getTableSelection();
-}
-
-function insertLoadingSpinner() {    
-    clearSearchResultSection();
-    searchResultsDiv.innerHTML = getSpinnerHTML();
+function insertLoadingSpinner(element) {    
+    element.innerHTML = getSpinnerHTML();
 }
 
 function getSpinnerHTML() {
@@ -134,8 +139,8 @@ function clearSearchResultSection() {
 
 //TODO this has to be fixed so that it goes by domain name
 //generate request url with search params and table selection
-function getHTTPRequestURL(form){    
-    return webHostURL + "/" + getTableSelection() + '?' + getSearchParams(form);
+function getHTTPRequestURL(form, dataType){    
+    return webHostURL + "/" + dataType + '?' + getSearchParams(form);
 }
 
 //get URI search param string from form
@@ -146,8 +151,8 @@ function getSearchParams(form){
     return params;
 }
 
-function generateSearchResultsDisplay(){
-    initializeSearchProperties(getTableSelection(), searchResultsData);    
+function generateSearchResultsDisplay(dataType){
+    initializeSearchProperties(dataType, searchResultsData);    
     insertSearchResults();
     insertPageButtons();  
     insertResultsMessage();  
@@ -223,9 +228,9 @@ function isMagnifyBtn(cellClicked) {
 function openSingleView(event) {
     let cellClicked = getTableCellClicked(event.target);
     let tableRow = cellClicked.parentElement;
-    modalForm.innerHTML = getSingleView(searchProperties.dataType, getRowData(tableRow));  
+    modalContentDiv.innerHTML = getSingleView(searchProperties.dataType, getRowData(tableRow));  
     openModal();
-    addModalEventListeners(cellClicked, false);
+    addModalEventListeners(cellClicked);
 }
 
 function insertMarginHacks(){
@@ -259,10 +264,11 @@ function setResultsPerPage(event){
 function openEditorModal(event){
     let cellClicked = getTableCellClicked(event.target);
     if(isEditableCell(cellClicked)){     //if cell clicked is not table header and not the id column
-        constructModal(cellClicked);
+        constructEditorModal(cellClicked);
         openModal();
         focusSelectedField(cellClicked);
-        addModalEventListeners(cellClicked, true);
+        addEditFormEventListeners(cellClicked);
+        addModalEventListeners();
     }
 }
 
@@ -281,9 +287,9 @@ function isEditableCell(cellClicked){
     return cellClicked.nodeName == "TD" && cellClicked.id !== "expand";
 }
 
-function constructModal(cellClicked){
+function constructEditorModal(cellClicked){
     let tableRow = cellClicked.parentElement;
-    modalForm.innerHTML = getEditFormHTML(searchProperties.dataType, getRowData(tableRow));    
+    modalContentDiv.innerHTML = getEditFormHTML(searchProperties.dataType, getRowData(tableRow));    
 }
 
 function getRowData(row){
@@ -300,34 +306,34 @@ function openModal(){
 
 //focus form field corresponding to field that was clicked in table
 function focusSelectedField(cellClicked){
+    console.log(cellClicked);
     getMatchingFormField(cellClicked).focus();  //focus field in form corresponding to field clicked
 }
 
 //gets input element corresponding to field of cell clicked
 function getMatchingFormField(cellClicked){
     let clickedId = cellClicked.id;     //id of clicked cell
-    //find matching id within modal form
-    for(let i = 0, len = modalForm.childNodes.length; i < len; i++){
-        if(modalForm.childNodes[i].id == clickedId){ 
-            return modalForm.childNodes[i];
-        }
-    }
-    return null;
+    return Array.from(getEditRowForm().childNodes).find( row => row.id === clickedId) || null;
 }
 
-function addModalEventListeners(cellClicked, isEditorModal){    
-    if(isEditorModal){
-        const tableRow = cellClicked.parentElement;        //table row element of cell clicked
-        const updateBtn = document.getElementById('updateRow'); 
-        const deleteBtn = document.getElementById("deleteRow");
-        updateBtn.addEventListener("click", event => updateTableRow(event, tableRow)); 
-        deleteBtn.addEventListener("click", () => showDeleteRowPrompt(tableRow)); 
-        const closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
-        //clicking x will close modal
-        closeModalBtn.onclick = function() {
-            closeModal();
-        }    
-    }
+function getEditRowForm() {
+    return document.getElementById('edit-row-form');
+}
+
+function addEditFormEventListeners(cellClicked) {
+    const tableRow = cellClicked.parentElement;        //table row element of cell clicked
+    const updateBtn = document.getElementById('updateRow'); 
+    const deleteBtn = document.getElementById("deleteRow");
+    updateBtn.addEventListener("click", event => updateTableRow(event, tableRow)); 
+    deleteBtn.addEventListener("click", () => showDeleteRowPrompt(tableRow)); 
+    const closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
+    //clicking x will close modal
+    closeModalBtn.onclick = function() {
+        closeModal();
+    }    
+}
+
+function addModalEventListeners(){    
     //clicking outside of modal content will close modal
     window.onclick = function(event) {
         if (event.target == modal) {
@@ -350,9 +356,8 @@ function closeModal(){
 function updateTableRow(event, tableRow){
     event.preventDefault();
     let xhr = new XMLHttpRequest();
-    xhr.open('POST', getHTTPRequestURL(modalForm), true);
-    console.log(getHTTPRequestURL(modalForm));
-    xhr.send();
+    xhr.open('PUT', getHTTPRequestURL(getEditRowForm(), getTableSelection()), true);
+    console.log(getHTTPRequestURL(getEditRowForm(), getTableSelection()));
     closeModal();
     xhr.onload = function(){
         let request = this;
@@ -361,6 +366,7 @@ function updateTableRow(event, tableRow){
         updateSearchResultsData(updatedRowData);
         updateSearchResultsDisplay(tableRow, updatedRowData);
     }
+    xhr.send();
 }
 
 //update data array with new data instead of making new http request
@@ -387,8 +393,8 @@ function showDeleteRowPrompt(tableRow) {
 function deleteTableRow(event, tableRow){ 
     event.preventDefault();
     let xhr = new XMLHttpRequest();
-    console.log(getHTTPRequestURL(modalForm));
-    xhr.open('DELETE', getHTTPRequestURL(modalForm), true);
+    console.log(getHTTPRequestURL(getEditRowForm(), getTableSelection()));
+    xhr.open('DELETE', getHTTPRequestURL(getEditRowForm(), getTableSelection()), true);
     xhr.send();
     xhr.onload = function(){
         let rowID = tableRow.children[0].innerText;
@@ -400,7 +406,7 @@ function deleteTableRow(event, tableRow){
 
 //restores default buttons when user chooses not to delete row
 function hideDeleteRowPrompt(actionDiv, tableRow){
-    actionDiv.innerHTML = getModalBtnHTML();    
+    actionDiv.innerHTML = getEditFormBtnHTML();    
     const updateBtn = document.getElementById('updateRow'); 
     const deleteBtn = document.getElementById("deleteRow");
     updateBtn.addEventListener("click", event => updateTableRow(event, tableRow)); 
@@ -461,6 +467,54 @@ function openAdvancedSearch(){
     fieldDiv.innerHTML = '';
     advancedSearchToggle.childNodes[0].nodeValue = 'Close Advanced Search';    //change text without affecting nodes
     advancedSearchInput.innerHTML = getAdvancedSearchHTML(searchProperties.dataType);
+}
+
+function openCreateRowModal(event, dataType) {
+    event.preventDefault();
+    constructCreateRowModal(dataType);
+    openModal();
+    addCreateRowEventListeners(dataType);
+    addModalEventListeners();    
+}
+
+function constructCreateRowModal(dataType) {
+    modalContentDiv.innerHTML = getCreateRowFormHTML(dataType);
+}
+
+function addCreateRowEventListeners(dataType) {
+    const createRowBtn = document.getElementById('create-form-submit');
+    const clearFormBtn = document.getElementById("create-form-clear");
+    createRowBtn.addEventListener("click", event => createTableRow(event, dataType)); 
+    clearFormBtn.addEventListener("click", () => clearCreateRowForm(dataType)); 
+    const closeModalBtn = document.getElementById("closeModal");       // Get the <span> element that closes the modal 
+    //clicking x will close modal
+    closeModalBtn.onclick = function() {
+        closeModal();
+    }   
+}
+
+function createTableRow(event, dataType) {
+    event.preventDefault();
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', getHTTPRequestURL(getCreateRowForm(), dataType), true);
+    console.log(getHTTPRequestURL(getCreateRowForm(), dataType));
+    xhr.onload = function(){
+        let request = this;
+        let updatedRowData = JSON.parse(request.responseText);
+        //update data array then insert data into table row
+        updateSearchResultsData(updatedRowData);
+        updateSearchResultsDisplay(tableRow, updatedRowData);
+    }
+    xhr.send();
+}
+
+function getCreateRowForm() {
+    return document.getElementById('create-row-form');
+}
+
+function clearCreateRowForm(dataType) {
+    constructCreateRowModal(dataType);
+    addCreateRowEventListeners(dataType);
 }
 
 function handleTableClick(event){

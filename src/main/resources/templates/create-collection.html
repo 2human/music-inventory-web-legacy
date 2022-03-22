@@ -1,0 +1,49 @@
+<html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <link rel="stylesheet" href="styles/style-sass.css">
+    <title>Create Collection</title>
+</head>
+
+<body>
+    <header class="navigation">
+        <img src="images/logo-small.jpg" alt="Logo" class="navigation__logo" width="100">
+        <nav class="navigation__nav">            
+            <ul class="navigation__list">
+                <li class="navigation__item"><a href="#" class="navigation__link">Home</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link">Search</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link">Shop</a></li>
+                <li class="navigation__item"><a href="#" class="navigation__link">About</a></li>
+            </ul>
+        </nav>
+        <a class="btn navigation__button" href="#">Donate</a>
+    </header>    
+    <section class="section-search-form">
+        <form action="createCollection" class="search-form">
+            <div class="advanced-search__row">
+                <div class="advanced-search__group">
+                    <input type="text" id="id" name="id" placeholder="Id" class="form__input form__input--short advanced-search__input">
+                    <label class="advanced-search__label" for="Id">Id</label>
+                </div>
+            </div>
+                
+            <div class="advanced-search__row">
+                <div class="advanced-search__group">
+                    <input type="text" id="collection" name="collection" placeholder="Collection" class="form__input form__input--long advanced-search__input">
+                    <label class="advanced-search__label" for="collection">Collection</label>
+                </div>
+            </div>
+                
+            <div class="advanced-search__row">
+                <div class="advanced-search__group">
+                    <input type="text" id="description" name="description" placeholder="Description" class="form__input form__input--long advanced-search__input">
+                    <label class="advanced-search__label" for="description">Description</label>
+                </div>
+            </div> 
+            <div class="u-center-text"><input class="btn btn--blue" type="submit" value="Submit"></div>          
+        </form>         
+    </section>
+</body>
+</html>

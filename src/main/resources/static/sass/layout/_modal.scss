@@ -1,9 +1,9 @@
 /* The Modal (background) */
 .modal {
-	display: none; /* Hidden by default */
-	position: fixed; /* Stay in place */
+	display: none; 
+	position: fixed; 
 	padding-top: 4.25em;
-	z-index: 1; /* Sit on top */
+	z-index: 100;
 	left: 0;
 	top: 0;
 	width: 100%;
@@ -19,15 +19,15 @@
 	  padding: 1.25em;
 	  width: 86rem;
 
-      @include respond(tab-port) { 
-				width: 70rem;
-				margin: 5% auto;  
-      }      
+		@include respond(tab-port) { 
+			width: 70rem;
+			margin: 5% auto;  
+		}      
 
-      @include respond(phone-land) { 
-        width: 95%; 
-				margin: 7% auto;  
-      }
+		@include respond(phone-land) { 
+			width: 95%; 
+			margin: 7% auto;  
+		}
 
 	  @include respond(phone-port) { 
         width: 95%; 
@@ -37,14 +37,14 @@
 
     &__input {
 		
-		&:not(:last-child) {
-			margin-bottom: .75rem;
-		}		
-		
-		&:disabled, 
-		&[disabled] {
-			background-color: grey;
+			&:not(:last-child) {
+				margin-bottom: .75rem;
+			}		
+			
+			&:disabled, 
+			&[disabled] {
+				background-color: grey;
 
-		}
+			}
     }
   }

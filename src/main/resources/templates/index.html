@@ -26,7 +26,14 @@
     </header>
     <!--Form for searching database-->
     <main>
-
+        <div class="dropdown">
+                <a href="#" class="btn-text dropdown--parent">
+                    Create<i class="down-arrow btn-text__down-arrow"></i>
+                </a>
+            <a id="create-collection" href="#" class="btn-text dropdown--content">Collection</a>
+            <a id="create-source" href="#" class="btn-text dropdown--content">Source</a>
+            <a id="create-entry" href="#" class="btn-text dropdown--content">Entry</a>
+        </div>
         <section class="section-search-form">
             <form id="search-form" class="search-form">
                 <div class="form__group--basic-search">
@@ -74,9 +81,7 @@
         <!--Modal which displays form for editing table row-->
         <div id="editor-modal" class="modal">
             <!-- Modal content -->
-            <div class="modal__content">
-                <span class="close" id="closeModal">&times;</span>
-                <form id="editor-modal-form" class="edit-form"></form>
+            <div id="modal-content" class="modal__content">
             </div>          
         </div>
     </main>
