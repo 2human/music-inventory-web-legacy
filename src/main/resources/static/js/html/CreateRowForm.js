@@ -24,7 +24,10 @@ function getCreateEntryFormHTML(){
           <input type="text" id="collection" class="form__input form__input--extra-long modal__input" name="collection" onfocus="this.select()"><br>
 
           <label for="sourceNumber" class="form__label form__label--modal">Source Number:</label>
-          <input type="text" id="sourceNumber" class="form__input form__input--extra-long modal__input" name="sourceNumber" onfocus="this.select()"><br>
+          <input type="text"
+                  ${getNumberInputOnlyAttribute()}
+                  class="form__input form__input--extra-long modal__input" 
+                  name="sourceNumber" onfocus="this.select()"><br>
           
           <label for="location" class="form__label form__label--modal">Location:</label>
           <input type="text" id="location" class="form__input form__input--extra-long modal__input" name="location" onfocus="this.select()"><br>
@@ -73,7 +76,10 @@ function getCreateSourceFormHTML(){
           <input type="text" id="collection" class="form__input form__input--extra-long modal__input" name="collection" onfocus="this.select()"><br>
 
           <label for="sourceNumber" class="form__label form__label--modal">Source Number:</label>
-          <input type="text" id="sourceNumber" class="form__input form__input--extra-long modal__input" name="sourceNumber" onfocus="this.select()"><br>
+          <input type="text"
+                  ${getNumberInputOnlyAttribute()}
+                  class="form__input form__input--extra-long modal__input" 
+                  name="sourceNumber" onfocus="this.select()"><br>
 
           <label for="callNumber" class="form__label form__label--modal">Call Number:</label>
           <input type="text" id="callNumber" class="form__input form__input--extra-long modal__input" name="callNumber" onfocus="this.select()"><br>
@@ -124,4 +130,8 @@ function getCreateCollectionFormHTML(){
 
 function getMessageDiv() {
   return '<div id="modal-message" class="u-center-text u-text-bold"></div>';
+}
+
+function getNumberInputOnlyAttribute() {
+  return `onkeyup="this.value=this.value.replace(/[^0-9.]/g,'')"`;
 }

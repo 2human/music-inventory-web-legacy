@@ -421,16 +421,31 @@ function showDeleteRowPrompt(tableRow) {
 //delete row currently being viewed in edit form
 function deleteTableRow(event, tableRow){ 
     event.preventDefault();
+
+    const modalMessageDiv = document.getElementById('modal-message');
+    insertMiniLoadingSpinner(modalMessageDiv);
+
     let xhr = new XMLHttpRequest();
     console.log(getHTTPRequestURL(getEditRowForm(), getTableSelection()));
     xhr.open('DELETE', getHTTPRequestURL(getEditRowForm(), getTableSelection()), true);
     xhr.send();
     xhr.onload = function(){
-        let rowID = tableRow.children[0].innerText;
-        alert('Source with ID ' + rowID + ' deleted.');
-        tableRow.innerHTML = ""; 
-        closeModal();
-    }
+        if(requestSuccessful(this.status)) {
+            alert('Row successfully deleted.');
+            tableRow.innerHTML = ""; 
+            closeModal();
+        } else {
+            displayDeleteRowErrorMessage(modalMessageDiv);
+        }
+    };
+
+    xhr.onerror = () => {
+        displayDeleteRowErrorMessage(modalMessageDiv);
+    };
+}
+
+function displayDeleteRowErrorMessage(messageDiv) {
+    messageDiv.innerHTML = 'There was an error deleting this row. Please check your connection and try again.'
 }
 
 //restores default buttons when user chooses not to delete row
@@ -550,7 +565,7 @@ function insertMiniLoadingSpinner(element) {
 }
 
 function getMiniSpinnerHTML() {
-    return '<div class="spinner__container"><div class="spinner__animation spinner__animation--mini"/></div>';
+    return '<div class="spinner__animation spinner__animation--mini"/>';
 }
 
 function displayCreateRowSucces(messageDiv) {

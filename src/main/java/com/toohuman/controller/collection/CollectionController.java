@@ -172,8 +172,7 @@ public class CollectionController {
 		ModelAndView mv = new ModelAndView("editCollection.html");
 		Collection collection =  repo.findById(id).orElse(new Collection());
 		mv.addObject(collection);
-		return mv;
-		
+		return mv;		
 	}
 	
 	//update collection information in database and return updated page
