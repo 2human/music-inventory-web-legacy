@@ -33,12 +33,24 @@ public class SourceResultFilter {
 		Set<Sources> workingSet = new HashSet<Sources>();
 		for(Sources result: resultSet) {			
 			try {
-				if(result.getSourceNumber() == Integer.parseInt(sourceNumber)) workingSet.add(result);
+				double srcNumDbl = Double.parseDouble(sourceNumber);
+				//if whole number, look for all numbers containing whole number, including with decimals
+				if(isWholeNumber(srcNumDbl)) {
+					if(Math.floor(result.getSourceNumber()) == srcNumDbl) workingSet.add(result);
+				}
+				//otherwise look for exact match
+				else {
+					if(result.getSourceNumber() == srcNumDbl) workingSet.add(result);					
+				}
 			} catch(Exception e) {
 	//			System.out.println("NaN entered as sourceNumber");
 			}			
 		}
 		return workingSet;		
+	}
+	
+	private static boolean isWholeNumber(Double number) {
+		return number == Math.floor(number);
 	}
 	
 	public static Set<Sources> getFilteredByCallNumberSet(String callNumber, Set<Sources> resultSet){
@@ -96,7 +108,16 @@ public class SourceResultFilter {
 				}
 			if(curResult.getCollection().indexOf(keyword) != -1) workingSet.add(curResult);
 			try {
-				if(curResult.getSourceNumber() == Integer.parseInt(keyword)) workingSet.add(curResult);
+				double termToDbl = Double.parseDouble(keyword);
+				//if whole number, look for all numbers containing whole number, including with decimals
+				if(isWholeNumber(termToDbl)) {
+
+					System.out.println(termToDbl);
+					if(Math.floor(curResult.getSourceNumber()) == termToDbl) workingSet.add(curResult);
+				}
+				else {
+					if(curResult.getSourceNumber() == termToDbl) workingSet.add(curResult);					
+				}
 			} catch(Exception e) {
 //				System.out.println("NaN entered as sourceNumber");
 			}

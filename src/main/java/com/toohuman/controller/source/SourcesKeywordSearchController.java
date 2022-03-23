@@ -63,7 +63,7 @@ public class SourcesKeywordSearchController {
 		}
 		workingSet.addAll(repo.findByCollection(keyword));
 		try {
-			workingSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
+			workingSet.addAll(repo.findBySourceNumber(Double.parseDouble(keyword)));
 		} catch(Exception e) {
 //			System.out.println("NaN entered as sourceNumber");
 		}

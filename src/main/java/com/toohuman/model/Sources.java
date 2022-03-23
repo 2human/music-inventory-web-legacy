@@ -19,13 +19,13 @@ public class Sources {
 	@Column(name="collection_name")
 	private String collection;
 	@Column(name="source_number")
-	private int sourceNumber;											//current source number
+	private double sourceNumber;						//current source number
 	@Column(name="source_call_number")
 	private String callNumber;							//call number for current source, indicated by bold text
 	@Column(name="source_author")
-	private String author;						//
+	private String author;						
 	@Column(name="source_title")
-	private String title;							//
+	private String title;							
 	@Column(name="source_inscription")
 	private String inscription;
 	@Column(name="source_description")
@@ -36,7 +36,7 @@ public class Sources {
 		
 	}
 	
-	public Sources(int id, String collection, int sourceNumber, String callNumber, String author, String title,
+	public Sources(int id, String collection, double sourceNumber, String callNumber, String author, String title,
 			String inscription, String description) {
 		super();
 		this.id = id;
@@ -49,7 +49,7 @@ public class Sources {
 		this.description = description;
 	}
 	
-	public Sources(String collection, int sourceNumber, String callNumber, String author, String title,
+	public Sources(String collection, double sourceNumber, String callNumber, String author, String title,
 			String inscription, String description) {
 		super();
 		this.collection = collection;
@@ -73,10 +73,10 @@ public class Sources {
 	public void setCollection(String collection) {
 		this.collection = collection;
 	}
-	public int getSourceNumber() {
+	public double getSourceNumber() {
 		return sourceNumber;
 	}
-	public void setSourceNumber(int sourceNumber) {
+	public void setSourceNumber(double sourceNumber) {
 		this.sourceNumber = sourceNumber;
 	}
 	public String getCallNumber() {

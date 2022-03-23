@@ -13,7 +13,10 @@ public interface SourcesRepo extends JpaRepository<Sources, Integer>{
 	List<Sources> findByCollection(String collection);
 
 	@Query("from Sources where sourceNumber=?1")
-	List<Sources> findBySourceNumber(int sourceNumber);
+	List<Sources> findBySourceNumber(double sourceNumber);
+	
+	@Query("from Sources where FLOOR(sourceNumber) = FLOOR(?1)")
+	List<Sources> findByRoundedSourceNumber(double sourceNumber);
 
 	@Query("from Sources where author LIKE %?1%")
 	List<Sources> findByAuthor(String author);

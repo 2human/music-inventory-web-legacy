@@ -18,7 +18,7 @@ public class Entry {
 	@Column(name="collection_name")
 	private String collection;
 	@Column(name="source_number")
-	private int sourceNumber;
+	private double sourceNumber;
 	@Column(name="entry_location")
 	private String location;
 	@Column(name="entry_title")
@@ -48,7 +48,7 @@ public class Entry {
 
 	
 	
-	public Entry(int id, String collection, int sourceNumber, String location, String title, String composer,
+	public Entry(int id, String collection, double sourceNumber, String location, String title, String composer,
 			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular, String notes) {
 		this.id = id;
 		this.collection = collection;
@@ -64,7 +64,7 @@ public class Entry {
 		this.notes = notes;
 	}
 
-	public Entry(String collection, int sourceNumber, String location, String title, String composer,
+	public Entry(String collection, double sourceNumber, String location, String title, String composer,
 			String vocalPart, String key, String melodicIncipit, String textIncipit, String isSecular, String notes) {
 		this.collection = collection;
 		this.sourceNumber = sourceNumber;
@@ -91,10 +91,10 @@ public class Entry {
 	public void setCollection(String collection) {
 		this.collection = collection;
 	}
-	public int getSourceNumber() {
+	public double getSourceNumber() {
 		return sourceNumber;
 	}
-	public void setSourceNumber(int sourceNumber) {
+	public void setSourceNumber(double sourceNumber) {
 		this.sourceNumber = sourceNumber;
 	}
 	public String getLocation() {

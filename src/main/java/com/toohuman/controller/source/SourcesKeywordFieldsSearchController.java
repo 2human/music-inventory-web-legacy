@@ -59,12 +59,19 @@ public class SourcesKeywordFieldsSearchController {
 					}
 					break;
 				case "collection":
-					System.out.println("Run 2");
 					workingSet.addAll(repo.findByCollection(keyword));
 					break;
 				case "sourceNumber":
 					try {
-						workingSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
+						double srcNum = Double.parseDouble(keyword);
+						//if whole number, get all sub sources within that source (same whole number followed by decimal points)
+						if(isWholeNumber(srcNum)) {
+							workingSet.addAll(repo.findByRoundedSourceNumber(srcNum));						
+						}
+						//if decimal, only get exact matches
+						else {
+							workingSet.addAll(repo.findBySourceNumber(srcNum));
+						}
 					} catch(Exception e) {
 						System.out.println("NaN entered as sourceNumber");
 					}
@@ -89,6 +96,10 @@ public class SourcesKeywordFieldsSearchController {
 		return workingSet;
 	}	
 	
+	private static boolean isWholeNumber(double number) {
+		return number == Math.floor(number);
+	}
+	
 	//get filtered result set by filtering existing set, checking all fields
 	private Set<Sources> getFilteredResultSet(String keyword, Set<Sources> curResultSet, List<String> fields){
 		Set<Sources> workingSet = new HashSet<Sources>();
@@ -108,7 +119,7 @@ public class SourcesKeywordFieldsSearchController {
 						break;
 					case "sourceNumber":
 						try {
-							workingSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
+							if(curResult.getSourceNumber() == Double.parseDouble(keyword)) workingSet.add(curResult);
 						} catch(Exception e) {
 							System.out.println("NaN entered as sourceNumber");
 						}

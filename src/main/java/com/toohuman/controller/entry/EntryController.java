@@ -66,7 +66,15 @@ public class EntryController {
 			}
 		resultSet.addAll(repo.findByCollection(keyword));
 		try {
-			resultSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
+			double keywordToDbl = Double.parseDouble(keyword);
+			//if whole number, get all sub sources within that source (same integer with decimal points, e.g., 123 gets 123.X)
+			if(keywordToDbl == Math.floor(keywordToDbl)) {
+				resultSet.addAll(repo.findByRoundedSourceNumber(keywordToDbl));						
+			}
+			//otherwise get exact match
+			else {
+				resultSet.addAll(repo.findBySourceNumber(keywordToDbl));
+			}
 		} catch(Exception e) {
 			System.out.println("NaN entered as sourceNumber");
 		}
@@ -114,7 +122,15 @@ public class EntryController {
 					break;
 				case "sourceNumber":
 					try {
-						resultSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
+						double keywordToDbl = Double.parseDouble(keyword);
+						//if whole number, get all sub sources within that source (same integer with decimal points)
+						if(keywordToDbl == Math.floor(keywordToDbl)) {
+							resultSet.addAll(repo.findByRoundedSourceNumber(keywordToDbl));						
+						}
+						//otherwise get exact match
+						else {
+							resultSet.addAll(repo.findBySourceNumber(keywordToDbl));
+						}
 					} catch(Exception e) {
 						System.out.println("NaN entered as sourceNumber");
 					}
@@ -170,7 +186,15 @@ public class EntryController {
 						break;
 					case "sourceNumber":
 						try {
-							if(curResult.getSourceNumber() == Integer.parseInt(keyword)) filteredSet.add(curResult);
+							double keywordToDbl = Double.parseDouble(keyword);
+							//if whole number, look for all numbers containing whole number, including with decimals
+							if(isWholeNumber(keywordToDbl)) {
+								if(Math.floor(curResult.getSourceNumber()) == keywordToDbl) filteredSet.add(curResult);
+							}
+							//otherwise look for exact match
+							else {
+								if(curResult.getSourceNumber() == keywordToDbl) filteredSet.add(curResult);					
+							}
 						} catch(Exception e) {
 							System.out.println("NaN entered as sourceNumber");
 						}
@@ -207,6 +231,10 @@ public class EntryController {
 		}
 
 		return filteredSet;
+	}
+	
+	private static boolean isWholeNumber(Double number) {
+		return number == Math.floor(number);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/entries", params = {"searchText", "table", "id", "sourceNumber", "location",
@@ -275,7 +303,7 @@ public class EntryController {
 	
 	@RequestMapping(value = "/deleteEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
 			"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
-	public ModelAndView deleteEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public ModelAndView deleteEntry(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 									@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 									@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 									@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -292,7 +320,7 @@ public class EntryController {
 	
 	@RequestMapping(method = RequestMethod.DELETE, value = "/entries", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
 			"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
-	public Entry delete(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public Entry delete(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 									@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 									@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 									@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -325,7 +353,7 @@ public class EntryController {
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping(value = "/createEntry", params = {"collection", "sourceNumber", "location", "title", "composer", "vocalPart",
 														"key", "melodicIncipit", "textIncipit", "isSecular", "notes"})
-	public ModelAndView createEntryMV(@RequestParam String collection, @RequestParam int sourceNumber,
+	public ModelAndView createEntryMV(@RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -343,7 +371,7 @@ public class EntryController {
 	
 	//creates entry when user clicks "submit" in editEntry form
 	@RequestMapping(method = RequestMethod.POST, value = "/entries")
-	public Entry createEntry(@RequestParam String collection, @RequestParam int sourceNumber,
+	public Entry createEntry(@RequestParam String collection, @RequestParam double sourceNumber,
 			@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 			@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 			@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -357,7 +385,7 @@ public class EntryController {
 	
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping(method = RequestMethod.PUT, value = "/entries")
-	public Entry updateExistingEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public Entry updateExistingEntry(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 			@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 			@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 			@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -371,7 +399,7 @@ public class EntryController {
 	
 	//updates entry information when user clicks "submit" in editEntry form
 	@RequestMapping("/updateEntry")
-	public ModelAndView updateEntry(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public ModelAndView updateEntry(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
@@ -389,7 +417,7 @@ public class EntryController {
 	
 	//update entry and return JSON object instead of web page
 	@RequestMapping("/updateEntryTable")
-	public Entry updateEntryTable(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public Entry updateEntryTable(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 							@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 							@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {

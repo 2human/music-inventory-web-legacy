@@ -48,7 +48,7 @@ public class SourcesMiscController {
 	}
 	
 	@RequestMapping(value = "/updateSources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public ModelAndView updateSources(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public ModelAndView updateSources(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 							@RequestParam String inscription, @RequestParam String description) {
 		Sources sources = new Sources(id, collection, sourceNumber, callNumber, author, title, inscription, description);
@@ -61,17 +61,18 @@ public class SourcesMiscController {
 	}	
 
 	@RequestMapping(method = RequestMethod.POST, value = "/sources", params = {"collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public Sources createSource(@RequestParam String collection, @RequestParam int sourceNumber,
+	public Sources createSource(@RequestParam String collection, @RequestParam double sourceNumber,
 					@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 					@RequestParam String inscription, @RequestParam String description) {
 		Sources sources = new Sources(collection, sourceNumber, callNumber, author, title, inscription, description);
 		repo.save(sources);
 		sources =  repo.findById(sources.getId()).orElse(new Sources());
+		System.out.println(sources.getSourceNumber());
 		return sources;
 		}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/sources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public Sources updateSource(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public Sources updateSource(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 					@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 					@RequestParam String inscription, @RequestParam String description) {
 		Sources sources = new Sources(id, collection, sourceNumber, callNumber, author, title, inscription, description);
@@ -83,7 +84,7 @@ public class SourcesMiscController {
 	
 	
 	@RequestMapping(value = "/createSources", params = {"collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public ModelAndView createSources(@RequestParam String collection, @RequestParam int sourceNumber,
+	public ModelAndView createSources(@RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 							@RequestParam String inscription, @RequestParam String description) {
 		Sources sources = new Sources(collection, sourceNumber, callNumber, author, title, inscription, description);
@@ -102,7 +103,7 @@ public class SourcesMiscController {
 	}
 	
 	@RequestMapping(value = "/deleteSources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public ModelAndView deleteSources(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public ModelAndView deleteSources(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 							@RequestParam String inscription, @RequestParam String description) {
 		Sources sources =  repo.findById(id).orElse(new Sources());
@@ -115,7 +116,7 @@ public class SourcesMiscController {
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/sources", params = {"id", "collection", "sourceNumber", "callNumber", "author", "title", "inscription", "description"})
-	public Sources delete(@RequestParam int id, @RequestParam String collection, @RequestParam int sourceNumber,
+	public Sources delete(@RequestParam int id, @RequestParam String collection, @RequestParam double sourceNumber,
 							@RequestParam String callNumber, @RequestParam String author, @RequestParam String title,
 							@RequestParam String inscription, @RequestParam String description) {
 		Sources sources =  repo.findById(id).orElse(new Sources());

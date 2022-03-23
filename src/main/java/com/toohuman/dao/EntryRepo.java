@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.toohuman.model.Entry;
+import com.toohuman.model.Sources;
 
 public interface EntryRepo extends JpaRepository<Entry, Integer> {
 
@@ -13,7 +14,10 @@ public interface EntryRepo extends JpaRepository<Entry, Integer> {
 	List<Entry> findByCollection(String collection);
 	
 	@Query("from Entry where sourceNumber=?1")
-	List<Entry> findBySourceNumber(int sourceNumber);
+	List<Entry> findBySourceNumber(double sourceNumber);
+	
+	@Query("from Entry where FLOOR(sourceNumber) = FLOOR(?1)")
+	List<Entry> findByRoundedSourceNumber(double sourceNumber);
 
 	@Query("from Entry where location LIKE %?1%")
 	List<Entry> findByLocation(String location);

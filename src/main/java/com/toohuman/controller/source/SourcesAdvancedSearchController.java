@@ -78,7 +78,15 @@ public class SourcesAdvancedSearchController {
 			}
 			else {
 				try {
-					resultSet.addAll(repo.findBySourceNumber(Integer.parseInt(sourceNumber)));
+					double srcNum = Double.parseDouble(sourceNumber);
+					//if whole number, get all sub sources within that source (same integer with decimal points)
+					if(srcNum == Math.floor(srcNum)) {
+						resultSet.addAll(repo.findByRoundedSourceNumber(srcNum));						
+					}
+					//otherwise get exact match
+					else {
+						resultSet.addAll(repo.findBySourceNumber(srcNum));
+					}
 				} catch(Exception e) {
 					System.out.println("NaN entered as sourceNumber");
 				}				
@@ -166,7 +174,7 @@ public class SourcesAdvancedSearchController {
 		}
 		workingSet.addAll(repo.findByCollection(keyword));
 		try {
-			workingSet.addAll(repo.findBySourceNumber(Integer.parseInt(keyword)));
+			workingSet.addAll(repo.findBySourceNumber(Double.parseDouble(keyword)));
 		} catch(Exception e) {
 //				System.out.println("NaN entered as sourceNumber");
 		}

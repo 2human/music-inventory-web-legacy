@@ -32,12 +32,24 @@ public class EntryResultFilter {
 		Set<Entry> workingSet = new HashSet<Entry>();
 		for(Entry result: resultSet) {			
 			try {
-				if(result.getSourceNumber() == Integer.parseInt(sourceNumber)) workingSet.add(result);
+				double srcNumDbl = Double.parseDouble(sourceNumber);
+				//if whole number, look for all numbers containing whole number, including with decimals
+				if(isWholeNumber(srcNumDbl)) {
+					if(Math.floor(result.getSourceNumber()) == srcNumDbl) workingSet.add(result);
+				}
+				//otherwise look for exact match
+				else {
+					if(result.getSourceNumber() == srcNumDbl) workingSet.add(result);					
+				}
 			} catch(Exception e) {
 	//			System.out.println("NaN entered as sourceNumber");
 			}			
 		}
 		return workingSet;		
+	}
+	
+	private static boolean isWholeNumber(Double number) {
+		return number == Math.floor(number);
 	}
 	
 	public static Set<Entry> getFilteredByLocationSet(String location, Set<Entry> resultSet){
@@ -131,14 +143,21 @@ public class EntryResultFilter {
 		//check each current result, adding only those containing current keyword to filtered set
 		for(Entry curResult: curResultSet) {
 			try {
-				if(curResult.getId() == Integer.parseInt(keyword)) filteredSet.add(curResult);
-//				resultSet.add(repo.findById(Integer.parseInt(curKeyword)).orElse(new Entry()));
+				double keywordToDbl = Double.parseDouble(keyword);
+				//if whole number, look for all numbers containing whole number, including with decimals
+				if(isWholeNumber(keywordToDbl)) {
+					if(Math.floor(curResult.getSourceNumber()) == keywordToDbl) filteredSet.add(curResult);
+				}
+				//otherwise look for exact match
+				else {
+					if(curResult.getSourceNumber() == keywordToDbl) filteredSet.add(curResult);					
+				}
 				} catch(Exception e) {
 					System.out.println("NaN entered as ID");
 				}
 			if(curResult.getCollection().indexOf(keyword) != -1) filteredSet.add(curResult);
 			try {
-				if(curResult.getSourceNumber() == Integer.parseInt(keyword)) filteredSet.add(curResult);
+				if(curResult.getSourceNumber() == Double.parseDouble(keyword)) filteredSet.add(curResult);
 			} catch(Exception e) {
 				System.out.println("NaN entered as sourceNumber");
 			}
