@@ -1,7 +1,9 @@
 Music Inventory Web
 ===================
 
-A full-stack web application for searching, viewing, and editing the Sacred Music Inventory MySQL database. Built using Spring Boot, vanilla JavaScript, and SASS.
+A full-stack web application for searching, viewing, and editing the Sacred Music Inventory MySQL database.  
+
+Built using Spring Boot, vanilla JavaScript, MySQL, and SASS.
 
 Background
 ----------
@@ -12,7 +14,7 @@ Around the time Nym Cooke(the author of the music inventory Word documents) and 
 
 Not knowing how involved the project would ultimately become, I chose to create the project using vanilla JavaScript, as the general impression I'd gotten was that it was beneficial to learn regular JavaScript before jumping into a framework. This project was a bit more than I had bargained for at the time, since I had so little knowledge of the web development landscape, but it turned out to be a great learning experience.
 
-This was originally going to be just a learning project. Even after we initially got it functioning, Nym and I were unsure about what we'd do with it. We were considering donating it to the Worcestor Antiquarian Society. About a year after starting this project, where I had learned more about web development, and we were both more invested in the project, we decided that the best course of action would be to release this as part of a web site on our own.
+This was originally going to be just a learning project. Even after we initially got it functioning, Nym and I were unsure about what we'd do with it. We were considering donating it to the American Antiquarian Society. About a year after starting this project, where I had learned more about web development, and we were both more invested in the project, we decided that the best course of action would be to release this as part of a web site on our own.
 
 So I first learned how to deploy web applications using AWS, making the initial version of the site accessible online. Later in the year, I learned much more about web design, and fully re-designed the user interface into a fully responsive UI.
 
