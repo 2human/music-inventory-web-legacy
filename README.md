@@ -1,7 +1,7 @@
 Music Inventory Web
 ===================
 
-A full-stack web application for searching, viewing, and editing the Sacred Music Inventory MySQL database. Built using Spring Boot and vanilla JavaScript.
+A full-stack web application for searching, viewing, and editing the Sacred Music Inventory MySQL database. Built using Spring Boot, vanilla JavaScript, and SASS.
 
 Background
 ----------
@@ -117,3 +117,7 @@ This opens the modal for creating rows, as shown below:
 
 The user can then fill out the fields, and click 'Create' in order to create a new row.
 
+Web Design
+----------
+
+The web design for this project was performed using SASS with BEM and 7-1 architecture.
