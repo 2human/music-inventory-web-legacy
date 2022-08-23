@@ -56,7 +56,7 @@ function getSourceFieldsCheckboxesHMTML(){
                     
                 <div class="form__checkbox-group">
                     <input class="form__checkbox" type="checkbox" name="field" id="inscription" value="inscription">
-                    <label for="inscription" class="form__label--field-select"> Inscription</label>
+                    <label for="inscription" class="form__label--field-select"> Inscriptions</label>
                 </div>
                 
                 <div class="form__checkbox-group">

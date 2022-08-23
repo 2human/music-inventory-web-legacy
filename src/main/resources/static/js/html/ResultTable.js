@@ -171,10 +171,27 @@ function sortAscending(a, b, searchProperties){
     //first sort by current column
     if(a[searchProperties.sortBy.column] < b[searchProperties.sortBy.column]) return -1;
     if(a[searchProperties.sortBy.column] > b[searchProperties.sortBy.column]) return 1;
-    //if they are the same, sort by id
+    //use source number as secondary sorting metric if entry or column
+    if(isSourceOrEntry(searchProperties.dataType)) {   
+        if(a.sourceNumber < b.sourceNumber) return -1;
+        if(a.sourceNumber > b.sourceNumber) return 1;
+    }
+
+    // if(dataType === 'entries') {        
+    //     if(a.location < b.location) return -1;
+    //     if(a.location > b.location) return 1;
+    // }
+
+    //otherwise sort by id
     if(a.id < b.id) return -1;
     if(a.id > b.id) return 1;
 
+    return 0;  //if all others are the same, it doesn't matter
+    
+}
+
+function isSourceOrEntry(dataType) {
+    return dataType === 'entries' || dataType === 'sources';
 }
 
 function sortDescending(a, b, searchProperties){

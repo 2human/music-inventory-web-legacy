@@ -9,6 +9,7 @@ export function getSortByColumnProps(sortProps, elementClicked){
     if(sortingByDifferentColumn(sortProps, columnName)){
         return { column: columnName, order: 'ascending' }
     } else{
+        //sort same column in opposite order
         return { ...sortProps, order: getOppositeSortOrder(sortProps) };
     }
 }

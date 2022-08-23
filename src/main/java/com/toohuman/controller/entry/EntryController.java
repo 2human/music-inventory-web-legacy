@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +27,9 @@ import com.toohuman.model.Entry;
 @RestController
 @CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com",
 		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org",
-		"http://musicinventoryapp.com", "http://www.musicinventoryapp.com"}, maxAge = 3600)
+		"http://musicinventoryapp.com", "http://www.musicinventoryapp.com",
+		"https://musicinventoryapp.com", "https://www.musicinventoryapp.com",
+		"http://localhost:3000", "localhost:3000"}, maxAge = 3600)
 public class EntryController {
 
 	@Autowired
@@ -324,6 +327,14 @@ public class EntryController {
 									@RequestParam String location, @RequestParam String title, @RequestParam String composer,
 									@RequestParam String vocalPart, @RequestParam String key, @RequestParam String melodicIncipit, 
 									@RequestParam String textIncipit, @RequestParam String isSecular, @RequestParam String notes) {
+		//construct/new entry object to database with update information
+		Entry entry =  repo.findById(id).orElse(new Entry());
+		repo.delete(entry);	
+		return entry;
+	}	
+	
+	@RequestMapping(method = RequestMethod.DELETE, value = "/entries", params = {"id"})
+	public Entry delete(@RequestParam int id) {
 		//construct/new entry object to database with update information
 		Entry entry =  repo.findById(id).orElse(new Entry());
 		repo.delete(entry);	

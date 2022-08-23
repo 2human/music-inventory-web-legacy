@@ -102,7 +102,7 @@ function getSingleSourceView(source) {
                 <td class="table__data">${source.title}</td>
             </tr>
             <tr class="table__row">
-                <td class="table__data">Inscription:</td>
+                <td class="table__data">Inscriptions:</td>
                 <td class="table__data u-retain-indentation">${source.inscription}</td>
             </tr>
             <tr class="table__row">

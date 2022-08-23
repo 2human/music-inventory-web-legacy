@@ -90,7 +90,7 @@ function getCreateSourceFormHTML(){
           <label for="title" class="form__label form__label--modal">Title:</label>
           <input type="text" id="title" class="form__input form__input--extra-long modal__input" name="title" onfocus="this.select()"><br>
 
-          <label for="inscription" class="form__label form__label--modal form__label--textarea">Inscription:</label>
+          <label for="inscription" class="form__label form__label--modal form__label--textarea">Inscriptions:</label>
           <textarea inline="text" id="inscription" class="form__textarea" name="inscription" onfocus="this.select()"></textarea><br>
 
           <label for="description" class="form__label form__label--modal form__label--textarea">Description:</label>      
@@ -129,7 +129,7 @@ function getCreateCollectionFormHTML(){
 }
 
 function getMessageDiv() {
-  return '<div id="modal-message" class="u-center-text u-text-bold"></div>';
+  return '<div id="modal-message" class="u-center-text u-text-bold u-margin-top-small"></div>';
 }
 
 function getNumberInputOnlyAttribute() {

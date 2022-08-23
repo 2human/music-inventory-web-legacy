@@ -1,21 +1,21 @@
 .form {
-
-  &__input { 
+  &__input {
     font-size: 1.4rem;
-    font-family: inherit;       //inputs do not inherit font family by default
-    color: inherit;    
-    border-radius: .2rem;
-    background-color: rgba($color-white, .5);
-    padding: .5rem 1rem; 
+    font-family: inherit; //inputs do not inherit font family by default
+    color: inherit;
+    border-radius: 0.2rem;
+    background-color: rgba($color-white, 0.5);
+    padding: 0.5rem 1rem;
     border-color: white;
-    
+
     &:focus {
       outline: none;
-      box-shadow: 0 1rem 1.5rem rgba($color-black, .1);
+      box-shadow: 0 1rem 1.5rem rgba($color-black, 0.1);
       // border-bottom: 3px solid $color-primary;
-    }    
+    }
 
-    &::-webkit-input-placeholder {      //double colon is pseudo-element
+    &::-webkit-input-placeholder {
+      //double colon is pseudo-element
       color: $color-grey-dark-2;
     }
 
@@ -23,95 +23,94 @@
       width: 50rem;
       margin-bottom: 0;
       vertical-align: middle;
-      margin-right: .5rem;
+      margin-right: 0.5rem;
 
       @include respond(phone-land) {
-        width: 25%;   //this is just to reset the property so that it will fill element
+        width: 25%; //this is just to reset the property so that it will fill element
         flex-grow: 1;
       }
-
     }
 
     &--short {
-      width: 14.32rem;      
+      width: 14.32rem;
 
-      @include respond(phone-land) { 
-        width: 23.75rem;   
-      }      
+      @include respond(phone-land) {
+        width: 23.75rem;
+      }
 
-      @include respond(phone-port) { 
-        width: 14.32rem;   
+      @include respond(phone-port) {
+        width: 14.32rem;
       }
     }
 
     &--long {
-      width: 29.5rem;    
+      width: 29.5rem;
 
-      @include respond(phone-land) { 
-        width: 23.75rem;   
-      }      
+      @include respond(phone-land) {
+        width: 23.75rem;
+      }
 
-      @include respond(phone-port) { 
-        width: 29.5rem;   
+      @include respond(phone-port) {
+        width: 29.5rem;
       }
     }
 
     &--extra-long {
       width: 72rem;
 
-      @include respond(tab-port) { 
-        width: 56rem;   
-      }      
+      @include respond(tab-port) {
+        width: 56rem;
+      }
     }
   }
 
   &__select {
     font-size: 1.4rem;
-    font-family: inherit;       //inputs do not inherit font family by default
-    color: inherit;    
-    border-radius: .2rem;
-    background-color: rgba($color-white, .5);
-    padding: .5rem .6rem;   
+    font-family: inherit; //inputs do not inherit font family by default
+    color: inherit;
+    border-radius: 0.2rem;
+    background-color: rgba($color-white, 0.5);
+    padding: 0.5rem 0.6rem;
   }
 
   &__textarea {
     font-size: 1.4rem;
-    font-family: inherit;       //inputs do not inherit font family by default
-    color: inherit;    
-    border-radius: .2rem;
-    background-color: rgba($color-white, .5);
-    padding: .5rem 1rem; 
+    font-family: inherit; //inputs do not inherit font family by default
+    color: inherit;
+    border-radius: 0.2rem;
+    background-color: rgba($color-white, 0.5);
+    padding: 0.5rem 1rem;
     border-color: white;
     width: 72rem;
     height: 10rem;
     resize: none;
-    
+
     font-size: 1.4rem;
-    font-family: inherit;       //inputs do not inherit font family by default
-    color: inherit;    
-    border-radius: .2rem;
-    background-color: rgba($color-white, .5);
-    padding: .5rem 1rem; 
+    font-family: inherit; //inputs do not inherit font family by default
+    color: inherit;
+    border-radius: 0.2rem;
+    background-color: rgba($color-white, 0.5);
+    padding: 0.5rem 1rem;
     border-color: white;
 
     &:not(:last-child) {
-      margin-bottom: .75rem;
-    }    
+      margin-bottom: 0.75rem;
+    }
 
-    @include respond(tab-port) { 
-      width: 56rem;   
-    }      
+    @include respond(tab-port) {
+      width: 56rem;
+    }
 
-    @include respond(phone-land) { 
-      width: 100%;      
+    @include respond(phone-land) {
+      width: 100%;
     }
   }
 
   &__label {
     font-size: 1.2rem;
-    display:inline-block;
+    display: inline-block;
     width: 10rem;
-    font-weight:bold;
+    font-weight: bold;
 
     &--keyword {
       vertical-align: middle;
@@ -122,18 +121,18 @@
       font-size: 1.25rem;
     }
 
-    &--textarea {      
+    &--textarea {
       vertical-align: top;
       font-size: 1.25rem;
     }
-  }  
+  }
 
   &__checkbox-section {
     display: inline-block;
     width: 58rem;
 
     @include respond(phone-land) {
-        width: 90%;
+      width: 90%;
     }
   }
 
@@ -141,15 +140,15 @@
     display: inline-block;
   }
 
-  &__group{
+  &__group {
     &--basic-search {
       width: 64rem;
       margin: 0 auto;
 
       @include respond(phone-land) {
-        width: 100%;   
+        width: 100%;
       }
-    }  
+    }
 
     &--keyword {
       @include respond(phone-land) {
@@ -158,9 +157,9 @@
     }
   }
 
-  &__radio-button, &__checkbox {
+  &__radio-button,
+  &__checkbox {
     vertical-align: text-bottom;
     width: 1.5rem;
   }
-
 }

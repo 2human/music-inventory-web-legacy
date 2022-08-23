@@ -1,50 +1,48 @@
 /* The Modal (background) */
 .modal {
-	display: none; 
-	position: fixed; 
-	padding-top: 4.25em;
-	z-index: 100;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%; 
-	overflow: auto;
-	background-color: rgb(0,0,0); /* Fallback color */
-	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  
-	&__content {
-	  background-color: #F8F8F8;
-	  border-radius: 1rem;
-	  margin: 3% auto;
-	  padding: 1.25em;
-	  width: 86rem;
+  display: none;
+  position: fixed;
+  padding-top: 4.25em;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 
-		@include respond(tab-port) { 
-			width: 70rem;
-			margin: 5% auto;  
-		}      
+  &__content {
+    background-color: #f8f8f8;
+    border-radius: 1rem;
+    margin: 3% auto;
+    padding: 1.25em;
+    width: 86rem;
 
-		@include respond(phone-land) { 
-			width: 95%; 
-			margin: 7% auto;  
-		}
+    @include respond(tab-port) {
+      width: 70rem;
+      margin: 5% auto;
+    }
 
-	  @include respond(phone-port) { 
-        width: 95%; 
-				margin: 10% auto;  
-      }
-	}
+    @include respond(phone-land) {
+      width: 95%;
+      margin: 7% auto;
+    }
 
-    &__input {
-		
-			&:not(:last-child) {
-				margin-bottom: .75rem;
-			}		
-			
-			&:disabled, 
-			&[disabled] {
-				background-color: grey;
-
-			}
+    @include respond(phone-port) {
+      width: 95%;
+      margin: 10% auto;
     }
   }
+
+  &__input {
+    &:not(:last-child) {
+      margin-bottom: 0.75rem;
+    }
+
+    &:disabled,
+    &[disabled] {
+      background-color: grey;
+    }
+  }
+}

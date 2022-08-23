@@ -139,7 +139,7 @@ function getAdvancedSearchHTMLSources(){
     <div class="advanced-search__row">
         <div class="advanced-search__group">
             <input type="text" id="inscription" name="inscription" class="form__input form__input--long advanced-search__input" placeholder="Inscription">
-            <label class="advanced-search__label" for="inscription">Inscription</label>
+            <label class="advanced-search__label" for="inscription">Inscriptions</label>
         </div>
 
         <div class="advanced-search__group">

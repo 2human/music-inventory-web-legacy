@@ -23,7 +23,9 @@ import com.toohuman.model.Sources;
 @RestController
 @CrossOrigin(origins = { "http://www.sacredmusicinventory.org", "http://www.sacredmusicinventory.com",
 		"http://sacredmusicinventory.com", "http://sacredmusicinventory.org",
-		"http://musicinventoryapp.com", "http://www.musicinventoryapp.com"}, maxAge = 3600)
+		"http://musicinventoryapp.com", "http://www.musicinventoryapp.com",
+		"https://musicinventoryapp.com", "https://www.musicinventoryapp.com",
+		"http://localhost:3000", "localhost:3000"}, maxAge = 3600)
 public class SourcesKeywordFieldsSearchController {
 	
 	@Autowired

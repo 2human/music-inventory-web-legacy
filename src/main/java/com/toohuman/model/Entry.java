@@ -143,10 +143,6 @@ public class Entry {
 		this.isSecular = isSecular;
 	}
 	
-	public String[] getFieldList() {
-		return FIELD_LIST;
-	}
-	
 	public String getNotes() {
 		return notes;
 	}
