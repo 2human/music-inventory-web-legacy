@@ -4,7 +4,7 @@ A full-stack web application for searching, viewing, and editing the Sacred Musi
 
 Built using Spring Boot, vanilla JavaScript, MySQL, and SASS. The front end code can be found in the [src/main/resources/static](https://github.com/2human/music-inventory-web-legacy/tree/master/src/main/resources/static) folder.
 
-This is a legacy version of the project. The front end has been fully re-constructed as a React application, [found here](https://github.com/2human/music-inventory-web-react), and is now the live version of the application.
+This is a legacy version of the project. The front end has been fully re-constructed as a [React application](https://github.com/2human/music-inventory-web-react), which is now the live version of the application.
 
 ## Background
 
